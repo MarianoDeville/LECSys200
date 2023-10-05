@@ -20,7 +20,7 @@ public class CambioPasswordDAO extends Conexion {
 
 			this.conectar();
 			Statement stm = this.conexion.createStatement();
-			ResultSet rs = stm.executeQuery("SELECT idUsuarios FROM usuarios "
+			ResultSet rs = stm.executeQuery("SELECT idUsuario FROM `lecsys2.00`.usuarios "
 										  + "WHERE(nombre = BINARY'" + dtosCambioPass.getNombreUsuario() + "' "
 										  + "AND contraseña = SHA('" + dtosCambioPass.getContraseñaOld() + "'))");
 	
@@ -45,7 +45,7 @@ public class CambioPasswordDAO extends Conexion {
 		try {
 			
 			this.conectar();
-			PreparedStatement stm = this.conexion.prepareStatement("UPDATE usuarios "
+			PreparedStatement stm = this.conexion.prepareStatement("UPDATE `lecsys2.00`.usuarios "
 																 + "SET contraseña = SHA(?), cambioContraseña = 3 "
 																 + "WHERE nombre = ?");
 			stm.setString(1, dtosCambioPass.getContraseñaNew());

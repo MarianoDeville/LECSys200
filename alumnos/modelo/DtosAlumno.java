@@ -131,7 +131,7 @@ public class DtosAlumno {
 	private String ausente;
 	private String presente;
 	private String tarde;
-
+/*
 	public void cargarAsistencia() {
 		
 		alumnosDAO = new AlumnoMySQL();
@@ -192,7 +192,7 @@ public class DtosAlumno {
 			finalOral = (oral1 + oral2) / 2;
 		}
 	}
-	
+	*/
 	private int conviertoInt(String valor) {
 
 		try {
@@ -334,7 +334,7 @@ public class DtosAlumno {
 		DefaultTableModel tablaModelo = new DefaultTableModel(cuerpo, titulo);
 		return tablaModelo;
 	}
-	
+	/*
 	public DefaultTableModel getTablaRegistroAsistencia(int cursoSeleccionado, int mesSeleccionado) {
 		
 		alumnosDAO = new AlumnoMySQL();
@@ -941,5 +941,5 @@ public class DtosAlumno {
 	public String getTarde() {
 		
 		return tarde;
-	}
+	}*/
 }

@@ -46,7 +46,7 @@ public class ExamenesMySQL extends Conexion implements ExamenesDAO{
 	public boolean setExamen() {
 
 		boolean bandera = true;
-		long tiempo = System.currentTimeMillis();
+/*		long tiempo = System.currentTimeMillis();
 		DtosAlumno dtosAlumno = new DtosAlumno();
 		DtosActividad dtosActividad = new DtosActividad();
 		String fecha = dtosAlumno.getFechaAño() + "-"
@@ -76,7 +76,7 @@ public class ExamenesMySQL extends Conexion implements ExamenesDAO{
 			this.cerrar();
 		}
 		tiempo = System.currentTimeMillis() - tiempo;
-		dtosActividad.registrarActividad("Carga de exámenes.", "Alumnos", tiempo);
+		dtosActividad.registrarActividad("Carga de exámenes.", "Alumnos", tiempo);*/
 		return bandera;
 	}
 }

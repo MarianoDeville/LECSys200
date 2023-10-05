@@ -179,21 +179,21 @@ public class OperadorSistema extends Conexion {
 				bandera = checkLectura(4);
 				break;				
 				
-			case "CursosDAO.getCronogramaDias":
+			case "CursosMySQL.getCronogramaDias":
 				bandera = checkLectura(4) | checkLectura(6);
 				break;
 
-			case "CursosDAO.buscarDiasCurso":
-			case "CursosDAO.isExamenCargado":
-			case "CursosDAO.getListado":
+			case "CursosMySQL.buscarDiasCurso":
+			case "CursosMySQL.isExamenCargado":
+			case "CursosMySQL.getListado":
 				bandera = checkLectura(2) | checkLectura(4);
 				break;
 
-			case "CursosDAO.setCurso":
+			case "CursosMySQL.setCurso":
 				bandera = permisos[4][1];
 				break;
 				
-			case "CursosDAO.setActualizarCurso":
+			case "CursosMySQL.setActualizarCurso":
 				bandera = permisos[4][2];
 				break;
 									// Permisos para Insumos.	///////////////////////////////////////////////

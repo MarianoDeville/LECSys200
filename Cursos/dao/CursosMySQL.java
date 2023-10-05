@@ -41,9 +41,9 @@ public class CursosMySQL extends Conexion {
 			where += "(curso.aula = " + aula + " OR (curso.idProfesor = " + idProfesor + " AND curso.idCurso != " + idCurso + ")))";		
 		}
 		String comandoStatement = "SELECT día, HOUR(hora), MINUTE(hora), duración "
-								+ "FROM diasCursado "
+								+ "FROM `lecsys2.00`.horarios "
 								+ "JOIN curso ON diasCursado.idCurso = curso.idCurso "
-								+ "JOIN empleados ON curso.idProfesor = empleados.idEmpleado "
+								+ "JOIN empleados ON horarios.idPertenece = empleados.legajo "
 								+ where;
 
 		for(int i = 0 ; i < 6 ; i++) {
@@ -75,7 +75,7 @@ public class CursosMySQL extends Conexion {
 			
 			bandera = false;
 			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("CursosDAO, getCronogramaDias()");
+			CtrlLogErrores.guardarError("CursosMySQL, getCronogramaDias()");
 			CtrlLogErrores.guardarError(comandoStatement);
 		} finally {
 			
@@ -87,7 +87,7 @@ public class CursosMySQL extends Conexion {
 	public String [][] buscarDiasCurso(String idCurso) {
 		
 		String matriz[][] = null;
-		String comandoStatement = "SELECT día, hora, duración FROM diasCursado WHERE idCurso = " + idCurso;
+		String comandoStatement = "SELECT día, hora, duración FROM `lecsys2.00`.diasCursado WHERE idCurso = " + idCurso;
 		
 		try {
 		
@@ -109,7 +109,7 @@ public class CursosMySQL extends Conexion {
 		} catch (Exception e) {
 		
 			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("CursosDAO, buscarDiasCurso()");
+			CtrlLogErrores.guardarError("CursosMySQL, buscarDiasCurso()");
 		} finally {
 		
 			this.cerrar();
@@ -128,7 +128,7 @@ public class CursosMySQL extends Conexion {
 			where = "WHERE (curso.estado = 1 AND curso.idCurso = " + idCurso + ")";
 
 		String comandoStatement = "SELECT curso.idCurso, año, nivel, nombre, apellido, precio, curso.idProfesor, aula "
-								+ "FROM curso "
+								+ "FROM `lecsys2.00`.curso "
 								+ "JOIN empleados ON curso.idProfesor = empleados.idEmpleado "
 								+ "JOIN persona ON empleados.idPersona = persona.idPersona "
 								+ "JOIN valorCuota on curso.idCurso = valorCuota.idCurso "
@@ -163,7 +163,7 @@ public class CursosMySQL extends Conexion {
 			
 			while(i < matriz.length) {		
 				
-				comandoStatement = "SELECT día FROM diasCursado WHERE idCurso = " + matriz[i][6];
+				comandoStatement = "SELECT día FROM `lecsys2.00`.diasCursado WHERE idCurso = " + matriz[i][6];
 				rs = stm.executeQuery(comandoStatement);
 				boolean bandera = true;
 	
@@ -183,7 +183,7 @@ public class CursosMySQL extends Conexion {
 		} catch (Exception e) {
 			
 			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("CursosDAO, getListado()");
+			CtrlLogErrores.guardarError("CursosMySQL, getListado()");
 			CtrlLogErrores.guardarError(comandoStatement);
 		} finally {
 			
@@ -195,8 +195,8 @@ public class CursosMySQL extends Conexion {
 	public boolean isExamenCargado(String idCurso, String examen) {
 
 		boolean bandera = false;
-		String comandoStatement = "SELECT curso.idCurso FROM curso "
-								+ "JOIN examenes ON curso.idCurso = examenes.idCurso "
+		String comandoStatement = "SELECT curso.idCurso FROM `lecsys2.00`.curso "
+								+ "JOIN `lecsys2.00`.examenes ON curso.idCurso = examenes.idCurso "
 								+ "WHERE (estado = 1 AND curso.idCurso = " + idCurso + " AND tipo = '" + examen + "' AND YEAR(fecha)=YEAR(NOW())) "
 								+ "GROUP BY curso.idCurso";
 
@@ -211,7 +211,7 @@ public class CursosMySQL extends Conexion {
 		} catch (Exception e) {
 			
 			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("CursosDAO, isExamenCargado()");
+			CtrlLogErrores.guardarError("CursosMySQL, isExamenCargado()");
 			CtrlLogErrores.guardarError(comandoStatement);
 		} finally {
 			
@@ -230,7 +230,7 @@ public class CursosMySQL extends Conexion {
 		try {
 			
 			this.conectar();
-			PreparedStatement stm = this.conexion.prepareStatement("INSERT INTO curso (año, nivel, idProfesor, estado, aula)"
+			PreparedStatement stm = this.conexion.prepareStatement("INSERT INTO `lecsys2.00`.curso (año, nivel, idProfesor, estado, aula)"
 																 + " VALUES (?, ?, ?, 1, ?)");
 			stm.setString(1, año);
 			stm.setString(2, nivel);
@@ -242,7 +242,7 @@ public class CursosMySQL extends Conexion {
 			if(rs.next())
 				idCurso = rs.getInt(1);
 			
-			stm = this.conexion.prepareStatement("INSERT INTO valorCuota (idCurso, precio) VALUES (?, ?)");
+			stm = this.conexion.prepareStatement("INSERT INTO `lecsys2.00`.valorCuota (idCurso, precio) VALUES (?, ?)");
 			stm.setInt(1, idCurso);
 			stm.setString(2, valorCuota);
 			stm.executeUpdate();
@@ -279,17 +279,17 @@ public class CursosMySQL extends Conexion {
 		try {
 			
 			this.conectar();
-			PreparedStatement stm = this.conexion.prepareStatement("UPDATE curso SET idProfesor = ?, estado = ?, aula = ? WHERE idCurso = ?");
+			PreparedStatement stm = this.conexion.prepareStatement("UPDATE `lecsys2.00`.curso SET idProfesor = ?, estado = ?, aula = ? WHERE idCurso = ?");
 			stm.setString(1, idProfesor);
 			stm.setInt(2, estado);
 			stm.setInt(3, aula);
 			stm.setString(4, idCurso);
 			stm.executeUpdate();
-			stm = this.conexion.prepareStatement("UPDATE valorCuota SET precio = ? WHERE idCurso = ?");
+			stm = this.conexion.prepareStatement("UPDATE `lecsys2.00`.valorCuota SET precio = ? WHERE idCurso = ?");
 			stm.setString(1, valorCuota);
 			stm.setString(2, idCurso);
 			stm.executeUpdate();
-			stm = this.conexion.prepareStatement("DELETE FROM diasCursado WHERE idCurso = ?");
+			stm = this.conexion.prepareStatement("DELETE FROM `lecsys2.00`.diasCursado WHERE idCurso = ?");
 			stm.setString(1, idCurso);
 			stm.executeUpdate();
 			
@@ -297,7 +297,7 @@ public class CursosMySQL extends Conexion {
 				
 				for(int i = 0 ; i < horarios.length ; i++) {
 					
-					stm = this.conexion.prepareStatement("INSERT INTO diasCursado (día, hora, duración, idCurso) VALUES (?, ?, ?, ?)");
+					stm = this.conexion.prepareStatement("INSERT INTO `lecsys2.00`.diasCursado (día, hora, duración, idCurso) VALUES (?, ?, ?, ?)");
 					stm.setString(1, horarios[i][0]);
 					stm.setString(2, horarios[i][1]);
 					stm.setString(3, horarios[i][2]);
@@ -309,7 +309,7 @@ public class CursosMySQL extends Conexion {
 			
 			bandera = false;
 			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("CursosDAO, setActualizarCurso()");
+			CtrlLogErrores.guardarError("CursosMySQL, setActualizarCurso()");
 		} finally {
 			
 			this.cerrar();
@@ -322,8 +322,8 @@ public class CursosMySQL extends Conexion {
 	public String getValorCuota(String idCurso) {
 		
 		String respuesta = null;
-		String comandoStatement = "SELECT precio FROM curso "
-								+ "JOIN valorCuota ON valorCuota.idCurso = curso.idCurso "
+		String comandoStatement = "SELECT precio FROM `lecsys2.00`.curso "
+								+ "JOIN `lecsys2.00`.valorCuota ON valorCuota.idCurso = curso.idCurso "
 								+ "WHERE curso.idCurso = " + idCurso;
 		
 		try {
@@ -339,7 +339,7 @@ public class CursosMySQL extends Conexion {
 		} catch (Exception e) {
 			
 			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("CursosDAO, getValorCuota()");
+			CtrlLogErrores.guardarError("CursosMySQL, getValorCuota()");
 			CtrlLogErrores.guardarError(comandoStatement);
 		} finally {
 			

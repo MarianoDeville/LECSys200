@@ -26,9 +26,9 @@ public class AsistenciaMySQL extends Conexion implements AsistenciaDAO {
 			this.conectar();
 			PreparedStatement stm = this.conexion.prepareStatement("INSERT INTO faltas (idAlumnos, fecha, estado, idCurso) VALUES (?, ?, ?, ?)");
 			stm.setInt(1, dtosAlumno.getAsistencia("Legajo",fila));
-			stm.setString(2, dtosAlumno.getFechaActual(false));
+//			stm.setString(2, dtosAlumno.getFechaActual(false));
 			stm.setInt(3, dtosAlumno.getAsistencia("Estado",fila));
-			stm.setInt(4, Integer.parseInt(dtosAlumno.getCurso()));
+//			stm.setInt(4, Integer.parseInt(dtosAlumno.getCurso()));
 			stm.executeUpdate();
 		} catch (Exception e) {
 	

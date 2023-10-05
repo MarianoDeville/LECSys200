@@ -3,7 +3,7 @@ package dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import controlador.CtrlLogErrores;
+import control.CtrlLogErrores;
 
 public class ActividadDAO extends Conexion {
 	

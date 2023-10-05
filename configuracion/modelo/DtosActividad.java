@@ -4,7 +4,7 @@ import java.net.InetAddress;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import javax.swing.table.DefaultTableModel;
-import controlador.CtrlLogErrores;
+import control.CtrlLogErrores;
 import dao.ActividadDAO;
 import dao.OperadorSistema;
 

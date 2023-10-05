@@ -8,6 +8,14 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="pantallas"/>
 	<classpathentry kind="src" path="configuracion"/>
+	<classpathentry kind="src" path="personas"/>
+	<classpathentry kind="src" path="empleados"/>
+	<classpathentry kind="src" path="Cursos"/>
+	<classpathentry kind="src" path="esquemeHorario"/>
+	<classpathentry kind="src" path="administracion"/>
+	<classpathentry kind="src" path="grupoFamiliar"/>
+	<classpathentry kind="src" path="insumos"/>
+	<classpathentry kind="src" path="alumnos"/>
 	<classpathentry kind="lib" path="librerias/mysql-connector-java-8.0.21.jar"/>
 	<classpathentry kind="lib" path="librerias/javax.mail-1.6.2.jar"/>
 	<classpathentry kind="lib" path="librerias/activation.jar"/>

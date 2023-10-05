@@ -55,15 +55,15 @@ int algo;
 		if(e.getSource() == ventanaPrincipal.btnAdmin) {
 
 			InterfaceBotones ventanaAdministracion = new InterfaceBotones("Gestión administrativa");
-			CtrlAdministracion ctrlAdmin = new CtrlAdministracion(ventanaAdministracion);
-			ctrlAdmin.iniciar();
+//			CtrlAdministracion ctrlAdmin = new CtrlAdministracion(ventanaAdministracion);
+//			ctrlAdmin.iniciar();
 		}
 		
 		if(e.getSource() == ventanaPrincipal.btnAlumnos) {
 				
 			InterfaceBotones ventanaAlumnos = new InterfaceBotones("Gestión de los alumnos");
-			CtrlAlumnos ctrlAlumn = new CtrlAlumnos(ventanaAlumnos);
-			ctrlAlumn.iniciar();
+//			CtrlAlumnos ctrlAlumn = new CtrlAlumnos(ventanaAlumnos);
+//			ctrlAlumn.iniciar();
 		}
 		
 		if(e.getSource() == ventanaPrincipal.btnPersonal) {
@@ -76,15 +76,15 @@ int algo;
 		if(e.getSource() == ventanaPrincipal.btnCursos) {
 
 			InterfaceBotones ventanaCursos = new InterfaceBotones("Gestión de los cursos");
-			CtrlCursos ctrlCursos = new CtrlCursos(ventanaCursos);
-			ctrlCursos.iniciar();
+//			CtrlCursos ctrlCursos = new CtrlCursos(ventanaCursos);
+//			ctrlCursos.iniciar();
 		}
 		
 		if(e.getSource() == ventanaPrincipal.btnProveedores) {
 			
 			ABML ventanaABMLProveedores = new ABML("ABML proveedores");
-			CtrlABMLProveedores ctrlABMLProveedores = new CtrlABMLProveedores(ventanaABMLProveedores);
-			ctrlABMLProveedores.iniciar();
+//			CtrlABMLProveedores ctrlABMLProveedores = new CtrlABMLProveedores(ventanaABMLProveedores);
+//			ctrlABMLProveedores.iniciar();
 		}
 		
 		if(e.getSource() == ventanaPrincipal.btnConfig) {	
@@ -107,8 +107,8 @@ int algo;
 		if(e.getSource() == ventanaPrincipal.btnInsumos) {
 			
 			InterfaceBotones ventanaInsumos = new InterfaceBotones("Insumos");
-			CtrlInsumos ctrlInsumos = new CtrlInsumos(ventanaInsumos);
-			ctrlInsumos.iniciar();
+//			CtrlInsumos ctrlInsumos = new CtrlInsumos(ventanaInsumos);
+//			ctrlInsumos.iniciar();
 		}
 		
 		if(e.getSource() == ventanaPrincipal.btnSalir) {
@@ -123,8 +123,8 @@ int algo;
 		if(acceso.isActualizarContraseña()) {
 			
 			CambioContraseña ventanaCambioPass = new CambioContraseña();
-			CtrlCambioPassword ctrlCambioPass = new CtrlCambioPassword(ventanaCambioPass);
-			ctrlCambioPass.iniciar();
+//			CtrlCambioPassword ctrlCambioPass = new CtrlCambioPassword(ventanaCambioPass);
+//			ctrlCambioPass.iniciar();
 		}
 	}
 	

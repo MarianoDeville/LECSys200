@@ -8,21 +8,7 @@ import dao.EmpleadoDAO;
 import dao.EmpleadoMySQL;
 
 public class DtosEmpleado {
-	
-	/* Todo esto entra en empleado static //////////////////////////////////////////////////////////////////////////////////////////////////////
-	private static String legajo;
-	private static String nombre;
-	private static String apellido;
-	private static String dni;
-	private static String telefono;
-	private static String direccion;
-	private static String email;
-	private static String sector;
-	private static String relacion;
-	private static String cargo;
-	private static String salario;
-	private static String estado;
-*/
+
 	private static Empleado empleado = new Empleado();
 	private Empleado listaEmpleados[];
 	private String añoNacimiento;
@@ -156,122 +142,6 @@ public class DtosEmpleado {
 		return bandera;
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	public DefaultTableModel getListadoEmpleados(String tipo, String filtro) {
-		
-		EmpleadoDAO empleadosDAO = new EmpleadoMySQL();
-		String titulo[] = {"Leg.", "Apellido, nombre", "Sector", "Cargo"};
-		listaEmpleados = empleadosDAO.getListado(tipo, true, filtro);
-		String cuerpo[][] = null;
-		
-		if(listaEmpleados != null) {
-			
-			cuerpo = new String[listaEmpleados.length][4];
-			
-			for(int i = 0; i < listaEmpleados.length; i++) {
-				
-				cuerpo[i][0] = listaEmpleados[i].getLegajo() + "";
-				cuerpo[i][1] = listaEmpleados[i].getNombre() + ", " + listaEmpleados[i].getApellido();
-				cuerpo[i][2] = listaEmpleados[i].getSector();
-				cuerpo[i][3] = listaEmpleados[i].getCargo();
-			}
-		} else
-			cuerpo = null;
-		
-		DefaultTableModel tablaModelo = new DefaultTableModel(cuerpo, titulo);
-		return tablaModelo;
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-	
-	public boolean setHorarios(int granularidad, JTable tablaOcupacion) {
-		
-		int cant = 0;
-		boolean comienzo;
-		boolean bandera = false;
-		Horarios horarios[] = null;
-		
-		for(int i = 0; i < tablaOcupacion.getRowCount(); i++) {
-			
-			comienzo = false;
-			
-			for(int e = 0; e < tablaOcupacion.getColumnCount(); e++) {
-
-				if(tablaOcupacion.getValueAt(i, e).equals("O ") && !comienzo) {
-				
-					comienzo = true;
-					cant++;
-				} 
-				
-				if(!tablaOcupacion.getValueAt(i, e).equals("O") && !tablaOcupacion.getValueAt(i, e).equals("O "))
-					comienzo = false;
-			}
-		}
-		horarios = new Horarios[cant];
-		int pos = -1;
-		
-		for(int i = 0; i < tablaOcupacion.getRowCount(); i++) {
-		
-			comienzo = false;
-			
-			for(int e = 0; e < tablaOcupacion.getColumnCount(); e++) {
-
-				if(tablaOcupacion.getValueAt(i, e).equals("O ") && !comienzo) {
-					
-					pos++;
-					horarios[pos] = new Horarios();
-					comienzo = true;
-					horarios[pos].setDia(i); 
-					horarios[pos].setGranularidad(listaHorarios(granularidad)[e]);
-					cant = 0;
-				}
-		
-				if(!tablaOcupacion.getValueAt(i, e).equals("O") && !tablaOcupacion.getValueAt(i, e).equals("O "))
-					comienzo = false;
-				
-				if(comienzo) {
-
-					cant++;
-					horarios[pos].setDuración(cant);
-				}
-			}
-		}
-		CronogramaDAO cronogramaDAO = new CronogramaMySQL();
-		bandera = cronogramaDAO.setCronogramaDias(empleado.getLegajo(), horarios, granularidad);
-		return bandera;
-	}
-
 	public boolean autocompletar(JTable tablaOcupacion) {
 
 		msgError = null;
@@ -327,30 +197,76 @@ public class DtosEmpleado {
 		}
 		return msgError==null;
 	}
+	
+	public String getCantidadHoras(JTable tablaOcupacion) {
+		
+		int cant = 0;
+		int tiempo[] = new int [] {6, 4, 2, 1};
+		boolean bandera = false;
+		
+		for(int i = 0; i < tablaOcupacion.getRowCount(); i++) {
 
+			for(int e = 0; e < tablaOcupacion.getColumnCount(); e++) {
+				
+				if(tablaOcupacion.getValueAt(i, e).equals("O"))
+					cant++;
+					
+				if(tablaOcupacion.getValueAt(i, e).equals("O ") ) {
+					
+					bandera = !bandera;
+					
+					if(bandera)
+						cant++;
+				}
+			}
+		}
+		int resto = cant % tiempo[granAlmacenada];
+		String cantidadHoras = (cant / tiempo[granAlmacenada]) + ":";
+		cantidadHoras += resto > 0 ?  resto * 60 / tiempo[granAlmacenada]:"00";
+		return cantidadHoras;
+	}
+	
+	public DefaultTableModel getListadoEmpleados(String tipo, String filtro) {
+		
+		EmpleadoDAO empleadosDAO = new EmpleadoMySQL();
+		String titulo[] = {"Leg.", "Apellido, nombre", "Sector", "Cargo"};
+		listaEmpleados = empleadosDAO.getListado(tipo, true, filtro);
+		String cuerpo[][] = null;
+		
+		if(listaEmpleados != null) {
+			
+			cuerpo = new String[listaEmpleados.length][4];
+			
+			for(int i = 0; i < listaEmpleados.length; i++) {
+				
+				cuerpo[i][0] = listaEmpleados[i].getLegajo() + "";
+				cuerpo[i][1] = listaEmpleados[i].getNombre() + ", " + listaEmpleados[i].getApellido();
+				cuerpo[i][2] = listaEmpleados[i].getSector();
+				cuerpo[i][3] = listaEmpleados[i].getCargo();
+			}
+		} else
+			cuerpo = null;
+		
+		DefaultTableModel tablaModelo = new DefaultTableModel(cuerpo, titulo);
+		return tablaModelo;
+	}
+	
 	public DefaultTableModel getHorarios(int granularidad) {
 		
 		CronogramaDAO cronogramaDAO = new CronogramaMySQL();
 		boolean ocupado[][] = null;
-	
-		if(empleado.getSector().equals("Docente")) {
+
+		if(actualizar) {
+		
+			ocupado = cronogramaDAO.getTablaSemanal(empleado.getLegajo());
+			granAlmacenada = cronogramaDAO.getGranularidad();
 			
-			ocupado = cronogramaDAO.getCronogramaDias("0", empleado.getLegajo(), -1);
-			granAlmacenada = granularidad;
+			if(granAlmacenada == -1)
+				granAlmacenada = granularidad;
+			actualizar = false;
 		} else {
 			
-			if(actualizar) {
-			
-				ocupado = cronogramaDAO.getCronogramaDias(empleado.getLegajo());
-				granAlmacenada = cronogramaDAO.getGranularidad();
-				
-				if(granAlmacenada == -1)
-					granAlmacenada = granularidad;
-				actualizar = false;
-			} else {
-				
-				granAlmacenada = granularidad;
-			}
+			granAlmacenada = granularidad;
 		}
 		String titulo[] = listaHorarios(granAlmacenada);
 		String cronograma[][] = new String[6][titulo.length];
@@ -384,36 +300,65 @@ public class DtosEmpleado {
 		return tablaModelo;
 	}
 	
-
-
-	public String getCantidadHoras(JTable tablaOcupacion) {
+	public boolean setHorarios(int granularidad, JTable tablaOcupacion) {
 		
 		int cant = 0;
-		int tiempo[] = new int [] {6, 4, 2, 1};
+		boolean comienzo;
 		boolean bandera = false;
+		Horarios horarios[] = null;
 		
 		for(int i = 0; i < tablaOcupacion.getRowCount(); i++) {
-
+			
+			comienzo = false;
+			
 			for(int e = 0; e < tablaOcupacion.getColumnCount(); e++) {
+
+				if(tablaOcupacion.getValueAt(i, e).equals("O ") && !comienzo) {
 				
-				if(tablaOcupacion.getValueAt(i, e).equals("O"))
+					comienzo = true;
 					cant++;
+				} 
+				
+				if(!tablaOcupacion.getValueAt(i, e).equals("O") && !tablaOcupacion.getValueAt(i, e).equals("O "))
+					comienzo = false;
+			}
+		}
+		horarios = new Horarios[cant];
+		int pos = -1;
+
+		for(int i = 0; i < tablaOcupacion.getRowCount(); i++) {
+		
+			comienzo = false;
+			
+			for(int e = 0; e < tablaOcupacion.getColumnCount(); e++) {
+
+				if(tablaOcupacion.getValueAt(i, e).equals("O ") && !comienzo) {
 					
-				if(tablaOcupacion.getValueAt(i, e).equals("O ") ) {
-					
-					bandera = !bandera;
-					
-					if(bandera)
-						cant++;
+					pos++;
+					horarios[pos] = new Horarios();
+					comienzo = true;
+					horarios[pos].setDia(i); 
+					horarios[pos].setHora(listaHorarios(granularidad)[e]);
+					horarios[pos].setGranularidad(granularidad);
+					horarios[pos].setIdPertenece(empleado.getLegajo());
+					cant = 0;
+				}
+		
+				if(!tablaOcupacion.getValueAt(i, e).equals("O") && !tablaOcupacion.getValueAt(i, e).equals("O "))
+					comienzo = false;
+				
+				if(comienzo) {
+
+					cant++;
+					horarios[pos].setDuración(cant);
 				}
 			}
 		}
-		int resto = cant % tiempo[granAlmacenada];
-		String cantidadHoras = (cant / tiempo[granAlmacenada]) + ":";
-		cantidadHoras += resto > 0 ?  resto * 60 / tiempo[granAlmacenada]:"00";
-		return cantidadHoras;
-	}
-	
+		CronogramaDAO cronogramaDAO = new CronogramaMySQL();
+		bandera = cronogramaDAO.setCronograma(horarios);
+		return bandera;
+	}	
+
 	public String getLegajo() {
 		
 		return empleado.getLegajo() + "";

@@ -76,8 +76,8 @@ int algo;
 		if(e.getSource() == ventanaPrincipal.btnCursos) {
 
 			InterfaceBotones ventanaCursos = new InterfaceBotones("Gestión de los cursos");
-//			CtrlCursos ctrlCursos = new CtrlCursos(ventanaCursos);
-//			ctrlCursos.iniciar();
+			CtrlCursos ctrlCursos = new CtrlCursos(ventanaCursos);
+			ctrlCursos.iniciar();
 		}
 		
 		if(e.getSource() == ventanaPrincipal.btnProveedores) {

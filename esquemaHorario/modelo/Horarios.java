@@ -1,12 +1,10 @@
 package modelo;
 
-import java.sql.Time;
-
 public class Horarios {
 	
 	private int id;
 	private int dia;
-	private Time hora;
+	private String hora;
 	private int duración;
 	private int idPertenece;
 	private int granularidad;
@@ -15,7 +13,7 @@ public class Horarios {
 		
 	}
 	
-	public Horarios(int id, int dia, Time hora, int duracion, int pertenece, int granularidad) {
+	public Horarios(int id, int dia, String hora, int duracion, int pertenece, int granularidad) {
 		
 		this.id = id;
 		this.dia = dia;
@@ -45,12 +43,12 @@ public class Horarios {
 		this.dia = dia;
 	}
 	
-	public Time getHora() {
+	public String getHora() {
 		
 		return hora;
 	}
 	
-	public void setHora(Time hora) {
+	public void setHora(String hora) {
 		
 		this.hora = hora;
 	}

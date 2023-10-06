@@ -178,10 +178,6 @@ public class OperadorSistema extends Conexion {
 			case "CtrlCursos.iniciar":
 				bandera = checkLectura(4);
 				break;				
-				
-			case "CursosMySQL.getCronogramaDias":
-				bandera = checkLectura(4) | checkLectura(6);
-				break;
 
 			case "CursosMySQL.buscarDiasCurso":
 			case "CursosMySQL.isExamenCargado":
@@ -231,8 +227,8 @@ public class OperadorSistema extends Conexion {
 				break;
 									// Permisos para Empleados.	///////////////////////////////////////////////
 			case "CtrlEmpleados.iniciar":
-			case "CronogramaMySQL.getCronogramaDias":
-				bandera = checkLectura(6);
+			case "CronogramaMySQL.getTablaSemanal":
+				bandera = checkLectura(4) | checkLectura(6);
 				break;
 				
 			case "EmpleadoMySQL.getEmpleadosActivos":
@@ -251,7 +247,7 @@ public class OperadorSistema extends Conexion {
 				bandera = permisos[6][2];
 				break;
 				
-			case "CronogramaMySQL.setCronogramaDias":
+			case "CronogramaMySQL.setCronograma":
 				bandera = permisos[6][1] | permisos[6][2];
 				break;
 									// Permisos para Proveedores.	///////////////////////////////////////////////

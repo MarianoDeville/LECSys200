@@ -4,46 +4,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import control.CtrlLogErrores;
+import modelo.Curso;
 import modelo.DtosActividad;
 
-public class CursosMySQL extends Conexion {
+public class CursosMySQL extends Conexion implements CursosDAO{
 	
-	public String [][] buscarDiasCurso(String idCurso) {
+	@Override
+	public Curso [] getListado(String idCurso) {
 		
-		String matriz[][] = null;
-		String comandoStatement = "SELECT día, hora, duración FROM `lecsys2.00`.diasCursado WHERE idCurso = " + idCurso;
-		
-		try {
-		
-			this.conectar();
-			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stm.executeQuery(comandoStatement);
-			rs.last();	
-			matriz = new String[rs.getRow()][3];
-			rs.beforeFirst();
-			int i=0; 
-			
-			while(rs.next()) {
-			
-				matriz[i][0] = rs.getString(1);
-				matriz[i][1] = rs.getString(2);
-				matriz[i][2] = rs.getString(3);
-				i++;
-			}
-		} catch (Exception e) {
-		
-			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("CursosMySQL, buscarDiasCurso()");
-		} finally {
-		
-			this.cerrar();
-		}
-		return matriz;
-	}
-	
-	public String [][] getListado(String idCurso) {
-		
-		String matriz[][] = null;
+		Curso matriz[] = null;
 		String where = null;
 		
 		if(idCurso.equals(""))
@@ -53,9 +22,9 @@ public class CursosMySQL extends Conexion {
 
 		String comandoStatement = "SELECT curso.idCurso, año, nivel, nombre, apellido, precio, curso.idProfesor, aula "
 								+ "FROM `lecsys2.00`.curso "
-								+ "JOIN empleados ON curso.idProfesor = empleados.idEmpleado "
-								+ "JOIN persona ON empleados.idPersona = persona.idPersona "
-								+ "JOIN valorCuota on curso.idCurso = valorCuota.idCurso "
+								+ "JOIN `lecsys2.00`empleados ON curso.idProfesor = empleados.idEmpleado "
+								+ "JOIN `lecsys2.00`persona ON empleados.idPersona = persona.idPersona "
+								+ "JOIN `lecsys2.00`valorCuota on curso.idCurso = valorCuota.idCurso "
 								+ where
 								+ "GROUP BY curso.idCurso";
 
@@ -65,20 +34,21 @@ public class CursosMySQL extends Conexion {
 			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			ResultSet rs = stm.executeQuery(comandoStatement);
 			rs.last();	
-			matriz = new String[rs.getRow()][9];
+			matriz = new Curso[rs.getRow()];
 			rs.beforeFirst();
 			int i=0;
 
 			while (rs.next()) {
 				
-				matriz[i][0] = rs.getString(2);
-				matriz[i][1] = rs.getString(3);
-				matriz[i][2] = rs.getString(4) + " " + rs.getString(5);
-				matriz[i][3] = String.format("%.2f", rs.getFloat(6));
-				matriz[i][5] = rs.getString(1);
-				matriz[i][6] = rs.getString(1);
-				matriz[i][7] = rs.getString(7);
-				matriz[i][8] = rs.getString(8);
+				matriz[i] = new Curso();
+				matriz[i] = rs.getString(2);
+				matriz[i] = rs.getString(3);
+				matriz[i] = rs.getString(4) + " " + rs.getString(5);
+				matriz[i] = String.format("%.2f", rs.getFloat(6));
+				matriz[i] = rs.getString(1);
+				matriz[i] = rs.getString(1);
+				matriz[i] = rs.getString(7);
+				matriz[i] = rs.getString(8);
 				i++;
 			}
 			
@@ -116,6 +86,50 @@ public class CursosMySQL extends Conexion {
 		return matriz;
 	}
 	
+	
+	
+	
+	
+	
+	
+	
+	@Override
+	public String [][] buscarDiasCurso(String idCurso) {
+		
+		String matriz[][] = null;
+		String comandoStatement = "SELECT día, hora, duración FROM `lecsys2.00`.diasCursado WHERE idCurso = " + idCurso;
+		
+		try {
+		
+			this.conectar();
+			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			ResultSet rs = stm.executeQuery(comandoStatement);
+			rs.last();	
+			matriz = new String[rs.getRow()][3];
+			rs.beforeFirst();
+			int i=0; 
+			
+			while(rs.next()) {
+			
+				matriz[i][0] = rs.getString(1);
+				matriz[i][1] = rs.getString(2);
+				matriz[i][2] = rs.getString(3);
+				i++;
+			}
+		} catch (Exception e) {
+		
+			CtrlLogErrores.guardarError(e.getMessage());
+			CtrlLogErrores.guardarError("CursosMySQL, buscarDiasCurso()");
+		} finally {
+		
+			this.cerrar();
+		}
+		return matriz;
+	}
+	
+
+	
+	@Override
 	public boolean isExamenCargado(String idCurso, String examen) {
 
 		boolean bandera = false;
@@ -144,6 +158,7 @@ public class CursosMySQL extends Conexion {
 		return bandera;
 	}
 	
+	@Override
 	public boolean setCurso(String año, String nivel, String idProfesor, int aula, String valorCuota, String horarios[][]) {
 
 		boolean bandera = true;
@@ -194,6 +209,7 @@ public class CursosMySQL extends Conexion {
 		return bandera;
 	}
 	
+	@Override
 	public boolean setActualizarCurso(String idCurso, String idProfesor, int aula, String valorCuota, int estado, String horarios[][]) {
 
 		boolean bandera = true;
@@ -243,6 +259,7 @@ public class CursosMySQL extends Conexion {
 		return bandera;
 	}
 	
+	@Override
 	public String getValorCuota(String idCurso) {
 		
 		String respuesta = null;
@@ -270,5 +287,78 @@ public class CursosMySQL extends Conexion {
 			this.cerrar();
 		}
 		return respuesta;
+	}
+	
+	@Override
+	public boolean [][] getTablaSemanal(int idCurso, int legajo, int aula){
+
+		boolean matrizDiasHorarios[][] = new boolean[6][33];
+int granularidad = 2;
+		
+		String comandoStatement = "SELECT día, HOUR(hora), MINUTE(hora), duración "
+								+ "FROM `lecsys2.00`.horarios "
+								+ "JOIN curso ON horarios.idPertenece = curso.idCurso "
+								+ "JOIN empleados ON horarios.idPertenece = empleados.legajo "
+								+ "WHERE (curso.estado = 1 AND ";
+
+		if(idCurso !=0 && legajo == 0 && aula == -1) {
+
+			comandoStatement += "curso.idCurso = " + idCurso + ")";
+		}else if(idCurso ==0 && legajo != 0 && aula == -1) {
+			
+			comandoStatement += "curso.idProfesor = " + legajo + ")";
+		}else if(idCurso ==0 && legajo == 0 && aula != -1) {
+			
+			comandoStatement += "curso.aula = " + aula + ")";
+		}else if(idCurso !=0 && legajo == 0 && aula != -1) {
+			
+			comandoStatement += "curso.idCurso = " + idCurso + " AND curso.aula = " + aula + ")";
+		}else if(idCurso ==0 && legajo != 0 && aula != -1) {
+
+			comandoStatement += "(curso.idProfesor = " + legajo + " OR curso.aula = " + aula + "))";
+		}else if(idCurso !=0 && legajo != 0 && aula != -1) {
+			
+			comandoStatement += "(curso.aula = " + aula + " OR (curso.idProfesor = " + legajo + " AND curso.idCurso != " + idCurso + ")))";		
+		}
+		
+		
+
+
+		for(int i = 0 ; i < 6 ; i++) {
+			
+			for(int e = 0 ; e < 32 ; e++) {
+				
+				matrizDiasHorarios[i][e] = false;
+			}
+		}
+
+		try {
+			
+			this.conectar();
+			Statement stm = this.conexion.createStatement();
+			ResultSet rs = stm.executeQuery(comandoStatement);
+			
+			while(rs.next()) {
+				
+				int dia = rs.getInt(1);
+				int duracion = rs.getInt(4);
+				int pos = (rs.getInt(2) - 7) * 2 + rs.getInt(3) / 30;
+				
+				
+				while(0 < duracion--) {
+					
+					matrizDiasHorarios[dia][pos++] = true;
+				}
+			}
+		} catch (Exception e) {
+			
+			CtrlLogErrores.guardarError(e.getMessage());
+			CtrlLogErrores.guardarError("CronogramaMySQL, getTablaSemanal()");
+			CtrlLogErrores.guardarError(comandoStatement);
+		} finally {
+			
+			this.cerrar();
+		}
+		return matrizDiasHorarios;
 	}
 }

@@ -11,7 +11,7 @@
 	<classpathentry kind="src" path="personas"/>
 	<classpathentry kind="src" path="empleados"/>
 	<classpathentry kind="src" path="Cursos"/>
-	<classpathentry kind="src" path="esquemeHorario"/>
+	<classpathentry kind="src" path="esquemaHorario"/>
 	<classpathentry kind="src" path="administracion"/>
 	<classpathentry kind="src" path="grupoFamiliar"/>
 	<classpathentry kind="src" path="insumos"/>

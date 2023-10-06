@@ -4,7 +4,6 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import dao.CronogramaDAO;
 import dao.CronogramaMySQL;
-import dao.CursosMySQL;
 import dao.EmpleadoDAO;
 import dao.EmpleadoMySQL;
 
@@ -29,7 +28,6 @@ public class DtosEmpleado {
 	private String añoNacimiento;
 	private String mesNacimiento;
 	private String diaNacimiento;
-	private String horarios[][];
 	private String msgError;
 	private int granAlmacenada;
 	private boolean actualizar;
@@ -222,6 +220,7 @@ public class DtosEmpleado {
 		int cant = 0;
 		boolean comienzo;
 		boolean bandera = false;
+		Horarios horarios[] = null;
 		
 		for(int i = 0; i < tablaOcupacion.getRowCount(); i++) {
 			
@@ -239,7 +238,7 @@ public class DtosEmpleado {
 					comienzo = false;
 			}
 		}
-		horarios = new String [cant][3];
+		horarios = new Horarios[cant];
 		int pos = -1;
 		
 		for(int i = 0; i < tablaOcupacion.getRowCount(); i++) {
@@ -251,9 +250,10 @@ public class DtosEmpleado {
 				if(tablaOcupacion.getValueAt(i, e).equals("O ") && !comienzo) {
 					
 					pos++;
+					horarios[pos] = new Horarios();
 					comienzo = true;
-					horarios[pos][0] = i + "";
-					horarios[pos][1] = listaHorarios(granularidad)[e];
+					horarios[pos].setDia(i); 
+					horarios[pos].setGranularidad(listaHorarios(granularidad)[e]);
 					cant = 0;
 				}
 		
@@ -263,7 +263,7 @@ public class DtosEmpleado {
 				if(comienzo) {
 
 					cant++;
-					horarios[pos][2] = cant + "";
+					horarios[pos].setDuración(cant);
 				}
 			}
 		}
@@ -328,24 +328,20 @@ public class DtosEmpleado {
 		return msgError==null;
 	}
 
-	
 	public DefaultTableModel getHorarios(int granularidad) {
 		
-		CursosMySQL cursoDAO = new CursosMySQL();
 		CronogramaDAO cronogramaDAO = new CronogramaMySQL();
 		boolean ocupado[][] = null;
 	
 		if(empleado.getSector().equals("Docente")) {
 			
-			cursoDAO.getCronogramaDias("0", empleado.getLegajo(), -1);
-			ocupado = cursoDAO.getmatrizDiasHorarios();
+			ocupado = cronogramaDAO.getCronogramaDias("0", empleado.getLegajo(), -1);
 			granAlmacenada = granularidad;
 		} else {
 			
 			if(actualizar) {
 			
-				cronogramaDAO.getCronogramaDias(empleado.getLegajo());
-				ocupado = cronogramaDAO.getmatrizDiasHorarios();
+				ocupado = cronogramaDAO.getCronogramaDias(empleado.getLegajo());
 				granAlmacenada = cronogramaDAO.getGranularidad();
 				
 				if(granAlmacenada == -1)

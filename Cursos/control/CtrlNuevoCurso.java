@@ -96,7 +96,7 @@ public class CtrlNuevoCurso implements ActionListener {
 	private void actualizar() {
 
 		ventana.lblMensageError.setText("");
-		dtosCurso.setCurso("0");
+		dtosCurso.setCurso(0);
 		ventana.tabla.setModel(dtosCurso.getHorariosCurso(ventana.comboBoxAula.getSelectedIndex(),
 														  ventana.comboBoxProfesor.getSelectedIndex()));
 		ventana.tabla.setDefaultEditor(Object.class, null);

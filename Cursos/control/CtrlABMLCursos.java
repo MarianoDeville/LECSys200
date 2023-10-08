@@ -14,7 +14,7 @@ import vista.NuevoCurso;
 public class CtrlABMLCursos implements ActionListener {
 	
 	private ABML ventana;
-	private DtosCurso dtosAMBLCurso;
+	private DtosCurso dtosCurso;
 	private NuevoCurso ventanaCrearCurso;
 	private NuevoCurso ventanaEditarCurso;
 	private int elemento;
@@ -23,7 +23,7 @@ public class CtrlABMLCursos implements ActionListener {
 	public CtrlABMLCursos(ABML vista) {
 		
 		this.ventana = vista;
-		this.dtosAMBLCurso = new DtosCurso();
+		this.dtosCurso = new DtosCurso();
 		this.ventana.btnNuevo.addActionListener(this);
 		this.ventana.btnEditar.addActionListener(this);
 		this.ventana.btnImprimir.addActionListener(this);
@@ -53,7 +53,7 @@ public class CtrlABMLCursos implements ActionListener {
 
 	private void actualizar() {
 		
-		ventana.tabla.setModel(dtosAMBLCurso.getTablaCursos());
+		ventana.tabla.setModel(dtosCurso.getTablaCursos());
 		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(40);
 		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(50);
 		ventana.tabla.getColumnModel().getColumn(3).setPreferredWidth(40);

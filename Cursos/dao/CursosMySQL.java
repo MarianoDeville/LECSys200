@@ -5,27 +5,21 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import control.CtrlLogErrores;
 import modelo.Curso;
+import modelo.CursoXtnd;
 import modelo.DtosActividad;
 
 public class CursosMySQL extends Conexion implements CursosDAO{
 	
 	@Override
-	public Curso [] getListado(String idCurso) {
+	public CursoXtnd [] getListado(String idCurso) {
 		
-		Curso matriz[] = null;
-		String where = null;
-		
-		if(idCurso.equals(""))
-			where = "WHERE curso.estado = 1 ";
-		else
-			where = "WHERE (curso.estado = 1 AND curso.idCurso = " + idCurso + ")";
-
-		String comandoStatement = "SELECT curso.idCurso, año, nivel, nombre, apellido, precio, curso.idProfesor, aula "
+		CursoXtnd cursos[] = null;
+		String comandoStatement = "SELECT curso.idCurso, año, nivel, nombre, apellido, precio, idProfesor, aula "
 								+ "FROM `lecsys2.00`.curso "
-								+ "JOIN `lecsys2.00`empleados ON curso.idProfesor = empleados.idEmpleado "
-								+ "JOIN `lecsys2.00`persona ON empleados.idPersona = persona.idPersona "
-								+ "JOIN `lecsys2.00`valorCuota on curso.idCurso = valorCuota.idCurso "
-								+ where
+								+ "LEFT JOIN `lecsys2.00`.empleados ON curso.idProfesor = empleados.legajo "
+								+ "LEFT JOIN `lecsys2.00`.persona ON empleados.dni = persona.dni "
+								+ "LEFT JOIN `lecsys2.00`.valorCuota on curso.idCurso = valorCuota.idCurso "
+								+ "WHERE (curso.estado = 1" + (idCurso.equals("")?")":"AND curso.idCurso = "+ idCurso + ")")
 								+ "GROUP BY curso.idCurso";
 
 		try {
@@ -34,44 +28,47 @@ public class CursosMySQL extends Conexion implements CursosDAO{
 			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			ResultSet rs = stm.executeQuery(comandoStatement);
 			rs.last();	
-			matriz = new Curso[rs.getRow()];
+			cursos = new CursoXtnd[rs.getRow()];
 			rs.beforeFirst();
 			int i=0;
 
 			while (rs.next()) {
 				
-				matriz[i] = new Curso();
-				matriz[i] = rs.getString(2);
-				matriz[i] = rs.getString(3);
-				matriz[i] = rs.getString(4) + " " + rs.getString(5);
-				matriz[i] = String.format("%.2f", rs.getFloat(6));
-				matriz[i] = rs.getString(1);
-				matriz[i] = rs.getString(1);
-				matriz[i] = rs.getString(7);
-				matriz[i] = rs.getString(8);
+				cursos[i] = new CursoXtnd();
+				cursos[i].setId(rs.getInt(1));
+				cursos[i].setAño(rs.getString(2));
+				cursos[i].setNivel(rs.getString(3));
+				cursos[i].setNombreProfesor(rs.getString(4) + " " + rs.getString(5));
+				cursos[i].setPrecio(rs.getFloat(6));
+				cursos[i].setLegajoProfesor(rs.getInt(7));
+				cursos[i].setAula(rs.getInt(8));
 				i++;
 			}
 			
 			String dia[] = new String[] {"Lunes", "Martes", "Miercoles", "Jueves", "viernes", "Sábado"};
 			i = 0;		
 			
-			while(i < matriz.length) {		
+			while(i < cursos.length) {		
 				
-				comandoStatement = "SELECT día FROM `lecsys2.00`.diasCursado WHERE idCurso = " + matriz[i][6];
+				comandoStatement = "SELECT día FROM `lecsys2.00`.curso "
+						+ "JOIN `lecsys2.00`.empleados ON curso.idProfesor = empleados.legajo "
+						+ "JOIN `lecsys2.00`.horarios ON empleados.legajo = horarios.idPertenece "
+						+ "WHERE idCurso = " + cursos[i].getId() ;
 				rs = stm.executeQuery(comandoStatement);
 				boolean bandera = true;
-	
+				String diasCursado = "";
 				while (rs.next()) {
 					
 					if(bandera) {
 						
-						matriz[i][4] = dia[rs.getInt(1)];
+						diasCursado = dia[rs.getInt(1)];
 						bandera = false;
 					} else {
 						
-						matriz[i][4] += ", " + dia[rs.getInt(1)];
+						diasCursado += ", " + dia[rs.getInt(1)];
 					}
 				}
+				cursos[i].setDiasCursado(diasCursado);
 				i++;
 			}			
 		} catch (Exception e) {
@@ -83,7 +80,7 @@ public class CursosMySQL extends Conexion implements CursosDAO{
 			
 			this.cerrar();
 		}
-		return matriz;
+		return cursos;
 	}
 	
 	
@@ -320,9 +317,6 @@ int granularidad = 2;
 			
 			comandoStatement += "(curso.aula = " + aula + " OR (curso.idProfesor = " + legajo + " AND curso.idCurso != " + idCurso + ")))";		
 		}
-		
-		
-
 
 		for(int i = 0 ; i < 6 ; i++) {
 			

@@ -1,10 +1,13 @@
 package dao;
 
 import modelo.Curso;
+import modelo.CursoXtnd;
 
 public interface CursosDAO {
 
-	public Curso [] getListado(String idCurso);
+	public CursoXtnd [] getListado(String idCurso);
+	
+	
 	
 	
 	public boolean [][] getTablaSemanal(int idCurso, int legajo, int aula);

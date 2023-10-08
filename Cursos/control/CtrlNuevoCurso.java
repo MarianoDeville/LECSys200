@@ -9,7 +9,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableCellRenderer;
-
 import modelo.DtosCurso;
 import vista.NuevoCurso;
 
@@ -96,7 +95,7 @@ public class CtrlNuevoCurso implements ActionListener {
 	private void actualizar() {
 
 		ventana.lblMensageError.setText("");
-		dtosCurso.setCurso(0);
+		dtosCurso.setIdCurso(0);
 		ventana.tabla.setModel(dtosCurso.getHorariosCurso(ventana.comboBoxAula.getSelectedIndex(),
 														  ventana.comboBoxProfesor.getSelectedIndex()));
 		ventana.tabla.setDefaultEditor(Object.class, null);
@@ -184,6 +183,7 @@ public class CtrlNuevoCurso implements ActionListener {
 			
 			ventana.lblMensageError.setForeground(Color.BLUE);
 			ventana.txtCuota.setText("");
+			dtosCurso.limpiarVariable();
 			actualizar();
 			ventana.lblMensageError.setText("Registro guardado con éxito.");
 			ventana.btnGuardar.setEnabled(false);

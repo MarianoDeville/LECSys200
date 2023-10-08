@@ -40,21 +40,6 @@ public class CtrlNuevoEmpleado implements ActionListener {
 		ventana.setVisible(true);
 	}
 	
-	private void limpiarCampos() {
-		
-		ventana.txtNombre.setText("");
-		ventana.txtApellido.setText("");
-		ventana.txtDNI.setText("");
-		ventana.txtAño.setText(""); 
-		ventana.txtMes.setText(""); 
-		ventana.txtDia.setText("");
-		ventana.txtDireccion.setText("");
-		ventana.txtEmail.setText("");
-		ventana.txtTelefono.setText("");
-		ventana.txt1.setText("");
-		ventana.txt2.setText("");
-	}
-	
 	public void actionPerformed(ActionEvent e) {
 		
 		if(e.getSource() == ventana.btnGuardar) {
@@ -99,14 +84,31 @@ public class CtrlNuevoEmpleado implements ActionListener {
 			if(dtosEmpleado.setNuevoEmpleado()) {
 				
 				ventana.lblMsgError.setForeground(Color.BLUE);
-				limpiarCampos();
 				ventana.lblMsgError.setText("Registro guardado con éxito.");
-				ventana.btnGuardar.setEnabled(false);
+				bloquear();
 			} else {
 				
 				ventana.lblMsgError.setForeground(Color.RED);
 				ventana.lblMsgError.setText("No se pudo guardar la información.");
 			}
 		}
+	}
+	
+	private void bloquear() {
+		
+		ventana.btnGuardar.setEnabled(false);
+		ventana.comboBox1.setEnabled(false);
+		ventana.comboBox2.setEnabled(false);
+		ventana.txtNombre.setEnabled(false);
+		ventana.txtApellido.setEnabled(false);
+		ventana.txtDNI.setEnabled(false);
+		ventana.txtAño.setEnabled(false); 
+		ventana.txtMes.setEnabled(false); 
+		ventana.txtDia.setEnabled(false);
+		ventana.txtDireccion.setEnabled(false);
+		ventana.txtEmail.setEnabled(false);
+		ventana.txtTelefono.setEnabled(false);
+		ventana.txt1.setEnabled(false);
+		ventana.txt2.setEnabled(false);
 	}
 }

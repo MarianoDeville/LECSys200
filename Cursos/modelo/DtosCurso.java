@@ -10,33 +10,14 @@ public class DtosCurso {
 	
 	private CursosDAO cursosDAO;
 	private CursoXtnd cursos[];
-	private CursoXtnd curso;
+	private static CursoXtnd curso;
 	private Empleado profesores[];
 	private boolean ocupado[][];
-	
-	
-	
-	
+	private Horarios horarios[];
 	private String cantHoras;
 	private String msgError;
-	
-	/*
-	
-	private String horarios[][];
-	private int idProfesores[];
-	private String idCursos[];
-	private int idCurso;
-	private int aula;
-	private int estado;
-	private String año;
-	private String nivel;
-	private String idProfesor;
-	private String valorCuota;
-	private String nombreProfesor;
-	private String idCurso;
-	*/
 
-	
+		
 	public DefaultTableModel getTablaCursos() {
 		
 		cursosDAO = new CursosMySQL();
@@ -132,7 +113,7 @@ public class DtosCurso {
 			}
 		}
 
-		if(this.curso.getAula() == aula && curso.getId() != 0) {
+		if(curso.getAula() == aula && curso.getId() != 0) {
 		
 			ocupado = cursosDAO.getTablaSemanal(curso.getId(), 0, 0);
 	
@@ -225,71 +206,125 @@ public class DtosCurso {
 			msgError = "Debe elegir por lo menos un día y horario para el curso.";
 			return false;
 		}
+		curso.setHorarios(horarios);
 		return true;
 	}	
 	
-	public boolean setNuevoCurso() {
+	public void setHorarios(JTable tablaHorarios) {
+
+		int cant = 0;
+		boolean comienzo;
+
+		for(int i = 0; i < tablaHorarios.getRowCount(); i++) {
+			
+			comienzo = false;
+			
+			for(int e = 0; e < tablaHorarios.getColumnCount(); e++) {
+
+				if(tablaHorarios.getValueAt(i, e).equals("O ") && !comienzo) {
+				
+					comienzo = true;
+					cant++;
+				} 
+				
+				if(!tablaHorarios.getValueAt(i, e).equals("O") && !tablaHorarios.getValueAt(i, e).equals("O "))
+					comienzo = false;
+			}
+		}
+		horarios = new Horarios [cant];
+		int pos = -1;
 		
-		CursosMySQL cursoDAO = new CursosMySQL();
-		return cursoDAO.setCurso(año, nivel, idProfesor, aula, valorCuota, horarios);
+		for(int i = 0; i < tablaHorarios.getRowCount(); i++) {
+		
+			comienzo = false;
+			
+			for(int e = 0; e < tablaHorarios.getColumnCount(); e++) {
+
+				if(tablaHorarios.getValueAt(i, e).equals("O ") && !comienzo) {
+					
+					pos++;
+					comienzo = true;
+					horarios[pos] = new Horarios();
+					horarios[pos].setDia(i);
+					horarios[pos].setHora(getListadoHorarios()[e]);
+					cant = 0;
+				}
+		
+				if(!tablaHorarios.getValueAt(i, e).equals("O") && !tablaHorarios.getValueAt(i, e).equals("O "))
+					comienzo = false;
+				
+				if(comienzo) {
+
+					cant++;
+					horarios[pos].setDuración(cant);
+				}
+			}
+		}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	public String getMsgError() {
 		
 		return msgError;
 	}
-
-	public void getInformacionCurso() {
+	
+	public boolean setNuevoCurso() {
 		
-		cursosDAO = new CursosMySQL();
-		String respuesta[][] = cursosDAO.getListado(idCurso);
-		
-		if(respuesta.length > 0) {
-			
-			año = respuesta[0][0];
-			nivel = respuesta[0][1];
-			nombreProfesor = respuesta[0][2];
-			valorCuota = respuesta[0][3];
-			idProfesor = respuesta[0][7];
-			aula = Integer.parseInt(respuesta[0][8]);
-			estado = 1;
-		}
+		CursosMySQL cursoDAO = new CursosMySQL();
+		return cursoDAO.setCurso(curso);
 	}
+	
+	public void limpiarVariable() {
+		
+		curso = null;
+	}
+
+	public void setCursoElegido(int pos) {
+		
+		curso = cursos[pos];
+	}
+	
+	public boolean setActualizarCurso() {
+		
+		CursosMySQL cursoDAO = new CursosMySQL();
+		return cursoDAO.update(curso);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
 	
 	public DefaultTableModel getDiagramacion (String criterio, int valor) {
 		
@@ -326,56 +361,7 @@ public class DtosCurso {
 		return tablaModelo;	
 	}
 
-	public void setHorarios(JTable tablaHorarios) {
 
-		int cant = 0;
-		boolean comienzo;
-
-		for(int i = 0; i < tablaHorarios.getRowCount(); i++) {
-			
-			comienzo = false;
-			
-			for(int e = 0; e < tablaHorarios.getColumnCount(); e++) {
-
-				if(tablaHorarios.getValueAt(i, e).equals("O ") && !comienzo) {
-				
-					comienzo = true;
-					cant++;
-				} 
-				
-				if(!tablaHorarios.getValueAt(i, e).equals("O") && !tablaHorarios.getValueAt(i, e).equals("O "))
-					comienzo = false;
-			}
-		}
-		horarios = new String [cant][3];
-		int pos = -1;
-		
-		for(int i = 0; i < tablaHorarios.getRowCount(); i++) {
-		
-			comienzo = false;
-			
-			for(int e = 0; e < tablaHorarios.getColumnCount(); e++) {
-
-				if(tablaHorarios.getValueAt(i, e).equals("O ") && !comienzo) {
-					
-					pos++;
-					comienzo = true;
-					horarios[pos][0] = i + "";
-					horarios[pos][1] = getListadoHorarios()[e];
-					cant = 0;
-				}
-		
-				if(!tablaHorarios.getValueAt(i, e).equals("O") && !tablaHorarios.getValueAt(i, e).equals("O "))
-					comienzo = false;
-				
-				if(comienzo) {
-
-					cant++;
-					horarios[pos][2] = cant + "";
-				}
-			}
-		}
-	}
 	
 	public String [] getListadoOpciones(String valor) {
 		
@@ -395,7 +381,7 @@ public class DtosCurso {
 	public String [] getListaCursos() {
 		
 		cursosDAO = new CursosMySQL();
-		String [][] respuesta = cursosDAO.getListado("");
+		cursos = cursosDAO.getListado("");
 		idCursos = new String[respuesta.length];
 		String [] nombreCursos = new String[respuesta.length];
 		
@@ -434,24 +420,6 @@ public class DtosCurso {
 		return new String [] {"Aula", "Curso", "Profesor"};
 	}
 
-	private static boolean isNumeric(String cadena) {
-		
-		try {
-			
-			Double.parseDouble(cadena);
-			return true;
-		} catch (NumberFormatException e){
-			
-			return false;
-		}
-	}
-	
-	public boolean setActualizarCurso() {
-		
-		CursosMySQL cursoDAO = new CursosMySQL();
-		return cursoDAO.setActualizarCurso(idCurso, idProfesor, aula, valorCuota, estado, horarios);
-	}
-
 	public String getAño() {
 		
 		return curso.getAño();
@@ -459,7 +427,7 @@ public class DtosCurso {
 
 	public void setAño(String año) {
 		
-		this.curso.setAño(año);
+		curso.setAño(año);
 	}
 
 	public String getNivel() {
@@ -469,7 +437,7 @@ public class DtosCurso {
 
 	public void setNivel(String nivel) {
 		
-		this.curso.setNivel(nivel);
+		curso.setNivel(nivel);
 	}
 
 	public String getValorCuota() {
@@ -481,16 +449,16 @@ public class DtosCurso {
 		
 		try {
 		
-			this.curso.setPrecio(Float.parseFloat(valorCuota));
+			curso.setPrecio(Float.parseFloat(valorCuota));
 		} catch (Exception e) {
 
-			this.curso.setPrecio(-1);
+			curso.setPrecio(-1);
 		}
 	}
 
 	public void setIdProfesor(int orden) {
 		
-		this.curso.setLegajoProfesor(profesores[orden].getLegajo());
+		curso.setLegajoProfesor(profesores[orden].getLegajo());
 	}
 
 	public int getAula() {
@@ -500,7 +468,7 @@ public class DtosCurso {
 
 	public void setAula(int aula) {
 		
-		this.curso.setAula(aula);
+		curso.setAula(aula);
 	}
 
 	public String getNombreProfesor() {
@@ -508,14 +476,16 @@ public class DtosCurso {
 		return curso.getNombreProfesor();
 	}
 
-	public void setCurso(int curso) {
+	public void setIdCurso(int idCurso) {
 		
-		this.curso.setId(curso);
+		if(curso == null)
+			curso = new CursoXtnd();
+		curso.setId(idCurso);
 	}
 
 	public void setEstado(int estado) {
 		
-		this.curso.setEstado(estado);
+		curso.setEstado(estado);
 	}
 
 	public String getCantHoras() {

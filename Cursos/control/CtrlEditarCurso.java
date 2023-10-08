@@ -9,7 +9,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableCellRenderer;
-
 import modelo.DtosCurso;
 import vista.NuevoCurso;
 
@@ -40,10 +39,8 @@ public class CtrlEditarCurso implements ActionListener{
 		});
 	}
 	
-	public void iniciar(String idCurso) {
+	public void iniciar() {
 		
-		dtosCurso.setCurso(idCurso);
-		dtosCurso.getInformacionCurso();
 		ventana.btnBorrar.setVisible(true);
 		ventana.btnValidar.setEnabled(false);
 		ventana.lblDescripción.setForeground(Color.GRAY);

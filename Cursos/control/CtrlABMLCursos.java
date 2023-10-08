@@ -6,7 +6,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.print.PrinterException;
 import javax.swing.JOptionPane;
-
 import modelo.DtosCurso;
 import vista.ABML;
 import vista.NuevoCurso;
@@ -18,8 +17,7 @@ public class CtrlABMLCursos implements ActionListener {
 	private NuevoCurso ventanaCrearCurso;
 	private NuevoCurso ventanaEditarCurso;
 	private int elemento;
-	private boolean bandera;
-
+	
 	public CtrlABMLCursos(ABML vista) {
 		
 		this.ventana = vista;
@@ -33,11 +31,9 @@ public class CtrlABMLCursos implements ActionListener {
 		        if (e.getClickCount() == 1) {
 
 					elemento = ventana.tabla.getSelectedRow();
-					bandera = true;
 		        } else if(e.getClickCount() == 2) {
 		        	
 		        	elemento = ventana.tabla.getSelectedRow();
-		        	bandera = true;
 		        	editar();
 		        }
 		    }
@@ -46,13 +42,14 @@ public class CtrlABMLCursos implements ActionListener {
 	
 	public void iniciar() {
 		
-		bandera = false;
+		elemento = -1;
 		actualizar();
 		ventana.setVisible(true);
 	}
 
 	private void actualizar() {
 		
+		dtosCurso.limpiarVariable();
 		ventana.tabla.setModel(dtosCurso.getTablaCursos());
 		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(40);
 		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(50);
@@ -115,17 +112,16 @@ public class CtrlABMLCursos implements ActionListener {
 	
 	private void editar() {
 		
-		String idCurso = (String)ventana.tabla.getValueAt(elemento, 0);
-		
-		if(!bandera) {
+		if(elemento == -1) {
 		
 			JOptionPane.showMessageDialog(null, "Debe seleccionar un curso para editar.");
 			return;
 		}
-		bandera = false;
+		dtosCurso.setCursoElegido(elemento);
+		elemento = -1;
 		ventanaEditarCurso = new NuevoCurso("Edición de curso");
 		CtrlEditarCurso ctrlEditarCurso = new CtrlEditarCurso(ventanaEditarCurso);
-		ctrlEditarCurso.iniciar(idCurso);
+		ctrlEditarCurso.iniciar();
 		ventanaEditarCurso.btnVolver.addActionListener(this);
 	}
 }

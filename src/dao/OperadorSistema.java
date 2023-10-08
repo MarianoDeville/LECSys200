@@ -182,6 +182,7 @@ public class OperadorSistema extends Conexion {
 			case "CursosMySQL.buscarDiasCurso":
 			case "CursosMySQL.isExamenCargado":
 			case "CursosMySQL.getListado":
+			case "CursosMySQL.getTablaSemanal":
 				bandera = checkLectura(2) | checkLectura(4);
 				break;
 
@@ -189,7 +190,7 @@ public class OperadorSistema extends Conexion {
 				bandera = permisos[4][1];
 				break;
 				
-			case "CursosMySQL.setActualizarCurso":
+			case "CursosMySQL.update":
 				bandera = permisos[4][2];
 				break;
 									// Permisos para Insumos.	///////////////////////////////////////////////

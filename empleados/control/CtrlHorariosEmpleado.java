@@ -51,7 +51,7 @@ public class CtrlHorariosEmpleado implements ActionListener {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				
-				actualizaEmpleados();
+				actualiza();
 			}
 		});
 	}
@@ -81,15 +81,15 @@ public class CtrlHorariosEmpleado implements ActionListener {
 		ventana.lblTxtMedio3.setVisible(false);
 		ventana.txtMedio3.setVisible(false);
 		dtosEmpleado.clearVariables();
-		actualizaEmpleados();
+		actualiza();
 		ventana.setVisible(true);
 	}
 	
 	public void actionPerformed(ActionEvent e) {
 		
-		if(e.getSource() == ventana.cmbBoxSector) {
+		if(e.getSource() == ventana.cmbBoxSector && ventana.isVisible()) {
 			
-			actualizaEmpleados();
+			actualiza();
 		}
 		
 		if(e.getSource() == ventana.cmbBoxGranularidad) {
@@ -134,7 +134,7 @@ public class CtrlHorariosEmpleado implements ActionListener {
 		}
 	}
 	
-	private void actualizaEmpleados(){
+	private void actualiza(){
 		
 		ventana.tabla1.setModel(dtosEmpleado.getListadoEmpleados((String)ventana.cmbBoxSector.getSelectedItem(),
 																				 ventana.txtSuperior.getText()));

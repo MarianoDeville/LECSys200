@@ -8,7 +8,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
-
 import modelo.DtosCurso;
 import vista.Listado;
 

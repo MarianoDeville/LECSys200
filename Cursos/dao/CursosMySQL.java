@@ -41,9 +41,9 @@ public class CursosMySQL extends Conexion implements CursosDAO{
 				cursos[i].setPrecio(rs.getFloat(6));
 				cursos[i].setLegajoProfesor(rs.getInt(7));
 				cursos[i].setAula(rs.getInt(8));
+				cursos[i].setEstado(1);
 				i++;
 			}
-			
 			String dia[] = new String[] {"Lunes", "Martes", "Miercoles", "Jueves", "viernes", "Sábado"};
 			i = 0;		
 			
@@ -86,7 +86,7 @@ public class CursosMySQL extends Conexion implements CursosDAO{
 		boolean matrizDiasHorarios[][] = new boolean[6][33];
 		String cmdStm = "SELECT día, HOUR(hora), MINUTE(hora), duración "
 						+ "FROM `lecsys2.00`.horarios "
-						+ "JOIN `lecsys2.00`.curso ON horarios.idPertenece = curso.idCurso "
+						+ "JOIN `lecsys2.00`.curso ON horarios.idCurso = curso.idCurso "
 						+ "JOIN `lecsys2.00`.empleados ON horarios.idPertenece = empleados.legajo "
 						+ "WHERE (curso.estado = 1 AND ";
 
@@ -119,7 +119,7 @@ public class CursosMySQL extends Conexion implements CursosDAO{
 		}
 
 		try {
-			
+
 			this.conectar();
 			Statement stm = this.conexion.createStatement();
 			ResultSet rs = stm.executeQuery(cmdStm);
@@ -169,7 +169,6 @@ public class CursosMySQL extends Conexion implements CursosDAO{
 			
 			if(rs.next())
 				curso.setId(rs.getInt(1));
-			
 			pprStm = "INSERT INTO `lecsys2.00`.valorCuota (idCurso, precio) VALUES (?, ?)";
 			stm = this.conexion.prepareStatement(pprStm);
 			stm.setInt(1, curso.getId());
@@ -285,7 +284,7 @@ public class CursosMySQL extends Conexion implements CursosDAO{
 	
 	@Override
 	public String [][] buscarDiasCurso(String idCurso) {
-		
+int algoparallamarlaatencion;
 		String matriz[][] = null;
 		String cmdStm = "SELECT día, hora, duración FROM `lecsys2.00`.diasCursado WHERE idCurso = " + idCurso;
 		
@@ -317,12 +316,10 @@ public class CursosMySQL extends Conexion implements CursosDAO{
 		}
 		return matriz;
 	}
-	
 
-	
 	@Override
 	public boolean isExamenCargado(String idCurso, String examen) {
-
+int algoparallamarlaatencion;
 		boolean bandera = false;
 		String cmdStm = "SELECT curso.idCurso FROM `lecsys2.00`.curso "
 						+ "JOIN `lecsys2.00`.examenes ON curso.idCurso = examenes.idCurso "
@@ -348,46 +345,4 @@ public class CursosMySQL extends Conexion implements CursosDAO{
 		}
 		return bandera;
 	}
-	
-
-	
-	
-	
-	
-	
-	
-	
-
-	
-	@Override
-	public String getValorCuota(String idCurso) {
-		
-		String respuesta = null;
-		String cmdStm = "SELECT precio FROM `lecsys2.00`.curso "
-						+ "JOIN `lecsys2.00`.valorCuota ON valorCuota.idCurso = curso.idCurso "
-						+ "WHERE curso.idCurso = " + idCurso;
-		
-		try {
-			
-			this.conectar();
-			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stm.executeQuery(cmdStm);
-
-			if(rs.next()) {
-				
-				respuesta = String.format("%.2f", rs.getFloat(1));
-			}
-		} catch (Exception e) {
-			
-			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("CursosMySQL, getValorCuota()");
-			CtrlLogErrores.guardarError(cmdStm);
-		} finally {
-			
-			this.cerrar();
-		}
-		return respuesta;
-	}
-	
-
 }

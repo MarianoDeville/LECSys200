@@ -19,8 +19,7 @@ public class CtrlABMLEmpleado implements ActionListener {
 	private DtosEmpleado dtosEmpleados;
 	private Nuevo ventanaNuevoEmpleado;
 	private Nuevo ventanaEditarEmpleado;
-	private int elemento;
-	private boolean bandera;
+	private int elemento = -1;
 	
 	public CtrlABMLEmpleado(ABML vista) {
 		
@@ -43,11 +42,9 @@ public class CtrlABMLEmpleado implements ActionListener {
 		        if (e.getClickCount() == 1) {
 
 					elemento = ventana.tabla.getSelectedRow();
-					bandera = true;
 		        } else if(e.getClickCount() == 2) {
 		        	
 		        	elemento = ventana.tabla.getSelectedRow();
-		        	bandera = true;
 		        	editar();
 		        }
 		    }
@@ -66,6 +63,7 @@ public class CtrlABMLEmpleado implements ActionListener {
 	
 	private void actualizar() {
 		
+		elemento = -1;
 		ventana.tabla.setModel(dtosEmpleados.getTablaEmpleados((String)ventana.comboBox1.getSelectedItem(), 
 																		ventana.chckbx1.isSelected(), 
 																		ventana.txt1.getText()));
@@ -76,12 +74,12 @@ public class CtrlABMLEmpleado implements ActionListener {
 	
 	public void actionPerformed(ActionEvent e) {
 		
-		if(e.getSource() == ventana.comboBox1) {
+		if(e.getSource() == ventana.comboBox1 && ventana.isVisible()) {
 			
 			actualizar();
 		}
 		
-		if(e.getSource() == ventana.chckbx1) {
+		if(e.getSource() == ventana.chckbx1 && ventana.isVisible()) {
 			
 			actualizar();
 		}
@@ -136,7 +134,7 @@ public class CtrlABMLEmpleado implements ActionListener {
 	private void editar() {
 		
 		ventana.tabla.clearSelection();
-		if(!bandera) {
+		if(elemento == -1) {
 			
 			JOptionPane.showMessageDialog(null, "Debe seleccionar un alumno para editar.");
 			return;

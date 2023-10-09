@@ -16,7 +16,6 @@ public class DtosCurso {
 	private Horarios horarios[];
 	private String cantHoras;
 	private String msgError;
-
 		
 	public DefaultTableModel getTablaCursos() {
 		
@@ -269,8 +268,8 @@ public class DtosCurso {
 	
 	public boolean setNuevoCurso() {
 		
-		CursosMySQL cursoDAO = new CursosMySQL();
-		return cursoDAO.setCurso(curso);
+		cursosDAO = new CursosMySQL();
+		return cursosDAO.setCurso(curso);
 	}
 	
 	public void limpiarVariable() {
@@ -285,83 +284,9 @@ public class DtosCurso {
 	
 	public boolean setActualizarCurso() {
 		
-		CursosMySQL cursoDAO = new CursosMySQL();
-		return cursoDAO.update(curso);
+		cursosDAO = new CursosMySQL();
+		return cursosDAO.update(curso);
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-
-
-	
-	public DefaultTableModel getDiagramacion (String criterio, int valor) {
-		
-		CursosMySQL cursoDAO = new CursosMySQL();
-		int sumaHoras = 0;
-
-		if(criterio.equals("Profesor")) {
-			
-			cursoDAO.getCronogramaDias("0", idProfesores[valor], -1);
-		} else if(criterio.equals("Curso")) {
-			
-			cursoDAO.getCronogramaDias(idCursos[valor], 0, -1);
-		}else {
-			
-			cursoDAO.getCronogramaDias("0", 0, valor);
-		}
-		ocupado = cursoDAO.getmatrizDiasHorarios();
-		String cronograma[][] = new String[6][getListadoHorarios().length];
-
-		for(int i = 0 ; i < 6 ; i++) {
-			
-			for(int e = 0 ; e < 33 ; e++) {
-				
-				cronograma[i][e] = ocupado[i][e]? "X":" ";
-
-				if(cronograma[i][e].equals("X")) {
-					
-					sumaHoras++;
-				}
-			}
-		}
-		cantHoras = (float)((sumaHoras - 1) / 2) + "";
-		DefaultTableModel tablaModelo = new DefaultTableModel(cronograma, getListadoHorarios());
-		return tablaModelo;	
-	}
-
-
 	
 	public String [] getListadoOpciones(String valor) {
 		
@@ -382,17 +307,52 @@ public class DtosCurso {
 		
 		cursosDAO = new CursosMySQL();
 		cursos = cursosDAO.getListado("");
-		idCursos = new String[respuesta.length];
-		String [] nombreCursos = new String[respuesta.length];
 		
-		for(int i = 0 ; i < respuesta.length; i++) {
+		String nombreCursos[] = new String[cursos.length];
+		
+		for(int i = 0 ; i < cursos.length; i++) {
 			
-			idCursos[i] = respuesta[i][5];
-			nombreCursos[i] = respuesta[i][0] + " " + respuesta[i][1] + " " + respuesta[i][2];
+			nombreCursos[i] = cursos[i].getNivel() + " " + cursos[i].getAño() + " " + cursos[i].getNombreProfesor();
 		}
 		return nombreCursos;
 	}
 	
+	public DefaultTableModel getDiagramacion (String criterio, int valor) {
+		
+		cursosDAO = new CursosMySQL();
+		float sumaHoras = 0;
+		boolean ocupado[][] = null;
+		
+		if(criterio.equals("Profesor")) {
+			
+			ocupado = cursosDAO.getTablaSemanal(0, cursos[valor].getLegajoProfesor(), -1);
+		} else if(criterio.equals("Curso")) {
+			
+			ocupado = cursosDAO.getTablaSemanal(cursos[valor].getId(), 0, -1);
+		}else {
+			
+			ocupado = cursosDAO.getTablaSemanal(0, 0, valor);
+		}
+		String cronograma[][] = new String[6][getListadoHorarios().length];
+
+		for(int i = 0 ; i < 6 ; i++) {
+			
+			boolean bandera = false;
+			
+			for(int e = 0 ; e < 33 ; e++) {
+				
+				cronograma[i][e] = ocupado[i][e]? "X":" ";
+
+				if(cronograma[i][e].equals("X") && bandera)
+					sumaHoras += 0.5;
+				bandera = cronograma[i][e].equals("X")?true:false;
+			}
+		}
+		cantHoras = sumaHoras + "";
+		DefaultTableModel tablaModelo = new DefaultTableModel(cronograma, getListadoHorarios());
+		return tablaModelo;	
+	}
+
 	public String [] getListadoHorarios() {
 
 		String listado[] = new String[33];
@@ -442,14 +402,14 @@ public class DtosCurso {
 
 	public String getValorCuota() {
 		
-		return (curso.getPrecio() + "");
+		return String.format("%.2f", curso.getPrecio());
 	}
 
 	public void setValorCuota(String valorCuota) {
 		
 		try {
 		
-			curso.setPrecio(Float.parseFloat(valorCuota));
+			curso.setPrecio(Float.parseFloat(valorCuota.replace(",", ".")));
 		} catch (Exception e) {
 
 			curso.setPrecio(-1);

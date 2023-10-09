@@ -60,12 +60,12 @@ public class CtrlEditarCurso implements ActionListener{
 	
 	public void actionPerformed(ActionEvent e) {
 
-		if(e.getSource() == ventana.comboBoxAula) {
+		if(e.getSource() == ventana.comboBoxAula && ventana.isVisible()) {
 			
 			actualizar();
 		}	
 		
-		if(e.getSource() == ventana.comboBoxProfesor) {
+		if(e.getSource() == ventana.comboBoxProfesor && ventana.isVisible()) {
 			
 			actualizar();
 		}

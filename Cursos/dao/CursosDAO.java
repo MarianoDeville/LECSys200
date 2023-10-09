@@ -11,9 +11,5 @@ public interface CursosDAO {
 	
 	
 	public String [][] buscarDiasCurso(String idCurso);
-	
 	public boolean isExamenCargado(String idCurso, String examen);
-	
-	
-	public String getValorCuota(String idCurso);
 }

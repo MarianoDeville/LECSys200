@@ -8,16 +8,15 @@ public class Alumno extends Persona {
 	private int estado;
 	private int grupoFamiliar;
 	private String fechaBaja;
-	private String nivel;
-	private String año;
-	
-    public Alumno() {
+	private CursoXtnd curso;
+
+	public Alumno() {
         
     }
     
 	public Alumno(int legajo, int idCurso, String fechaIngreso, int estado, int grupoFamiliar, String fechaBaja,
 			String dni, String nombre, String apellido, String direccion, String fechaNacimiento, String telefono,
-			String email) {
+			String email, CursoXtnd curso) {
 		
 		super(dni, nombre, apellido, direccion, fechaNacimiento, telefono, email);
 		this.legajo = legajo;
@@ -26,6 +25,7 @@ public class Alumno extends Persona {
 		this.estado = estado;
 		this.grupoFamiliar = grupoFamiliar;
 		this.fechaBaja = fechaBaja;
+		this.curso = curso;
 	}
 
 	public int getLegajo() {
@@ -87,24 +87,14 @@ public class Alumno extends Persona {
 		
 		this.fechaBaja = fechaBaja;
 	}
-
-	public String getNivel() {
-		
-		return nivel;
+	
+    public CursoXtnd getCurso() {
+    	
+		return curso;
 	}
 
-	public void setNivel(String nivel) {
+	public void setCurso(CursoXtnd curso) {
 		
-		this.nivel = nivel;
-	}
-
-	public String getAño() {
-		
-		return año;
-	}
-
-	public void setAño(String año) {
-		
-		this.año = año;
+		this.curso = curso;
 	}
 }

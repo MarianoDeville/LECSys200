@@ -62,8 +62,8 @@ int algo;
 		if(e.getSource() == ventanaPrincipal.btnAlumnos) {
 				
 			InterfaceBotones ventanaAlumnos = new InterfaceBotones("Gestión de los alumnos");
-//			CtrlAlumnos ctrlAlumn = new CtrlAlumnos(ventanaAlumnos);
-//			ctrlAlumn.iniciar();
+			CtrlAlumnos ctrlAlumn = new CtrlAlumnos(ventanaAlumnos);
+			ctrlAlumn.iniciar();
 		}
 		
 		if(e.getSource() == ventanaPrincipal.btnPersonal) {

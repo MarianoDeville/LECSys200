@@ -100,39 +100,39 @@ public class OperadorSistema extends Conexion {
 				break;
 				
 			case "ComprasDAO.setOrdenCompra":
-			case "AlumnosDAO.setInactivos":
+			case "AlumnoMySQL.setInactivos":
 				bandera = permisos[1][1] || permisos[1][2];
 				break;
 									// Permisos para Alumnos.	///////////////////////////////////////////////
 			case "CtrlAlumnos.iniciar":
-			case "AlumnosDAO.isAsistenciaTomada":
-			case "AlumnosDAO.getAsistencias":
-			case "AlumnosDAO.getInfoAsistencia":
-			case "AlumnosDAO.getExamen":
+			case "AlumnoMySQL.isAsistenciaTomada":
+			case "AlumnoMySQL.getAsistencias":
+			case "AlumnoMySQL.getInfoAsistencia":
+			case "AlumnoMySQL.getExamen":
 				bandera = checkLectura(2);
 				break;	
 
-			case "AlumnosDAO.getAlumnos":
-			case "AlumnosDAO.getListadoAlumnos":
-			case "AlumnosDAO.getIntegrantes":
-			case "AlumnosDAO.getGruposFamilias":
+			case "AlumnoMySQL.getAlumnos":
+			case "AlumnoMySQL.getListado":
+			case "AlumnoMySQL.getIntegrantes":
+			case "AlumnoMySQL.getGruposFamilias":
 				bandera = checkLectura(1) | checkLectura(2);
 				break;
 				
-			case "AlumnosDAO.setGrupoFamiliar":
-			case "AlumnosDAO.setAlumno":
+			case "AlumnoMySQL.setGrupoFamiliar":
+			case "AlumnoMySQL.setNuevo":
 				bandera = permisos[1][1] | permisos[2][1];
 				break;
 				
-			case "AlumnosDAO.setEliminarIntegrante":
-			case "AlumnosDAO.setActualizarAlumno":
-			case "AlumnosDAO.setActualizarGrupo":
-			case "AlumnosDAO.setActualizarIdFamila":
+			case "AlumnoMySQL.setEliminarIntegrante":
+			case "AlumnoMySQL.update":
+			case "AlumnoMySQL.setActualizarGrupo":
+			case "AlumnoMySQL.setActualizarIdFamila":
 				bandera = permisos[1][2] | permisos[2][2];
 				break;
 				
-			case "AlumnosDAO.setExamen":
-			case "AlumnosDAO.setAsistencia":
+			case "AlumnoMySQL.setExamen":
+			case "AlumnoMySQL.setAsistencia":
 				bandera = permisos[2][1] | permisos[2][2];
 				break;
 

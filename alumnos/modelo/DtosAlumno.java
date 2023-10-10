@@ -6,26 +6,30 @@ import javax.swing.table.DefaultTableModel;
 import control.CtrlLogErrores;
 import dao.AlumnoDAO;
 import dao.AlumnoMySQL;
+import dao.CursosDAO;
 import dao.CursosMySQL;
 import dao.EmpleadoMySQL;
 import dao.PersonaDAO;
+import dao.PersonaMySQL;
 
 public class DtosAlumno {
 	
 	private AlumnoDAO alumnosDAO;
-	private static Alumno alumno;
+	private static Alumno alumno = new Alumno();
+	private static CursoXtnd cursos[];
 	private Alumno alumnos[];
+	private String añoNacimiento;
+	private String mesNacimiento;
+	private String diaNacimiento;
 	
-
+	
+	
+	
 	
 	private static String cantAlumnos;
 	private static String resultadoExamen;
 	private static String tipoExamen;
 	private static String msg;
-	private static String [] idCursos;
-	private static String [] nombreCursos;
-	private static String [] idProfesores;
-	private static String [][] horariosCursos;
 	private static Object [][] tablaAsistencia;
 	private int escrito1;
 	private int escrito2;
@@ -62,8 +66,7 @@ public class DtosAlumno {
 			tabla[i][4] = alumnos[i].getDireccion();
 			tabla[i][5] = alumnos[i].getTelefono();
 			tabla[i][6] = alumnos[i].getEmail();
-			CursoXtnd curso = alumnos[i].getCurso();
-			tabla[i][7] = curso.getNivel() + " " + curso.getAño();
+			tabla[i][7] = alumnos[i].getCurso().getNivel() + " " + alumnos[i].getCurso().getAño();
 		}
 		cantAlumnos = alumnos.length + "";
 		DefaultTableModel tablaModelo = new DefaultTableModel(tabla, titulo);
@@ -75,6 +78,118 @@ public class DtosAlumno {
 		alumno = alumnos[pos];
 	}
 	
+	public String [] getListaCursos() {
+		
+		CursosDAO cursosDAO = new CursosMySQL();
+		cursos = cursosDAO.getListado("");
+		String nombreCursos[] = new String[cursos.length];
+
+		for(int i = 0 ; i < cursos.length; i++) {
+			
+			nombreCursos[i] = cursos[i].getAño() + " " + cursos[i].getNivel() + " " + cursos[i].getNombreProfesor();
+		}
+		return nombreCursos;
+	}
+	
+	public DefaultTableModel getTablaDias(int pos) {
+	
+		String titulo[] = {"", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sábado"};
+		Object cuerpo[][] = new Object[][] {{"Hora:","","","","","",""},{"Duración:","","","","","",""}};
+		
+		if(cursos != null) {
+			
+			for(int i = 0 ; i < cursos[pos].getHorarios().length ; i++) {
+
+				cuerpo[0][cursos[pos].getHorarios()[i].getDia() + 1] = cursos[pos].getHorarios()[i].getHora();
+				cuerpo[1][cursos[pos].getHorarios()[i].getDia() + 1] = calcularTiempo(cursos[pos].getHorarios()[i].getDuración());
+			}
+		} else {
+			
+			cuerpo = null;
+		}
+		DefaultTableModel tablaModelo = new DefaultTableModel(cuerpo, titulo);
+		return tablaModelo;
+	}
+
+	private String calcularTiempo(int num) {
+		
+		String resultado =(int) num / 2 + "";
+		
+		if (num % 2 == 0)
+			resultado += ":00";
+		else
+			resultado += ":30";
+		return resultado;
+	}
+	
+	public String checkInformacion(boolean checDNI) {
+
+		if(alumno.getNombre().length() < 3)
+			return "El nombre debe tener más de dos caracteres.";
+		
+		if(alumno.getApellido().length() < 3)
+			msg ="El apellido debe tener más de dos caracteres.";
+		
+		if(alumno.getDni().length() < 7)
+			return "Error en el formato del DNI (solamente números).";
+		PersonaDAO personasDAO = new PersonaMySQL();
+		
+		if(personasDAO.isDNIDuplicado(alumno.getDni()) && checDNI)
+			return "El DNI ya está siendo usado.";
+		
+		if(añoNacimiento.length() == 0 || Integer.parseInt(añoNacimiento) < 1920)
+			return "Error en el formato del año.";
+		
+		if(mesNacimiento.length() == 0 || Integer.parseInt(mesNacimiento) < 1 || Integer.parseInt(mesNacimiento) > 12 )
+			return "Error en el formato del mes.";
+			
+		if(diaNacimiento.length() == 0 || Integer.parseInt(diaNacimiento) < 1 || Integer.parseInt(diaNacimiento) > 31 )
+			return "Error en el formato del día.";
+			
+		if(alumno.getDireccion().length() == 0)
+			return "La dirección no puede estar vacía.";
+		
+		if(alumno.getTelefono().length() == 0 || !isNumeric(alumno.getTelefono()))
+			return "Error en el formato del teléfono (solamente números).";
+
+		alumno.setFechaNacimiento(añoNacimiento + "/" + mesNacimiento + "/" + diaNacimiento);
+		return "";
+	}
+	
+	public boolean setNuevoAlumno() {
+		
+		alumnosDAO = new AlumnoMySQL();
+		return alumnosDAO.setNuevo(alumno);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+
+	
+
+	
+
+	
+
 	
 	
 	
@@ -86,6 +201,149 @@ public class DtosAlumno {
 	
 	
 	
+	
+	
+	
+	
+
+	
+	
+	
+	public String getMsg() {
+		
+		return msg;
+	}
+	
+	public String getLegajo() {
+		
+		return DtosAlumno.alumno.getLegajo() + "";
+	}
+	
+	public String getNombre() {
+		
+		return DtosAlumno.alumno.getNombre();
+	}
+	
+	public void setNombre(String nombre) {
+		
+		DtosAlumno.alumno.setNombre(nombre);
+	}
+	
+	public String getApellido() {
+		
+		return DtosAlumno.alumno.getApellido();
+	}
+
+	public void setApellido(String apellido) {
+		
+		DtosAlumno.alumno.setApellido(apellido);
+	}
+
+	public String getFechaAño() {
+		
+		return añoNacimiento;
+	}
+	
+	public void setFechaAño(String fechaNacimientoAño) {
+		
+		añoNacimiento = fechaNacimientoAño;
+	}
+	
+	public String getFechaMes() {
+		
+		return mesNacimiento;
+	}
+	
+	public void setFechaMes(String fechaNacimientoMes) {
+		
+		mesNacimiento = fechaNacimientoMes;
+	}
+	
+	public String getFechaDia() {
+		
+		return diaNacimiento;
+	}
+
+	public void setFechaDia(String fechaNacimientoDia) {
+		
+		diaNacimiento = fechaNacimientoDia;
+	}
+
+	public String getDni() {
+		
+		return DtosAlumno.alumno.getDni();
+	}
+	
+	public void setDni(String dni) {
+		
+		if(isNumeric(dni))
+			DtosAlumno.alumno.setDni(dni);
+		else
+			DtosAlumno.alumno.setDni("");
+		
+	}
+
+	public String getTelefono() {
+		
+		return DtosAlumno.alumno.getTelefono();
+	}
+	
+	public void setTelefono(String telefono) {
+		
+		DtosAlumno.alumno.setTelefono(telefono);
+	}
+	
+	public String getDireccion() {
+		
+		return DtosAlumno.alumno.getDireccion();
+	}
+	
+	public void setDireccion(String direccion) {
+		
+		DtosAlumno.alumno.setDireccion(direccion);
+	}
+	
+	public String getEmail() {
+		
+		return DtosAlumno.alumno.getEmail();
+	}
+	
+	public void setEmail(String email) {
+		
+		DtosAlumno.alumno.setEmail(email);
+	}
+	
+	public void setEstado(boolean estado) {
+		
+		DtosAlumno.alumno.setEstado(estado?1:0);
+	}
+	
+	public String getCurso() {
+		
+		return DtosAlumno.alumno.getIdCurso() + "";
+	}
+	
+	public void setCurso(int pos) {
+		
+		DtosAlumno.alumno.setIdCurso(cursos[pos].getId());
+	}
+
+
+	
+	
+	
+	
+	
+	
+
+	
+
+	
+
+	
+
+	
+
 	
 	
 	
@@ -274,32 +532,7 @@ public class DtosAlumno {
 		DefaultTableModel tablaModelo = new DefaultTableModel(respuesta, titulo);
 		return tablaModelo;
 	}
-	
 
-	
-	public DefaultTableModel getTablaDias(int curso) {
-		
-		CursosMySQL cursosDAO = new CursosMySQL();
-		String titulo[] = {"", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sábado"};
-		String duracion[] = new String [] {"0:00","0:30","1:00","1:30","2:00","2:30","3:00","3:30","4:00"};
-		String respuesta[][] = cursosDAO.buscarDiasCurso(idCursos[curso]);
-		Object cuerpo[][] = new Object[][] {{"Hora:","","","","","",""},{"Duración:","","","","","",""}};
-		
-		if(respuesta != null) {
-			
-			for(int i = 0 ; i < respuesta.length ; i++) {
-
-				cuerpo[0][Integer.parseInt(respuesta[i][0])+1] = respuesta[0][1];
-				cuerpo[1][Integer.parseInt(respuesta[i][0])+1] = duracion[Integer.parseInt(respuesta[i][2])];
-			}
-		} else {
-			
-			cuerpo = null;
-		}
-		DefaultTableModel tablaModelo = new DefaultTableModel(cuerpo, titulo);
-		return tablaModelo;
-	}
-	
 	public DefaultTableModel getTablaRegistroAsistencia(int cursoSeleccionado, int mesSeleccionado) {
 		
 		alumnosDAO = new AlumnoMySQL();
@@ -433,67 +666,7 @@ public class DtosAlumno {
 			return idProfesores[valor];
 		return null;
 	}
-	
-	public String getMsg() {
-		
-		return msg;
-	}
-	
-	public String getLegajo() {
-		
-		return legajo;
-	}
-	
-	public String getNombre() {
-		
-		return nombre;
-	}
-	
-	public String getApellido() {
-		
-		return apellido;
-	}
-	
-	public String getFechaAño() {
-		
-		return fechaAño;
-	}
-	
-	public String getFechaMes() {
-		
-		return fechaMes;
-	}
-	
-	public String getFechaDia() {
-		
-		return fechaDia;
-	}
-	
-	public String getDni() {
-		
-		return dni;
-	}
-	
-	public String getTelefono() {
-		
-		return telefono;
-	}
-	
-	public String getDireccion() {
-		
-		return direccion;
-	}
-	
-	public String getEmail() {
-		
-		return email;
-	}
-	
-	public String getCurso() {
-		
-		return idCurso;
-	}
-	
+
 	public String getNombreCurso() {
 	
 		String temp[] = nombreCursos[getCursoSeleccionado()].split(" ");
@@ -537,22 +710,7 @@ public class DtosAlumno {
 	
 
 	
-	public String [] getListaCursos() {
-		
-		CursosMySQL cursosDAO = new CursosMySQL();
-		String respuesta[][] = cursosDAO.getListado("");
-		idCursos = new String[respuesta.length];
-		nombreCursos = new String[respuesta.length];
-		idProfesores = new String[respuesta.length];
 
-		for(int i = 0 ; i < respuesta.length; i++) {
-			
-			idCursos[i] = respuesta[i][5];
-			nombreCursos[i] = respuesta[i][0] + " " + respuesta[i][1] + " " + respuesta[i][2];
-			idProfesores[i] = respuesta[i][7];
-		}
-		return nombreCursos;
-	}
 	
 	public String [] getCriterio() {
 		
@@ -604,81 +762,9 @@ public class DtosAlumno {
 		}
 	}
 	
-	
-	public void setNombre(String nombre) {
-		
-		DtosAlumno.nombre = nombre;
-	}
-
-	public void setApellido(String apellido) {
-		
-		DtosAlumno.apellido = apellido;
-	}
-
-	public void setFechaAño(String fechaNacimientoAño) {
-		
-		DtosAlumno.fechaAño = fechaNacimientoAño;
-	}
-	
-	public void setFechaMes(String fechaNacimientoMes) {
-		
-		DtosAlumno.fechaMes = fechaNacimientoMes;
-	}
-		
-	public void setFechaDia(String fechaNacimientoDia) {
-		
-		DtosAlumno.fechaDia = fechaNacimientoDia;
-	}
-
-	public void setDni(String dni) {
-		
-		DtosAlumno.dni = dni;
-	}
-
-	public void setTelefono(String telefono) {
-		
-		DtosAlumno.telefono = telefono;
-	}
-	
-	public void setDireccion(String direccion) {
-		
-		DtosAlumno.direccion = direccion;
-	}
-	
-	public void setEmail(String email) {
-		
-		DtosAlumno.email = email;
-	}
-	
-	public void setHorariosCursos(String [][] horariosCursos) {
-		
-		DtosAlumno.horariosCursos = horariosCursos;
-	}
-
-	public void setEstado(boolean estado) {
-		
-		DtosAlumno.estado = estado;
-	}
-	
-	public void setCurso(int curso) {
-		
-		DtosAlumno.idCurso = idCursos[curso];
-	}
-
-	public void setIdPersona(String idPersona) {
-		
-		DtosAlumno.idPersona = idPersona;
-	}
-	
 	public void setTipoExamen(String tipoExamen) {
 		
 		DtosAlumno.tipoExamen = tipoExamen;
-	}
-	
-	public boolean setNuevoAlumno() {
-		
-		alumnosDAO = new AlumnoMySQL();
-		return alumnosDAO.setNuevo();
 	}
 	
 	public boolean setActualizarAlumno() { 
@@ -760,39 +846,6 @@ public class DtosAlumno {
 			}
 		}
 		return; 
-	}
-
-	public String checkInformacion(boolean checDNI) {
-
-		if(nombre.length() < 3)
-			return "El nombre debe tener más de dos caracteres.";
-		
-		if(apellido.length() < 3)
-			msg ="El apellido debe tener más de dos caracteres.";
-		
-		if(dni.length() < 7 || !isNumeric(dni))
-			return "Error en el formato del DNI (solamente números).";
-		PersonaDAO personasDAO = new PersonaDAO();
-		
-		if(personasDAO.getDNIDuplicado(dni) && checDNI)
-			return "El DNI ya está siendo usado.";
-		
-		if(fechaAño.length() == 0 || Integer.parseInt(fechaAño) < 1920)
-			return "Error en el formato del año.";
-		
-		if(fechaMes.length() == 0 || Integer.parseInt(fechaMes) < 1 || Integer.parseInt(fechaMes) > 12 )
-			return "Error en el formato del mes.";
-			
-		if(fechaDia.length() == 0 || Integer.parseInt(fechaDia) < 1 || Integer.parseInt(fechaDia) > 31 )
-			return "Error en el formato del día.";
-			
-		if(direccion.length() == 0)
-			return "La dirección no puede estar vacía.";
-		
-		if(telefono.length() == 0 || !isNumeric(telefono))
-			return "Error en el formato del teléfono (solamente números).";
-
-		return "";
 	}
 
 	public boolean guardoAsistencia() {
@@ -887,5 +940,10 @@ public class DtosAlumno {
 	public String getTarde() {
 		
 		return tarde;
+	}
+	
+	public void setHorariosCursos(String [][] horariosCursos) {
+		
+		DtosAlumno.horariosCursos = horariosCursos;
 	}
 }

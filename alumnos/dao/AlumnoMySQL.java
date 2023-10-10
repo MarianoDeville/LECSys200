@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import control.CtrlLogErrores;
 import modelo.Alumno;
-import modelo.CursoXtnd;
 import modelo.DtosActividad;
 
 public class AlumnoMySQL extends Conexion implements AlumnoDAO {
@@ -75,13 +74,11 @@ public class AlumnoMySQL extends Conexion implements AlumnoDAO {
 				alumnos[i].setEstado(rs.getInt(10));
 				alumnos[i].setFechaIngreso(rs.getString(11));
 				alumnos[i].setFechaBaja(rs.getString(12));
-				CursoXtnd curso = new CursoXtnd();
-				curso.setId(rs.getInt(13));
-				curso.setAño(rs.getString(14));
-				curso.setNivel(rs.getString(15));
-				curso.setPrecio(rs.getFloat(16));
-				curso.setLegajoProfesor(rs.getInt(17));
-				alumnos[i].setCurso(curso);
+				alumnos[i].getCurso().setId(rs.getInt(13));
+				alumnos[i].getCurso().setAño(rs.getString(14));
+				alumnos[i].getCurso().setNivel(rs.getString(15));
+				alumnos[i].getCurso().setPrecio(rs.getFloat(16));
+				alumnos[i].getCurso().setLegajoProfesor(rs.getInt(17));
 				i++;
 			}
 		}catch (Exception e) {
@@ -95,16 +92,6 @@ public class AlumnoMySQL extends Conexion implements AlumnoDAO {
 		}
 		return alumnos;
 	}
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	@Override
 	public boolean setNuevo(Alumno alumno) {
@@ -149,6 +136,16 @@ public class AlumnoMySQL extends Conexion implements AlumnoDAO {
 		dtosActividad.registrarActividad("Registro nuevo alumno.", "Alumnos", tiempo);
 		return bandera;
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	@Override
 	public boolean update(Alumno alumno) {
@@ -223,8 +220,8 @@ public class AlumnoMySQL extends Conexion implements AlumnoDAO {
 				alumnos[i].setNombre(rs.getString(2));
 				alumnos[i].setApellido(rs.getString(3));
 				alumnos[i].setDireccion(rs.getString(4));
-				alumnos[i].setNivel(rs.getString(5));
-				alumnos[i].setAño(rs.getString(6));	
+				alumnos[i].getCurso().setNivel(rs.getString(5));
+				alumnos[i].getCurso().setAño(rs.getString(6));	
 				alumnos[i].setGrupoFamiliar(rs.getInt(7));
 				i++;
 			}

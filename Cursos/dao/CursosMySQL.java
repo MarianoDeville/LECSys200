@@ -6,6 +6,7 @@ import java.sql.Statement;
 import control.CtrlLogErrores;
 import modelo.CursoXtnd;
 import modelo.DtosActividad;
+import modelo.Horarios;
 
 public class CursosMySQL extends Conexion implements CursosDAO{
 	
@@ -45,16 +46,24 @@ public class CursosMySQL extends Conexion implements CursosDAO{
 				i++;
 			}
 			String dia[] = new String[] {"Lunes", "Martes", "Miercoles", "Jueves", "viernes", "Sábado"};
-			i = 0;		
-			
-			while(i < cursos.length) {		
 				
-				cmdStm = "SELECT día FROM `lecsys2.00`.horarios "
-						 + "WHERE idCurso = " + cursos[i].getId() ;
+			for(int e = 0; e < cursos.length; e++) {
+
+				cmdStm = "SELECT día, hora, duración FROM `lecsys2.00`.horarios WHERE idCurso = " + cursos[e].getId();
 				rs = stm.executeQuery(cmdStm);
+				rs.last();	
+				cursos[e].setHorarios(new Horarios[rs.getRow()]);
+				rs.beforeFirst();
+				i=0;
 				boolean bandera = true;
 				String diasCursado = "";
-				while (rs.next()) {
+				
+				while(rs.next()) {
+				
+					cursos[e].getHorarios()[i] = new Horarios();
+					cursos[e].getHorarios()[i].setDia(rs.getInt(1));
+					cursos[e].getHorarios()[i].setHora(rs.getString(2));
+					cursos[e].getHorarios()[i].setDuración(rs.getInt(3));
 					
 					if(bandera) {
 						
@@ -64,10 +73,10 @@ public class CursosMySQL extends Conexion implements CursosDAO{
 						
 						diasCursado += ", " + dia[rs.getInt(1)];
 					}
+					i++;
 				}
-				cursos[i].setDiasCursado(diasCursado);
-				i++;
-			}			
+				cursos[e].setDiasCursado(diasCursado);
+			}
 		} catch (Exception e) {
 			
 			CtrlLogErrores.guardarError(e.getMessage());
@@ -257,69 +266,10 @@ public class CursosMySQL extends Conexion implements CursosDAO{
 		dtosActividad.registrarActividad("Editar un curso.", "Cursos.", tiempo);
 		return bandera;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	@Override
-	public String [][] buscarDiasCurso(String idCurso) {
-int algoparallamarlaatencion;
-		String matriz[][] = null;
-		String cmdStm = "SELECT día, hora, duración FROM `lecsys2.00`.diasCursado WHERE idCurso = " + idCurso;
-		
-		try {
-		
-			this.conectar();
-			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stm.executeQuery(cmdStm);
-			rs.last();	
-			matriz = new String[rs.getRow()][3];
-			rs.beforeFirst();
-			int i=0; 
-			
-			while(rs.next()) {
-			
-				matriz[i][0] = rs.getString(1);
-				matriz[i][1] = rs.getString(2);
-				matriz[i][2] = rs.getString(3);
-				i++;
-			}
-		} catch (Exception e) {
-		
-			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("CursosMySQL, buscarDiasCurso()");
-			CtrlLogErrores.guardarError(cmdStm);
-		} finally {
-		
-			this.cerrar();
-		}
-		return matriz;
-	}
 
 	@Override
 	public boolean isExamenCargado(String idCurso, String examen) {
-int algoparallamarlaatencion;
+
 		boolean bandera = false;
 		String cmdStm = "SELECT curso.idCurso FROM `lecsys2.00`.curso "
 						+ "JOIN `lecsys2.00`.examenes ON curso.idCurso = examenes.idCurso "

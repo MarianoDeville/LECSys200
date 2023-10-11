@@ -41,7 +41,7 @@ public class PersonaMySQL extends Conexion implements PersonaDAO {
 		} catch (Exception e) {
 			
 			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("PersonasMySQL, getListadoCumpleAños()");
+			CtrlLogErrores.guardarError("PersonaMySQL, getListadoCumpleAños()");
 			CtrlLogErrores.guardarError(ppstm);
 		} finally {
 			
@@ -58,7 +58,7 @@ public class PersonaMySQL extends Conexion implements PersonaDAO {
 		try {
 			
 			this.conectar();
-			PreparedStatement stm = this.conexion.prepareStatement("SELECT idPersona FROM persona WHERE dni = ?");
+			PreparedStatement stm = this.conexion.prepareStatement("SELECT nombre FROM persona WHERE dni = ?");
 			stm.setString(1, dni);
 			ResultSet rs = stm.executeQuery();
 
@@ -67,7 +67,7 @@ public class PersonaMySQL extends Conexion implements PersonaDAO {
 		}catch (Exception e) {
 			
 			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("PersonasMySQL, getDNIDuplicado()");
+			CtrlLogErrores.guardarError("PersonaMySQL, isDNIDuplicado()");
 		} finally {
 			
 			this.cerrar();
@@ -75,80 +75,3 @@ public class PersonaMySQL extends Conexion implements PersonaDAO {
 		return bandera;
 	}
 }
-
-
-/*
-	public boolean actualizarPersona(String infoPersona[]) {
-		
-		boolean bandera = true;
-		
-		try {
-			
-			this.conectar();
-			PreparedStatement stm = this.conexion.prepareStatement("UPDATE persona SET "
-																 + "nombre = ?, apellido = ?, "
-																 + "dni = ?, dirección = ?, "
-																 + "fechaNacimiento = ?, teléfono = ?, "
-																 + "email = ? WHERE (idPersona = ?)");
-			stm.setString(1, infoPersona[0]);
-			stm.setString(2, infoPersona[1]);
-			stm.setString(3, infoPersona[2]);
-			stm.setString(4, infoPersona[3]);
-			stm.setString(5, infoPersona[4]);
-			stm.setString(6, infoPersona[5]);
-			stm.setString(7, infoPersona[6]);
-			stm.setString(8, infoPersona[7]);
-			stm.executeUpdate();
-		} catch (Exception e) {
-			
-			bandera = false;
-			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("PersonasDAO, actualizarPersona()");
-		} finally {
-			
-			this.cerrar();
-		}
-		return bandera;
-	}
-	
-	public int registrarPersona(String infoPersona[]) {
-		
-		int registro = 0;
-		
-		try {
-			
-			this.conectar();
-			PreparedStatement stm = this.conexion.prepareStatement("INSERT INTO persona ("
-																 + "nombre, "
-																 + "apellido, "
-																 + "dni, "
-																 + "dirección, "
-																 + "fechaNacimiento, "
-																 + "teléfono, "
-																 + "email)"
-																 + " VALUES (?, ?, ?, ?, ?, ?, ?)");
-			stm.setString(1, infoPersona[0]);
-			stm.setString(2, infoPersona[1]);
-			stm.setString(3, infoPersona[2]);
-			stm.setString(4, infoPersona[3]);
-			stm.setString(5, infoPersona[4]);
-			stm.setString(6, infoPersona[5]);
-			stm.setString(7, infoPersona[6]);
-			stm.executeUpdate();
-			ResultSet rs = stm.executeQuery("SELECT MAX(idPersona) FROM persona");
-			
-			if(rs.next())
-				registro = rs.getInt(1);
-			
-		} catch (Exception e) {
-			
-			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("PersonasDAO, registrarPersona()");
-		} finally {
-			
-			this.cerrar();
-		}
-		return registro;
-	}
-
-*/

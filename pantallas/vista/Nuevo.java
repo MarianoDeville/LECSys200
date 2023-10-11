@@ -254,7 +254,6 @@ public class Nuevo extends VentanaModelo {
 		txt2 = new JTextField();
 		contenedor.putConstraint(SpringLayout.NORTH, txt2, -2, SpringLayout.NORTH, lblTxt2);
 		contenedor.putConstraint(SpringLayout.WEST, txt2, 5, SpringLayout.EAST, lblTxt2);
-		contenedor.putConstraint(SpringLayout.EAST, txt2, 150, SpringLayout.WEST, txt2);
 		txt2.setVisible(false);
 		panel.add(txt2);
 		configurarJTextField(txt2, 20);

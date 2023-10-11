@@ -57,11 +57,12 @@ public class OperadorSistema extends Conexion {
 			case "CambioPasswordDAO.guardarNuevaContraseña":
 			case "EstadisticasDAO.isNuevoMes":
 			case "EstadisticasDAO.getUltima":	
-			case "GrupoFamiliarDAO.setActualizarDeuda":
+			case "GrupoFamiliarMySQL.updateDeuda":
 			case "OperadorSistema.checkUsuario":
 			case "PersonaMySQL.getListadoCumpleAños":
 			case "UsuariosMySQL.updateTiempoPass":
 			case "UsuariosMySQL.isNombreUsado":
+			case "PersonaMySQL.isDNIDuplicado":
 				bandera = true;
 				break;
 									// Permisos para Administración.	///////////////////////////////////////////////
@@ -136,18 +137,18 @@ public class OperadorSistema extends Conexion {
 				bandera = permisos[2][1] | permisos[2][2];
 				break;
 
-			case "GrupoFamiliarDAO.getIntegrantes":
-			case "GrupoFamiliarDAO.getGruposFamilias":
-			case "GrupoFamiliarDAO.isNombreFamilia":
+			case "GrupoFamiliarMySQL.getIntegrantes":
+			case "GrupoFamiliarMySQL.getListado":
+			case "GrupoFamiliarMySQL.isNombreFamilia":
 				bandera = checkLectura(1) | checkLectura(2);
 				break;
 				
-			case "GrupoFamiliarDAO.setGrupoFamiliar":
+			case "GrupoFamiliarMySQL.setGrupoFamiliar":
 				bandera = permisos[1][1] | permisos[2][1];
 				break;
 				
-			case "GrupoFamiliarDAO.setEliminarIntegrante":
-			case "GrupoFamiliarDAO.setActualizarGrupo":
+			case "GrupoFamiliarMySQL.eliminarIntegrante":
+			case "GrupoFamiliarMySQL.update":
 				bandera = permisos[1][2] | permisos[2][2];
 				break;
 									// Permisos para Configuración.		///////////////////////////////////////////////		
@@ -270,18 +271,6 @@ public class OperadorSistema extends Conexion {
 			case "ProveedoresDAO.setActualizarProveedor":
 				bandera = permisos[7][2];
 				break;	
-									// Permisos para Personas.	///////////////////////////////////////////////
-			case "PersonasDAO.getDNIDuplicado":
-				bandera = checkLectura(2) | checkLectura(6);
-				break;
-
-			case "PersonasDAO.registrarPersona":
-				bandera = permisos[2][1] | permisos[6][1];
-				break;
-				
-			case "PersonasDAO.actualizarPersona":
-				bandera = permisos[2][2] | permisos[6][2];
-				break;
 
 			default:
 				DtosActividad dtosActividad = new DtosActividad();

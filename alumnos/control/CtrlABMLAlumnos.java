@@ -73,7 +73,7 @@ public class CtrlABMLAlumnos implements ActionListener {
 		ventana.tabla.getColumnModel().getColumn(3).setPreferredWidth(65);
 		ventana.tabla.getColumnModel().getColumn(3).setMaxWidth(70);
 		ventana.tabla.getColumnModel().getColumn(5).setPreferredWidth(80);
-		ventana.tabla.getColumnModel().getColumn(5).setMaxWidth(80);
+		ventana.tabla.getColumnModel().getColumn(5).setMaxWidth(100);
 		ventana.tabla.getColumnModel().getColumn(7).setPreferredWidth(80);
 		ventana.tabla.getColumnModel().getColumn(7).setMaxWidth(80);
 		ventana.tabla.setDefaultEditor(Object.class, null);
@@ -145,8 +145,8 @@ public class CtrlABMLAlumnos implements ActionListener {
 			JOptionPane.showMessageDialog(null, "Debe seleccionar un elemento para editar.");
 			return;
 		}
-		elemento = -1;
 		dtosAlumnos.setAlumnoSeleccionado(elemento);
+		elemento = -1;
 		ventanaEditarAlumno = new Nuevo("Edición de alumno.");
 		CtrlEditarAlumno ctrolEditarAlumno = new CtrlEditarAlumno(ventanaEditarAlumno);
 		ctrolEditarAlumno.iniciar();

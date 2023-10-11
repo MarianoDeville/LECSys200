@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import control.CtrlLogErrores;
 import modelo.Alumno;
+import modelo.CursoXtnd;
 import modelo.DtosActividad;
 
 public class AlumnoMySQL extends Conexion implements AlumnoDAO {
@@ -62,6 +63,7 @@ public class AlumnoMySQL extends Conexion implements AlumnoDAO {
 			while (rs.next()) {
 					
 				alumnos[i] = new Alumno();
+				alumnos[i].setCurso(new CursoXtnd());
 				alumnos[i].setLegajo(rs.getInt(1));	
 				alumnos[i].setNombre(rs.getString(2));
 				alumnos[i].setApellido(rs.getString(3));	
@@ -74,6 +76,7 @@ public class AlumnoMySQL extends Conexion implements AlumnoDAO {
 				alumnos[i].setEstado(rs.getInt(10));
 				alumnos[i].setFechaIngreso(rs.getString(11));
 				alumnos[i].setFechaBaja(rs.getString(12));
+				alumnos[i].setIdCurso(rs.getInt(13));
 				alumnos[i].getCurso().setId(rs.getInt(13));
 				alumnos[i].getCurso().setAño(rs.getString(14));
 				alumnos[i].getCurso().setNivel(rs.getString(15));
@@ -99,25 +102,24 @@ public class AlumnoMySQL extends Conexion implements AlumnoDAO {
 		long tiempo = System.currentTimeMillis();
 		boolean bandera = true;
 		DtosActividad dtosActividad = new DtosActividad();
-
+		String pprStm = "INSERT INTO `lecsys2.00`.persona "
+						+ "(dni, nombre, apellido, dirección, fechaNacimiento, teléfono, email)"
+						+ " VALUES (?, ?, ?, ?, ?, ?, ?)";
 		try {
 			
 			this.conectar();
-			
-			PreparedStatement stm = this.conexion.prepareStatement("INSERT INTO `lecsys2.00`.persona "
-					+ "(nombre, apellido, dni, dirección, fechaNacimiento, teléfono, email)"
-					+ " VALUES (?, ?, ?, ?, ?, ?, ?)");
-			stm.setString(1, alumno.getNombre());
-			stm.setString(2, alumno.getApellido());
-			stm.setString(3, alumno.getDni());
+			PreparedStatement stm = this.conexion.prepareStatement(pprStm);
+			stm.setString(1, alumno.getDni());
+			stm.setString(2, alumno.getNombre());
+			stm.setString(3, alumno.getApellido());
 			stm.setString(4, alumno.getDireccion());
 			stm.setString(5, alumno.getFechaNacimiento());
 			stm.setString(6, alumno.getTelefono());
 			stm.setString(7, alumno.getEmail());
 			stm.executeUpdate();
-			stm = this.conexion.prepareStatement("INSERT INTO `lecsys2.00`.alumnos "
-					+ "(idCurso, dni, fechaIngreso, estado) "
-					+ "VALUES (?, ?, DATE(NOW()), ?)");
+			pprStm = "INSERT INTO `lecsys2.00`.alumnos (idCurso, dni, fechaIngreso, estado) "
+					+ "VALUES (?, ?, DATE(NOW()), ?)";
+			stm = this.conexion.prepareStatement(pprStm);
 			stm.setInt(1, alumno.getIdCurso());
 			stm.setString(2, alumno.getDni());
 			stm.setInt(3, 0);
@@ -126,6 +128,7 @@ public class AlumnoMySQL extends Conexion implements AlumnoDAO {
 	
 			CtrlLogErrores.guardarError(e.getMessage());
 			CtrlLogErrores.guardarError("AlumnoMySQL, setNuevo()");
+			CtrlLogErrores.guardarError(pprStm);
 			bandera = false;
 		} finally {
 			
@@ -136,41 +139,30 @@ public class AlumnoMySQL extends Conexion implements AlumnoDAO {
 		dtosActividad.registrarActividad("Registro nuevo alumno.", "Alumnos", tiempo);
 		return bandera;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	@Override
 	public boolean update(Alumno alumno) {
 
 		boolean bandera = true;
 		long tiempo = System.currentTimeMillis();
 		DtosActividad dtosActividad = new DtosActividad();
-		
+		String pprStm = "UPDATE `lecsys2.00`.persona SET "
+					 + "nombre = ?, apellido = ?, dirección = ?, fechaNacimiento = ?, teléfono = ?, email = ? "
+					 + "WHERE dni = ?";
 		try {
 
 			this.conectar();
-			
-			PreparedStatement stm = this.conexion.prepareStatement("UPDATE `lecsys2.00`.persona SET "
-					 + "nombre = ?, apellido = ?, dni = ?, dirección = ?, fechaNacimiento = ?, teléfono = ?, email = ? "
-					 + "WHERE idPersona = ?");
+			PreparedStatement stm = this.conexion.prepareStatement(pprStm);
 			stm.setString(1, alumno.getNombre());
 			stm.setString(2, alumno.getApellido());
-			stm.setString(3, alumno.getDni());
-			stm.setString(4, alumno.getDireccion());
-			stm.setString(5, alumno.getFechaNacimiento());
-			stm.setString(6, alumno.getTelefono());
-			stm.setString(7, alumno.getEmail());
+			stm.setString(3, alumno.getDireccion());
+			stm.setString(4, alumno.getFechaNacimiento());
+			stm.setString(5, alumno.getTelefono());
+			stm.setString(6, alumno.getEmail());
+			stm.setString(7, alumno.getDni());
 			stm.executeUpdate();
-			stm = this.conexion.prepareStatement("UPDATE `lecsys2.00`.alumnos SET idCurso = ?, estado = ?, fechaBaja = ? "
-					+ "WHERE legajo = ?");
+			pprStm = "UPDATE `lecsys2.00`.alumnos SET idCurso = ?, estado = ?, fechaBaja = ? WHERE legajo = ?";
+			stm = this.conexion.prepareStatement(pprStm);
 			stm.setInt(1, alumno.getIdCurso());
 			stm.setInt(2, alumno.getEstado());
 			stm.setString(3, alumno.getFechaBaja());
@@ -180,6 +172,7 @@ public class AlumnoMySQL extends Conexion implements AlumnoDAO {
 	
 			CtrlLogErrores.guardarError(e.getMessage());
 			CtrlLogErrores.guardarError("AlumnosDAO, setActualizarAlumno()");
+			CtrlLogErrores.guardarError(pprStm);
 			bandera = false;
 		} finally {
 			
@@ -189,6 +182,18 @@ public class AlumnoMySQL extends Conexion implements AlumnoDAO {
 		dtosActividad.registrarActividad("Actualizacion de datos de alumno.", "Alumnos", tiempo);
 		return bandera;
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	@Override
 	public Alumno [] getListado( boolean estado, int grupo, String busqueda) {

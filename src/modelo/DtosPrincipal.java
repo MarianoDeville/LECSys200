@@ -3,7 +3,7 @@ package modelo;
 import control.EmailSenderService;
 import dao.BackupDB;
 import dao.EstadisticasDAO;
-import dao.GrupoFamiliarDAO;
+import dao.GrupoFamiliarMySQL;
 import dao.UsuariosMySQL;
 
 public class DtosPrincipal {
@@ -15,7 +15,7 @@ public class DtosPrincipal {
 
 		if(estadisticasDAO.isNuevoMes()) {
 
-			GrupoFamiliarDAO grupoFamiliarDAO = new GrupoFamiliarDAO();
+			GrupoFamiliarMySQL grupoFamiliarDAO = new GrupoFamiliarMySQL();
 			UsuariosMySQL usuariosDAO = new UsuariosMySQL();
 			grupoFamiliarDAO.setActualizarDeuda(0, 1);
 			usuariosDAO.updateTiempoPass();

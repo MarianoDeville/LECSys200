@@ -6,7 +6,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
-
 import modelo.DtosAlumno;
 import vista.InformeAlumno;
 import vista.Listado;
@@ -15,8 +14,7 @@ public class CtrlListado implements ActionListener {
 
 	private Listado ventana;
 	private DtosAlumno dtosAlumno;
-	private int elemento;
-	private boolean bandera;
+	private int elemento = -1;
 	
 	public CtrlListado(Listado vista) {
 		
@@ -32,11 +30,9 @@ public class CtrlListado implements ActionListener {
 		        if (e.getClickCount() == 1) {
 
 					elemento = ventana.tabla.getSelectedRow();
-					bandera = true;
 		        } else if(e.getClickCount() == 2) {
 		        	
 		        	elemento = ventana.tabla.getSelectedRow();
-		        	bandera = true;
 		        	informe();
 		        }
 		    }
@@ -61,9 +57,10 @@ public class CtrlListado implements ActionListener {
 	
 	private void actualizar() {
 		
+		elemento = -1;
 		ventana.tabla.setModel(dtosAlumno.getListadoAlumnos((String)ventana.comboBox1.getSelectedItem() 
-																,dtosAlumno.getIdValorCriterio((String)ventana.comboBox1.getSelectedItem()
-																,ventana.comboBox2.getSelectedIndex())));
+															,dtosAlumno.getIdCriterio((String)ventana.comboBox1.getSelectedItem(),
+																						ventana.comboBox2.getSelectedIndex())));
 		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(40);
 		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(50);
 		ventana.tabla.setDefaultEditor(Object.class, null);
@@ -72,13 +69,13 @@ public class CtrlListado implements ActionListener {
 	
 	public void actionPerformed(ActionEvent e) {
 
-		if(e.getSource() == ventana.comboBox1) {
+		if(e.getSource() == ventana.comboBox1 && ventana.isVisible()) {
 
 			ventana.comboBox2.setModel(new DefaultComboBoxModel<String>(dtosAlumno.getListadoValorCriterio((String)ventana.comboBox1.getSelectedItem())));
 			actualizar();
 		}
 		
-		if(e.getSource() == ventana.comboBox2) {
+		if(e.getSource() == ventana.comboBox2 && ventana.isVisible()) {
 
 			actualizar();
 		}
@@ -108,14 +105,13 @@ public class CtrlListado implements ActionListener {
 	
 	private void informe() {
 		
-		if(!bandera) {
+		if(elemento == -1) {
 			
 			JOptionPane.showMessageDialog(null, "Debe seleccionar un alumno.");
 			return;
 		}
-		
-		dtosAlumno.setLegajo((String)ventana.tabla.getValueAt(elemento, 0));
-		dtosAlumno.recuperarInformacionAlumno( true);
+		dtosAlumno.setAlumnoSeleccionado(elemento);
+		elemento = -1;
 		InformeAlumno ventanaInforme = new InformeAlumno("Informe académico");
 		CtrlInformeAlumno ctrlInforme = new CtrlInformeAlumno(ventanaInforme);
 		ctrlInforme.iniciar();

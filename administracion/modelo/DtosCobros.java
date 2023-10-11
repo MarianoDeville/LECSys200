@@ -58,7 +58,7 @@ import javax.swing.table.TableModel;
 import control.CtrlLogErrores;
 import dao.AdministracionDAO;
 import dao.AlumnoMySQL;
-import dao.GrupoFamiliarDAO;
+import dao.GrupoFamiliarMySQL;
 
 public class DtosCobros {
 	
@@ -88,7 +88,7 @@ public class DtosCobros {
 	public boolean setBorrarDeuda() {
 		
 		long tiempo = System.currentTimeMillis();
-		GrupoFamiliarDAO grupoFamiliarDAO = new GrupoFamiliarDAO();
+		GrupoFamiliarMySQL grupoFamiliarDAO = new GrupoFamiliarMySQL();
 
 		if(!grupoFamiliarDAO.setActualizarDeuda(idFamilia, -cantidadCuotasSeleccionadas))
 			return false;
@@ -194,7 +194,7 @@ public class DtosCobros {
 		if(!administracionDAO.setCobro())
 			return false;
 		nroCobro = administracionDAO.getUltimoRegistro();
-		GrupoFamiliarDAO grupoFamiliarDAO = new GrupoFamiliarDAO();
+		GrupoFamiliarMySQL grupoFamiliarDAO = new GrupoFamiliarMySQL();
 		
 		if(!grupoFamiliarDAO.setActualizarDeuda(idFamilia, -cantidadCuotasSeleccionadas))
 			return false;
@@ -294,7 +294,7 @@ public class DtosCobros {
 		cantidadCuotas = Integer.parseInt(tablaRespuesta[elementoSeleccionado][3]);
 		sumaCuotas = Float.parseFloat(tablaRespuesta[elementoSeleccionado][4].replace(",", "."));
 		descuentoGrupo = Integer.parseInt(tablaRespuesta[elementoSeleccionado][5]);		
-		GrupoFamiliarDAO grupoFamiliarDAO = new GrupoFamiliarDAO();
+		GrupoFamiliarMySQL grupoFamiliarDAO = new GrupoFamiliarMySQL();
 		matrizSelec = grupoFamiliarDAO.getIntegrantes(idFamilia + "");	
 		integrantes = matrizSelec.length;
 		email = matrizSelec[0][7];
@@ -302,7 +302,7 @@ public class DtosCobros {
 
 	public TableModel getTablaDeudores(String busqueda, boolean pagoAdelantado) {
 		
-		GrupoFamiliarDAO grupoFamiliarDAO = new GrupoFamiliarDAO();
+		GrupoFamiliarMySQL grupoFamiliarDAO = new GrupoFamiliarMySQL();
 		String titulo[] = new String[] {"Nombre", "Integrantes",  "Cuotas" ,"Valor cuota", "Desc.", "Total"};
 		tablaRespuesta = grupoFamiliarDAO.getGruposFamilias("", "", pagoAdelantado, busqueda);
 		String cuerpo[][] = new String[tablaRespuesta.length][8];
@@ -329,7 +329,7 @@ public class DtosCobros {
 	
 	public boolean guardarCobroGrupoExistente() {
 		
-		GrupoFamiliarDAO grupoFamiliarDAO = new GrupoFamiliarDAO();
+		GrupoFamiliarMySQL grupoFamiliarDAO = new GrupoFamiliarMySQL();
 
 		if(!grupoFamiliarDAO.setActualizarGrupo(idFamilia, nombre, cantElementosSel + integrantes, descuentoGrupo, email, "1"))
 			return false;
@@ -359,7 +359,7 @@ public class DtosCobros {
 		if(reinscripción) {
 			
 			titulo = new String[] {"Id", "Nombre", "Cant. Integrantes",  "Email" , "Sel"};
-			GrupoFamiliarDAO grupoFamiliarDAO = new GrupoFamiliarDAO();
+			GrupoFamiliarMySQL grupoFamiliarDAO = new GrupoFamiliarMySQL();
 			tablaRespuesta = grupoFamiliarDAO.getGruposFamilias("ESTADO", "0", true, busqueda);
 		} else {
 		
@@ -581,7 +581,7 @@ public class DtosCobros {
 			
 			if(idFamilia != 0) {
 			
-				GrupoFamiliarDAO grupoFamiliarDAO = new GrupoFamiliarDAO();
+				GrupoFamiliarMySQL grupoFamiliarDAO = new GrupoFamiliarMySQL();
 				matrizSelec = grupoFamiliarDAO.getIntegrantes(idFamilia + "");
 				descuentoGrupo = Integer.parseInt(matrizSelec[0][6]);
 				email = matrizSelec[0][7];
@@ -681,7 +681,7 @@ public class DtosCobros {
  
 	public boolean guardarCobroGrupo() {
 		
-		GrupoFamiliarDAO grupoFamiliarDAO = new GrupoFamiliarDAO();
+		GrupoFamiliarMySQL grupoFamiliarDAO = new GrupoFamiliarMySQL();
 		AdministracionDAO administracionDAO = new AdministracionDAO();
 
 		if(reinscripción) {
@@ -708,7 +708,7 @@ public class DtosCobros {
 
 	public String validarInformación(boolean validarNombre, boolean validarInscripcion) {
 		
-		GrupoFamiliarDAO grupoFamiliaDAO = new GrupoFamiliarDAO();
+		GrupoFamiliarMySQL grupoFamiliaDAO = new GrupoFamiliarMySQL();
 	
 		if(grupoFamiliaDAO.isNombreFamilia(nombre) && !reinscripción && validarNombre)
 			return "El nombre de familia ya está en uso.";

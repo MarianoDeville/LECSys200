@@ -1,11 +1,18 @@
 package modelo;
 
 import javax.swing.table.DefaultTableModel;
-import dao.AlumnosDAO;
+import dao.AlumnoDAO;
 import dao.GrupoFamiliarDAO;
+import dao.GrupoFamiliarMySQL;
 
 public class DtosGrupoFamiliar {
 
+	private static GrupoFamiliar familia;
+	private GrupoFamiliar familias[];
+	private String msgError;
+	
+	
+/*	
 	private static String listaIntegrantes[][];
 	private static String listaAlumnos[][];
 	private static String eliminarElementos[];
@@ -18,9 +25,127 @@ public class DtosGrupoFamiliar {
 	private static String email;
 	private static String descuento;
 	private String listaAcciones[];
-	private String msgError;
 	private int elementoSeleccionado;
+*/
+	
+	public DefaultTableModel getTablaGrupoFamiliar(boolean est, String busqueda) {
+		
+		GrupoFamiliarDAO grupoFamiliarDAO = new GrupoFamiliarMySQL();
+		String titulo[] = new String[] {"Nombre", "Integrantes"};
+		
+		familias = grupoFamiliarDAO.getListado("", "", est, busqueda);
+		
+		String cuerpo[][] = new String[familias.length][2];
 
+		for(int i = 0 ; i < familias.length ; i++) {
+			
+			cuerpo[i][0] = familias[i].getNombre();
+			cuerpo[i][1] = "";
+			String integrantes[][] = grupoFamiliarDAO.getGrupoFamiliar(listaIntegrantes[i][0]);
+			
+			for(int e = 0; e < integrantes.length ; e++) {
+			
+				cuerpo[i][1] += integrantes[e][1] + " " + integrantes[e][2];
+				
+				if(e < integrantes.length - 1) {
+					
+					cuerpo[i][1] += ", ";
+				}
+			}
+		}
+		DefaultTableModel tablaModelo = new DefaultTableModel(cuerpo, titulo) {
+			private static final long serialVersionUID = 1L;
+			public boolean isCellEditable(int row, int column) {
+				
+				return column > 1? true: false;
+			}
+			
+			public Class<?> getColumnClass(int column) {
+				
+				return column > 1? Boolean.class: String.class;
+		    }
+		};
+		return tablaModelo;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public DefaultTableModel getTablaGrupoFamiliar(boolean est, String busqueda, boolean sel) {
+		
+		GrupoFamiliarDAO grupoFamiliarDAO = new GrupoFamiliarMySQL();
+		String titulo[] = null;
+		
+		if(sel)
+			titulo = new String[] {"Nombre", "Integrantes", "Sel"};
+		else
+			titulo = new String[] {"Nombre", "Integrantes"};
+		
+		familias = grupoFamiliarDAO.getListado("", "", est, busqueda);
+		
+		Object cuerpo[][] = new Object[listaIntegrantes.length][3];
+
+		for(int i = 0 ; i < listaIntegrantes.length ; i++) {
+			
+			cuerpo[i][0] = listaIntegrantes[i][1];
+			cuerpo[i][1] = "";
+			cuerpo[i][2] = false;
+			String integrantes[][] = grupoFamiliarDAO.getGrupoFamiliar(listaIntegrantes[i][0]);
+			
+			for(int e = 0; e < integrantes.length ; e++) {
+			
+				cuerpo[i][1] += integrantes[e][1] + " " + integrantes[e][2];
+				
+				if(e < integrantes.length - 1) {
+					
+					cuerpo[i][1] += ", ";
+				}
+			}
+		}
+		DefaultTableModel tablaModelo = new DefaultTableModel(cuerpo, titulo) {
+			private static final long serialVersionUID = 1L;
+			public boolean isCellEditable(int row, int column) {
+				
+				return column > 1? true: false;
+			}
+			
+			public Class<?> getColumnClass(int column) {
+				
+				return column > 1? Boolean.class: String.class;
+		    }
+		};
+		return tablaModelo;
+	}
+	
+	
 	public boolean guardarCambios() {
 
 		boolean bandera = true;
@@ -204,51 +329,6 @@ public class DtosGrupoFamiliar {
 		integrantes = listaIntegrantes[elementoSeleccionado][2];
 		email = listaIntegrantes[elementoSeleccionado][6];
 		descuento = listaIntegrantes[elementoSeleccionado][5];
-	}
-	
-	public DefaultTableModel getTablaGrupoFamiliar(boolean est, String busqueda, boolean sel) {
-		
-		estado = est?"1":"0";
-		GrupoFamiliarDAO grupoFamiliarDAO = new GrupoFamiliarDAO();
-		String titulo[] = null;
-		
-		if(sel)
-			titulo = new String[] {"Nombre", "Integrantes", "Sel"};
-		else
-			titulo = new String[] {"Nombre", "Integrantes"};
-		listaIntegrantes = grupoFamiliarDAO.getGruposFamilias("", "", est, busqueda);
-		Object cuerpo[][] = new Object[listaIntegrantes.length][3];
-
-		for(int i = 0 ; i < listaIntegrantes.length ; i++) {
-			
-			cuerpo[i][0] = listaIntegrantes[i][1];
-			cuerpo[i][1] = "";
-			cuerpo[i][2] = false;
-			String integrantes[][] = grupoFamiliarDAO.getIntegrantes(listaIntegrantes[i][0]);
-			
-			for(int e = 0; e < integrantes.length ; e++) {
-			
-				cuerpo[i][1] += integrantes[e][1] + " " + integrantes[e][2];
-				
-				if(e < integrantes.length - 1) {
-					
-					cuerpo[i][1] += ", ";
-				}
-			}
-		}
-		DefaultTableModel tablaModelo = new DefaultTableModel(cuerpo, titulo) {
-			private static final long serialVersionUID = 1L;
-			public boolean isCellEditable(int row, int column) {
-				
-				return column > 1? true: false;
-			}
-			
-			public Class<?> getColumnClass(int column) {
-				
-				return column > 1? Boolean.class: String.class;
-		    }
-		};
-		return tablaModelo;
 	}
 
 	public void setElementoSeleccionado(int elemento) {

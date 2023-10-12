@@ -5,22 +5,16 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import control.CtrlLogErrores;
 import modelo.Alumno;
+import modelo.CursoXtnd;
 import modelo.DtosActividad;
-import modelo.DtosCobros;
 import modelo.GrupoFamiliar;
 
 public class GrupoFamiliarMySQL extends Conexion implements GrupoFamiliarDAO{
 
-	
-	
-	
-	
-	
-	
 	@Override
 	public GrupoFamiliar [] getListado(String campo, String valor, boolean sinDeuda, String campoBusqueda) {
 
-		String matriz[][]=null;
+		GrupoFamiliar familia[] = null;
 		String armoWhere = null;
 		
 		if(campo.equals("ID")) {
@@ -37,127 +31,144 @@ public class GrupoFamiliarMySQL extends Conexion implements GrupoFamiliarDAO{
 			armoWhere = "WHERE (grupoFamiliar.estado = 1 AND deuda " + (sinDeuda? "= 0":"> 0") + " AND nombreFamilia LIKE '%" + campoBusqueda + "%') ";
 		}
 		
-		String comandoStatement = "SELECT grupoFamiliar.idGrupoFamiliar, nombreFamilia, integrantes, deuda, SUM(precio), descuento , grupoFamiliar.email " +
-								  "FROM grupoFamiliar " + 
-								  "JOIN alumnos ON alumnos.idGrupoFamiliar = grupoFamiliar.idGrupoFamiliar " + 
-								  "JOIN curso ON alumnos.idCurso = curso.idCurso " + 
-								  "JOIN valorCuota ON curso.idCurso = valorCuota.idCurso " + 
-								  armoWhere +
-								  "GROUP BY grupoFamiliar.idGrupoFamiliar " +
-								  "ORDER BY grupoFamiliar.nombreFamilia";
+		String cmdStm = "SELECT grupoFamiliar.idGrupoFamiliar, nombreFamilia, integrantes, deuda, SUM(precio), descuento , grupoFamiliar.email "
+						+ "FROM grupoFamiliar "
+						+ "JOIN alumnos ON alumnos.idGrupoFamiliar = grupoFamiliar.idGrupoFamiliar "
+						+ "JOIN curso ON alumnos.idCurso = curso.idCurso "
+						+ "JOIN valorCuota ON curso.idCurso = valorCuota.idCurso " 
+						+ armoWhere 
+						+ "GROUP BY grupoFamiliar.idGrupoFamiliar "
+						+ "ORDER BY grupoFamiliar.nombreFamilia";
 		
 		try {
 		
 			this.conectar();
 			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stm.executeQuery(comandoStatement);
+			ResultSet rs = stm.executeQuery(cmdStm);
 			rs.last();	
-			matriz = new String[rs.getRow()][7];
+			familia = new GrupoFamiliar[rs.getRow()];
 			rs.beforeFirst();
 			int i=0;
 
 			while (rs.next()) {
 					
-				matriz[i][0] = rs.getString(1);
-				matriz[i][1] = rs.getString(2);
-				matriz[i][2] = rs.getString(3);
-				matriz[i][3] = rs.getString(4);
-				matriz[i][4] = String.format("%.2f", rs.getFloat(5));
-				matriz[i][5] = rs.getString(6);
-				matriz[i][6] = rs.getString(7);
+				familia[i] = new GrupoFamiliar();
+				familia[i].setId(rs.getInt(1));
+				familia[i].setNombre(rs.getString(2));
+				familia[i].setCantIntegrantes(rs.getInt(3));
+				familia[i].setDeuda(rs.getInt(4));
+				familia[i].setSumaPrecioCuotas(rs.getFloat(5));
+				familia[i].setDescuento(rs.getInt(6));
+				familia[i].setEmail(rs.getString(7));
 				i++;
 			}
+			
+			
+			
+			
+			
 		}catch (Exception e) {
 			
 			CtrlLogErrores.guardarError(e.getMessage());
 			CtrlLogErrores.guardarError("GrupoFamiliarMySQL, getListado()");
-			CtrlLogErrores.guardarError(comandoStatement);
+			CtrlLogErrores.guardarError(cmdStm);
 		} finally {
 			
 			this.cerrar();
 		}
-		return matriz;
+		return familia;
 	}
 	
 	@Override
-	public Alumno [] getIntegrantes(String id) {
+	public GrupoFamiliar getGrupoFamiliar(int id) {
 
-		String respuesta[][] = null;
-		String comandoStatement = "SELECT alumnos.idAlumno, apellido, nombre, dirección, año, nivel, precio, descuento , grupoFamiliar.email, nombreFamilia " +
-								  "FROM grupoFamiliar " + 
-								  "JOIN alumnos ON alumnos.idGrupoFamiliar = grupoFamiliar.idGrupoFamiliar " +
-								  "JOIN persona ON persona.idPersona = alumnos.idpersona " + 
-								  "JOIN curso ON alumnos.idCurso = curso.idCurso " + 
-								  "JOIN valorCuota ON curso.idCurso = valorCuota.idCurso " + 
-								  "WHERE grupoFamiliar.idGrupoFamiliar = " + id;
+		GrupoFamiliar familia = new GrupoFamiliar();
+		String cmdStm = "SELECT nombreFamilia, integrantes, deuda, estado, descuento, email, "
+						+ "legajo, apellido, persona.nombre, dirección, alumno.dni"
+						+ "año, nivel, precio"
+						+ "FROM grupoFamiliar " 
+						+ "JOIN alumnos ON alumnos.idGrupoFamiliar = grupoFamiliar.idGrupoFamiliar "
+						+ "JOIN persona ON persona.dni = alumnos.dni "
+						+ "JOIN valorCuota ON alumnos.idCurso = valorCuota.idCurso " 
+						+ "WHERE grupoFamiliar.idGrupoFamiliar = " + id;
 				  
 		try {
 		
 			this.conectar();
 			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stm.executeQuery(comandoStatement);
+			ResultSet rs = stm.executeQuery(cmdStm);
 			rs.last();	
-			respuesta = new String[rs.getRow()][9];
+			familia.setIntegrantes(new Alumno[rs.getRow()]);
 			rs.beforeFirst();
 			int i=0;
 			
 			while (rs.next()) {
-				
-				respuesta[i][0] = rs.getString(1);
-				respuesta[i][1] = rs.getString(2);
-				respuesta[i][2] = rs.getString(3);
-				respuesta[i][3] = rs.getString(4);
-				respuesta[i][4] = rs.getString(5) + " " + rs.getString(6);
-				respuesta[i][5] = String.format("%.2f", rs.getFloat(7));
-				respuesta[i][6] = rs.getString(8);
-				respuesta[i][7] = rs.getString(9);
-				respuesta[i][8] = rs.getString(10);
+
+				familia.setId(id);
+				familia.setNombre(rs.getString(1));
+				familia.setCantIntegrantes(rs.getInt(2));
+				familia.setDeuda(rs.getInt(3));
+				familia.setDescuento(rs.getInt(4));
+				familia.setDescuento(rs.getInt(5));
+				familia.setEmail(rs.getString(6));
+				familia.getIntegrantes()[i] = new Alumno(); 
+				familia.getIntegrantes()[i].setLegajo(rs.getInt(7));
+				familia.getIntegrantes()[i].setApellido(rs.getString(8));
+				familia.getIntegrantes()[i].setNombre(rs.getString(9));
+				familia.getIntegrantes()[i].setDireccion(rs.getString(10));
+				familia.getIntegrantes()[i].setDni(rs.getString(11));
+				familia.getIntegrantes()[i].setCurso(new CursoXtnd());
+				familia.getIntegrantes()[i].getCurso().setAño(rs.getString(12));
+				familia.getIntegrantes()[i].getCurso().setNivel(rs.getString(13));
+				familia.getIntegrantes()[i].getCurso().setPrecio(rs.getFloat(14));
 				i++;
 			}
 		}catch (Exception e) {
 		
 			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("GrupoFamiliarMySQL, getIntegrantes()");
-			CtrlLogErrores.guardarError(comandoStatement);
+			CtrlLogErrores.guardarError("GrupoFamiliarMySQL, getGrupoFamiliar()");
+			CtrlLogErrores.guardarError(cmdStm);
 		} finally {
 		
 			this.cerrar();
 		}
-		return respuesta;
+		return familia;
 	}
-	
+
 	@Override
 	public boolean setGrupoFamiliar(GrupoFamiliar familia) {
 
 		boolean bandera = true;
 		long tiempo = System.currentTimeMillis();
-		DtosCobros dtosNuevoGrupoFamilar = new DtosCobros();
 		DtosActividad dtosActividad = new DtosActividad();
+		String pprStm = "INSERT INTO grupoFamiliar (nombreFamilia, integrantes, deuda, estado, descuento, email) "
+				 		+ "VALUES (?, ?, 0, 1, ?, ?)";
 		int id = 0;
 		
 		try {
 			
 			this.conectar();
-			PreparedStatement stm = this.conexion.prepareStatement("INSERT INTO grupoFamiliar (nombreFamilia, integrantes, deuda, estado, descuento, email) "
-																 + "VALUES (?, ?, 0, 1, ?, ?)");
-			stm.setString(1, dtosNuevoGrupoFamilar.getNombre());
-			stm.setInt(2, dtosNuevoGrupoFamilar.getCantidadElementosSeleccionados());
-			stm.setInt(3, dtosNuevoGrupoFamilar.getDescuentoGrupo());
-			stm.setString(4, dtosNuevoGrupoFamilar.getEmail());
+			PreparedStatement stm = this.conexion.prepareStatement(pprStm);
+			stm.setString(1, familia.getNombre());
+			stm.setInt(2, familia.getCantIntegrantes());
+			stm.setInt(3, familia.getDeuda());
+			stm.setInt(4, familia.getDescuento());
+			stm.setString(5, familia.getEmail());
 			stm.executeUpdate();
-			String listaIdAlumnos[] = dtosNuevoGrupoFamilar.getIdElementosSeleccionados();
-			ResultSet rs = stm.executeQuery("SELECT MAX(idGrupoFamiliar) FROM grupoFamiliar");
+			pprStm = "SELECT MAX(idGrupoFamiliar) FROM grupoFamiliar";
+			ResultSet rs = stm.executeQuery(pprStm);
 			
 			if(rs.next())
 				id = rs.getInt(1);
+			familia.setId(id);
+			pprStm = "UPDATE alumnos SET idGrupoFamiliar = ?, estado = 1 WHERE (legajo = ?)";
 			
-			dtosNuevoGrupoFamilar.setIdFamilia(id);
-			
-			for(int i = 0 ; i < listaIdAlumnos.length ; i++) {
+			for(int i = 0 ; i < familia.getIntegrantes().length ; i++) {
 				
-				stm = this.conexion.prepareStatement("UPDATE alumnos SET idGrupoFamiliar = ?, estado = 1 WHERE (idAlumno = ?)");
+				
+				stm = this.conexion.prepareStatement(pprStm);
 				stm.setInt(1, id);
-				stm.setInt(2, Integer.parseInt(listaIdAlumnos[i]));
+				stm.setInt(2, familia.getIntegrantes()[i].getLegajo());
 				stm.executeUpdate();
 			}
 			
@@ -165,6 +176,7 @@ public class GrupoFamiliarMySQL extends Conexion implements GrupoFamiliarDAO{
 			
 			CtrlLogErrores.guardarError(e.getMessage());
 			CtrlLogErrores.guardarError("GrupoFamiliarMySQL, setGrupoFamiliar()");
+			CtrlLogErrores.guardarError(pprStm);
 			bandera = false;
 		} finally {
 			
@@ -188,17 +200,17 @@ public class GrupoFamiliarMySQL extends Conexion implements GrupoFamiliarDAO{
 			PreparedStatement stm = this.conexion.prepareStatement("UPDATE grupoFamiliar "
 																 + "SET nombreFamilia = ?, integrantes = ?, estado = ?, descuento = ?, email = ? "
 																 + "WHERE idGrupoFamiliar = ?");
-			stm.setString(1, nombre);
-			stm.setInt(2, integrantes);
-			stm.setInt(3, Integer.parseInt(estado));
-			stm.setFloat(4, descuentoGrupo);
-			stm.setString(5, email);
-			stm.setInt(6, idFamilia);
+			stm.setString(1, familia.getNombre());
+			stm.setInt(2, familia.getCantIntegrantes());
+			stm.setInt(3, familia.getEstado());
+			stm.setFloat(4, familia.getDescuento());
+			stm.setString(5, familia.getEmail());
+			stm.setInt(6, familia.getId());
 			stm.executeUpdate();
 		} catch (Exception e) {
 	
 			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("GrupoFamiliarMySQL, setActualizarGrupo()");
+			CtrlLogErrores.guardarError("GrupoFamiliarMySQL, update()");
 			bandera = false;
 		} finally {
 			
@@ -253,13 +265,13 @@ public class GrupoFamiliarMySQL extends Conexion implements GrupoFamiliarDAO{
 		boolean bandera = true;
 		long tiempo = System.currentTimeMillis();
 		DtosActividad dtosActividad = new DtosActividad();
-		String comandoStatement = "SELECT integrantes FROM grupoFamiliar WHERE idGrupoFamiliar = ?";
+		String pprStm = "SELECT integrantes FROM grupoFamiliar WHERE idGrupoFamiliar = ?";
 		int cant = 0;
 
 		try {
 			
 			this.conectar();
-			PreparedStatement stm = this.conexion.prepareStatement(comandoStatement);
+			PreparedStatement stm = this.conexion.prepareStatement(pprStm);
 			stm.setInt(1, idGrupo);			
 			ResultSet rs = stm.executeQuery();
 			
@@ -268,21 +280,21 @@ public class GrupoFamiliarMySQL extends Conexion implements GrupoFamiliarDAO{
 
 			if(cant > 0) {
 				
-				comandoStatement = "UPDATE grupoFamiliar SET integrantes = ? WHERE idGrupoFamiliar = ?";
+				pprStm = "UPDATE grupoFamiliar SET integrantes = ? WHERE idGrupoFamiliar = ?";
 			} else {
 				
-				comandoStatement = "UPDATE grupoFamiliar SET integrantes = ?, estado = 0 WHERE idGrupoFamiliar = ?";
+				pprStm = "UPDATE grupoFamiliar SET integrantes = ?, estado = 0 WHERE idGrupoFamiliar = ?";
 			}
-			stm = this.conexion.prepareStatement(comandoStatement);
+			stm = this.conexion.prepareStatement(pprStm);
 			stm.setInt(1, cant);
-			stm.setString(2, idGrupo);
+			stm.setInt(2, idGrupo);
 			stm.executeUpdate();
 			
 		} catch (Exception e) {
 	
 			CtrlLogErrores.guardarError(e.getMessage());
 			CtrlLogErrores.guardarError("GrupoFamiliarMySQL, setEliminarIntegrante()");
-			CtrlLogErrores.guardarError(comandoStatement);
+			CtrlLogErrores.guardarError(pprStm);
 			bandera = false;
 		} finally {
 			
@@ -297,13 +309,13 @@ public class GrupoFamiliarMySQL extends Conexion implements GrupoFamiliarDAO{
 	public boolean isNombreFamilia(String nombre) {
 		
 		boolean bandera = false;
-		String comandoStatement = "SELECT idGrupoFamiliar FROM grupoFamiliar WHERE nombreFamilia = '" + nombre + "'";
+		String cmdStm = "SELECT idGrupoFamiliar FROM grupoFamiliar WHERE nombreFamilia = '" + nombre + "'";
 		
 		try {
 			
 			this.conectar();
 			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stm.executeQuery(comandoStatement);
+			ResultSet rs = stm.executeQuery(cmdStm);
 
 			if(rs.next())
 				bandera = true;
@@ -312,7 +324,7 @@ public class GrupoFamiliarMySQL extends Conexion implements GrupoFamiliarDAO{
 			
 			CtrlLogErrores.guardarError(e.getMessage());
 			CtrlLogErrores.guardarError("GrupoFamiliarMySQL, isNombreFamilia()");
-			CtrlLogErrores.guardarError(comandoStatement);
+			CtrlLogErrores.guardarError(cmdStm);
 		} finally {
 			
 			this.cerrar();

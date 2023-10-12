@@ -6,9 +6,15 @@ public class GrupoFamiliar {
 	private String nombre;
 	private int cantIntegrantes;
 	private int deuda;
+	private Float sumaPrecioCuotas;
 	private int estado;
 	private int descuento;
 	private String email;
+	private Alumno integrantes[];
+	
+	public GrupoFamiliar() {
+		
+	}
 	
 	public GrupoFamiliar(int id, String nombre, int cantIntegrantes, int deuda, int estado, int descuento, String email) {
 		
@@ -60,6 +66,16 @@ public class GrupoFamiliar {
 		
 		this.deuda = deuda;
 	}
+
+	public Float getSumaPrecioCuotas() {
+		
+		return sumaPrecioCuotas;
+	}
+
+	public void setSumaPrecioCuotas(Float sumaPrecioCuotas) {
+		
+		this.sumaPrecioCuotas = sumaPrecioCuotas;
+	}
 	
 	public int getEstado() {
 		
@@ -89,5 +105,15 @@ public class GrupoFamiliar {
 	public void setEmail(String email) {
 		
 		this.email = email;
+	}
+
+	public Alumno[] getIntegrantes() {
+		
+		return integrantes;
+	}
+
+	public void setIntegrantes(Alumno integrantes[]) {
+		
+		this.integrantes = integrantes;
 	}
 }

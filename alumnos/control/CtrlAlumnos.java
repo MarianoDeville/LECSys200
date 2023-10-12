@@ -87,8 +87,8 @@ public class CtrlAlumnos implements ActionListener {
 		if(e.getSource() == ventana.btn1D) {
 			
 			ABML ventanaGrupoFamiliar = new ABML("Gestión de grupos familiares");
-//			CtrlGrupoFamiliar ctrlGrupoFamiliar = new CtrlGrupoFamiliar(ventanaGrupoFamiliar);
-//			ctrlGrupoFamiliar.iniciar();
+			CtrlGrupoFamiliar ctrlGrupoFamiliar = new CtrlGrupoFamiliar(ventanaGrupoFamiliar);
+			ctrlGrupoFamiliar.iniciar();
 		}
 		
 		if(e.getSource() == ventana.btn2A) {

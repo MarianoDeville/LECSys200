@@ -295,7 +295,7 @@ public class DtosCobros {
 		sumaCuotas = Float.parseFloat(tablaRespuesta[elementoSeleccionado][4].replace(",", "."));
 		descuentoGrupo = Integer.parseInt(tablaRespuesta[elementoSeleccionado][5]);		
 		GrupoFamiliarMySQL grupoFamiliarDAO = new GrupoFamiliarMySQL();
-		matrizSelec = grupoFamiliarDAO.getIntegrantes(idFamilia + "");	
+		matrizSelec = grupoFamiliarDAO.getGrupoFamiliar(idFamilia + "");	
 		integrantes = matrizSelec.length;
 		email = matrizSelec[0][7];
 	}
@@ -582,7 +582,7 @@ public class DtosCobros {
 			if(idFamilia != 0) {
 			
 				GrupoFamiliarMySQL grupoFamiliarDAO = new GrupoFamiliarMySQL();
-				matrizSelec = grupoFamiliarDAO.getIntegrantes(idFamilia + "");
+				matrizSelec = grupoFamiliarDAO.getGrupoFamiliar(idFamilia + "");
 				descuentoGrupo = Integer.parseInt(matrizSelec[0][6]);
 				email = matrizSelec[0][7];
 				sumaCuotas = 0;

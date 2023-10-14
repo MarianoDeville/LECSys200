@@ -240,11 +240,9 @@ public class AlumnoMySQL extends Conexion implements AlumnoDAO {
 		}
 		return alumnos;
 	}
-	
 
-	
 	@Override
-	public boolean setActualizarFamila(String idFamilia, String idAlumnos[], String estado) {
+	public boolean updateFamilia(int idFamilia, Alumno alumnos[], int estado) {
 
 		boolean bandera = true;
 		long tiempo = System.currentTimeMillis();
@@ -255,13 +253,13 @@ public class AlumnoMySQL extends Conexion implements AlumnoDAO {
 			this.conectar();
 			PreparedStatement stm = this.conexion.prepareStatement("UPDATE `lecsys2.00`.alumnos "
 																 + "SET estado = ?, idGrupoFamiliar = ? "
-																 + "WHERE idAlumno = ?");
-			stm.setString(1, estado);
-			stm.setString(2, idFamilia);
+																 + "WHERE legajo = ?");
+			stm.setInt(1, estado);
+			stm.setString(2, idFamilia == 0? null: idFamilia + "");
 			
-			for(int i = 0; i < idAlumnos.length; i++) {
+			for(int i = 0; i < alumnos.length; i++) {
 				
-				stm.setString(3, idAlumnos[i]);
+				stm.setInt(3, alumnos[i].getLegajo());
 				stm.executeUpdate();
 			}
 		} catch (Exception e) {
@@ -278,6 +276,10 @@ public class AlumnoMySQL extends Conexion implements AlumnoDAO {
 		return bandera;
 	}
 
+	
+	
+	
+	
 	@Override
 	public boolean resetEstado() {
 

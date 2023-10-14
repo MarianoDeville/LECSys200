@@ -14,7 +14,7 @@ public class GrupoFamiliarMySQL extends Conexion implements GrupoFamiliarDAO{
 	@Override
 	public GrupoFamiliar [] getListado(String campo, String valor, boolean sinDeuda, String campoBusqueda) {
 
-		GrupoFamiliar familia[] = null;
+		GrupoFamiliar familias[] = null;
 		String armoWhere = null;
 		
 		if(campo.equals("ID")) {
@@ -30,12 +30,11 @@ public class GrupoFamiliarMySQL extends Conexion implements GrupoFamiliarDAO{
 		
 			armoWhere = "WHERE (grupoFamiliar.estado = 1 AND deuda " + (sinDeuda? "= 0":"> 0") + " AND nombreFamilia LIKE '%" + campoBusqueda + "%') ";
 		}
-		
 		String cmdStm = "SELECT grupoFamiliar.idGrupoFamiliar, nombreFamilia, integrantes, deuda, SUM(precio), descuento , grupoFamiliar.email "
-						+ "FROM grupoFamiliar "
-						+ "JOIN alumnos ON alumnos.idGrupoFamiliar = grupoFamiliar.idGrupoFamiliar "
-						+ "JOIN curso ON alumnos.idCurso = curso.idCurso "
-						+ "JOIN valorCuota ON curso.idCurso = valorCuota.idCurso " 
+						+ "FROM `lecsys2.00`.grupoFamiliar "
+						+ "JOIN `lecsys2.00`.alumnos ON alumnos.idGrupoFamiliar = grupoFamiliar.idGrupoFamiliar "
+						+ "JOIN `lecsys2.00`.curso ON alumnos.idCurso = curso.idCurso "
+						+ "JOIN `lecsys2.00`.valorCuota ON curso.idCurso = valorCuota.idCurso " 
 						+ armoWhere 
 						+ "GROUP BY grupoFamiliar.idGrupoFamiliar "
 						+ "ORDER BY grupoFamiliar.nombreFamilia";
@@ -46,27 +45,51 @@ public class GrupoFamiliarMySQL extends Conexion implements GrupoFamiliarDAO{
 			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			ResultSet rs = stm.executeQuery(cmdStm);
 			rs.last();	
-			familia = new GrupoFamiliar[rs.getRow()];
+			familias = new GrupoFamiliar[rs.getRow()];
 			rs.beforeFirst();
 			int i=0;
 
 			while (rs.next()) {
 					
-				familia[i] = new GrupoFamiliar();
-				familia[i].setId(rs.getInt(1));
-				familia[i].setNombre(rs.getString(2));
-				familia[i].setCantIntegrantes(rs.getInt(3));
-				familia[i].setDeuda(rs.getInt(4));
-				familia[i].setSumaPrecioCuotas(rs.getFloat(5));
-				familia[i].setDescuento(rs.getInt(6));
-				familia[i].setEmail(rs.getString(7));
+				familias[i] = new GrupoFamiliar();
+				familias[i].setId(rs.getInt(1));
+				familias[i].setNombre(rs.getString(2));
+				familias[i].setCantIntegrantes(rs.getInt(3));
+				familias[i].setDeuda(rs.getInt(4));
+				familias[i].setSumaPrecioCuotas(rs.getFloat(5));
+				familias[i].setDescuento(rs.getInt(6));
+				familias[i].setEmail(rs.getString(7));
 				i++;
 			}
+			for(int e = 0; e < familias.length; e++) {
 			
-			
-			
-			
-			
+				cmdStm = "SELECT legajo, apellido, nombre, dirección, alumno.dni"
+						+ "año, nivel, precio"
+						+ "FROM `lecsys2.00`.alumnos "
+						+ "JOIN `lecsys2.00`.persona ON persona.dni = alumnos.dni "
+						+ "JOIN `lecsys2.00`.valorCuota ON alumnos.idCurso = valorCuota.idCurso " 
+						+ "WHERE alumnos.idGrupoFamiliar = " + familias[e].getId();
+				rs = stm.executeQuery(cmdStm);
+				rs.last();	
+				familias[i].setIntegrantes(new Alumno[rs.getRow()]);
+				rs.beforeFirst();
+				i=0;
+				
+				while (rs.next()) {
+	
+					familias[e].getIntegrantes()[i] = new Alumno(); 
+					familias[e].getIntegrantes()[i].setLegajo(rs.getInt(7));
+					familias[e].getIntegrantes()[i].setApellido(rs.getString(8));
+					familias[e].getIntegrantes()[i].setNombre(rs.getString(9));
+					familias[e].getIntegrantes()[i].setDireccion(rs.getString(10));
+					familias[e].getIntegrantes()[i].setDni(rs.getString(11));
+					familias[e].getIntegrantes()[i].setCurso(new CursoXtnd());
+					familias[e].getIntegrantes()[i].getCurso().setAño(rs.getString(12));
+					familias[e].getIntegrantes()[i].getCurso().setNivel(rs.getString(13));
+					familias[e].getIntegrantes()[i].getCurso().setPrecio(rs.getFloat(14));
+					i++;
+				}
+			}
 		}catch (Exception e) {
 			
 			CtrlLogErrores.guardarError(e.getMessage());
@@ -76,7 +99,7 @@ public class GrupoFamiliarMySQL extends Conexion implements GrupoFamiliarDAO{
 			
 			this.cerrar();
 		}
-		return familia;
+		return familias;
 	}
 	
 	@Override
@@ -165,7 +188,6 @@ public class GrupoFamiliarMySQL extends Conexion implements GrupoFamiliarDAO{
 			
 			for(int i = 0 ; i < familia.getIntegrantes().length ; i++) {
 				
-				
 				stm = this.conexion.prepareStatement(pprStm);
 				stm.setInt(1, id);
 				stm.setInt(2, familia.getIntegrantes()[i].getLegajo());
@@ -193,13 +215,14 @@ public class GrupoFamiliarMySQL extends Conexion implements GrupoFamiliarDAO{
 		boolean bandera = true;
 		long tiempo = System.currentTimeMillis();
 		DtosActividad dtosActividad = new DtosActividad();
+		String pprStm = "UPDATE grupoFamiliar "
+					 + "SET nombreFamilia = ?, integrantes = ?, estado = ?, descuento = ?, email = ? "
+					 + "WHERE idGrupoFamiliar = ?";
 
 		try {
 
 			this.conectar();
-			PreparedStatement stm = this.conexion.prepareStatement("UPDATE grupoFamiliar "
-																 + "SET nombreFamilia = ?, integrantes = ?, estado = ?, descuento = ?, email = ? "
-																 + "WHERE idGrupoFamiliar = ?");
+			PreparedStatement stm = this.conexion.prepareStatement(pprStm);
 			stm.setString(1, familia.getNombre());
 			stm.setInt(2, familia.getCantIntegrantes());
 			stm.setInt(3, familia.getEstado());
@@ -211,6 +234,7 @@ public class GrupoFamiliarMySQL extends Conexion implements GrupoFamiliarDAO{
 	
 			CtrlLogErrores.guardarError(e.getMessage());
 			CtrlLogErrores.guardarError("GrupoFamiliarMySQL, update()");
+			CtrlLogErrores.guardarError(pprStm);
 			bandera = false;
 		} finally {
 			
@@ -239,7 +263,6 @@ public class GrupoFamiliarMySQL extends Conexion implements GrupoFamiliarDAO{
 			
 			if(rs.next()) 
 				nuevaDeuda = rs.getInt(1) + modificarDeuda;
-
 			comandoStatement = "UPDATE grupoFamiliar SET deuda = ? " + where;
 			stm = this.conexion.prepareStatement(comandoStatement);
 			stm.setInt(1, nuevaDeuda);
@@ -258,52 +281,6 @@ public class GrupoFamiliarMySQL extends Conexion implements GrupoFamiliarDAO{
 		dtosActividad.registrarActividad("Actualización de la deuda del grupo familiar.", "Adminnistración", tiempo);
 		return bandera;
 	}
-	
-	@Override
-	public boolean eliminarIntegrante(int idGrupo) {
-
-		boolean bandera = true;
-		long tiempo = System.currentTimeMillis();
-		DtosActividad dtosActividad = new DtosActividad();
-		String pprStm = "SELECT integrantes FROM grupoFamiliar WHERE idGrupoFamiliar = ?";
-		int cant = 0;
-
-		try {
-			
-			this.conectar();
-			PreparedStatement stm = this.conexion.prepareStatement(pprStm);
-			stm.setInt(1, idGrupo);			
-			ResultSet rs = stm.executeQuery();
-			
-			if(rs.next())
-				cant = rs.getInt(1) - 1;
-
-			if(cant > 0) {
-				
-				pprStm = "UPDATE grupoFamiliar SET integrantes = ? WHERE idGrupoFamiliar = ?";
-			} else {
-				
-				pprStm = "UPDATE grupoFamiliar SET integrantes = ?, estado = 0 WHERE idGrupoFamiliar = ?";
-			}
-			stm = this.conexion.prepareStatement(pprStm);
-			stm.setInt(1, cant);
-			stm.setInt(2, idGrupo);
-			stm.executeUpdate();
-			
-		} catch (Exception e) {
-	
-			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("GrupoFamiliarMySQL, setEliminarIntegrante()");
-			CtrlLogErrores.guardarError(pprStm);
-			bandera = false;
-		} finally {
-			
-			this.cerrar();
-		}
-		tiempo = System.currentTimeMillis() - tiempo;
-		dtosActividad.registrarActividad("Actualización de la cantidad de integrantes del grupo familiar.", "Alumnos", tiempo);
-		return bandera;
-	}
 
 	@Override
 	public boolean isNombreFamilia(String nombre) {
@@ -319,7 +296,6 @@ public class GrupoFamiliarMySQL extends Conexion implements GrupoFamiliarDAO{
 
 			if(rs.next())
 				bandera = true;
-				
 		}catch (Exception e) {
 			
 			CtrlLogErrores.guardarError(e.getMessage());

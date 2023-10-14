@@ -15,10 +15,8 @@ public class CtrlEditarGrupoFamiliar implements ActionListener {
 
 	private ListadoDoble ventana;
 	private DtosGrupoFamiliar dtosGrupoFamiliar;
-	private int elemento1;
-	private boolean bandera1;
-	private int elemento2;
-	private boolean bandera2;
+	private int elemento1 = -1;
+	private int elemento2 = -1;
 	
 	public CtrlEditarGrupoFamiliar(ListadoDoble vista) {
 		
@@ -37,20 +35,14 @@ public class CtrlEditarGrupoFamiliar implements ActionListener {
 		});
 		this.ventana.tabla1.addMouseListener(new MouseAdapter() {
 		    public void mouseClicked(MouseEvent e) {
-		        if (e.getClickCount() == 1) {
-
+		        if (e.getClickCount() == 1)
 					elemento1 = ventana.tabla1.getSelectedRow();
-					bandera1 = true;
-		        }
 		    }
 		});
 		this.ventana.tabla2.addMouseListener(new MouseAdapter() {
 		    public void mouseClicked(MouseEvent e) {
-		        if (e.getClickCount() == 1) {
-
+		        if (e.getClickCount() == 1)
 					elemento2 = ventana.tabla2.getSelectedRow();
-					bandera2 = true;
-		        }
 		    }
 		});
 	}
@@ -70,8 +62,8 @@ public class CtrlEditarGrupoFamiliar implements ActionListener {
 	
 	private void actualizar() {
 
-		bandera1 = false;
-		bandera2 = false;
+		elemento1 = -1;
+		elemento2 = -1;
 		ventana.tabla1.setModel(dtosGrupoFamiliar.getTablaFamilia());
 		ventana.tabla1.getColumnModel().getColumn(0).setPreferredWidth(40);
 		ventana.tabla1.getColumnModel().getColumn(0).setMaxWidth(50);
@@ -88,13 +80,13 @@ public class CtrlEditarGrupoFamiliar implements ActionListener {
 	
 	public void actionPerformed(ActionEvent e) {
 		
-		if(e.getSource() == ventana.btnAgregar) {
+		if(e.getSource() == ventana.btnAgregar && ventana.isVisible()) {
 			
 			agregarElementoSeleccionado();
 			actualizar();
 		}
 		
-		if(e.getSource() == ventana.btnQuitar) {
+		if(e.getSource() == ventana.btnQuitar && ventana.isVisible()) {
 			
 			eliminarElemento();
 			actualizar();
@@ -113,31 +105,28 @@ public class CtrlEditarGrupoFamiliar implements ActionListener {
 	
 	private void agregarElementoSeleccionado() {
 		
-		if(!bandera2) {
+		if(elemento2 == -1) {
 			
 			JOptionPane.showMessageDialog(null, "Debe seleccionar un elemento.");
 			return;
 		}
-		bandera2 = false;
-		dtosGrupoFamiliar.setElementoSeleccionado(elemento2);
 
-		if( dtosGrupoFamiliar.isRepetido(ventana.tabla2.getValueAt(elemento2, 0)) ) {
+		if(dtosGrupoFamiliar.isRepetido(elemento2) ) {
 			
 			JOptionPane.showMessageDialog(null, "El elemento seleccionado ya fue agregado.");
 			return;
 		}
-		dtosGrupoFamiliar.setAgregarElementos();
+		dtosGrupoFamiliar.setAgregarElementos(elemento2);
+		elemento2 = -1;
 	}
 	
 	private void eliminarElemento() {
 
-		if(!bandera1) {
+		if(elemento1 == -1) {
 			
 			JOptionPane.showMessageDialog(null, "Debe seleccionar un elemento.");
 			return;
 		}
-		bandera1 = false;
-		dtosGrupoFamiliar.setElementoSeleccionado(elemento1);
 		
 		if(ventana.tabla1.getValueAt(elemento1, 3).equals("E")) {
 			
@@ -150,7 +139,8 @@ public class CtrlEditarGrupoFamiliar implements ActionListener {
 			JOptionPane.showMessageDialog(null, "No se puede eliminar un elemento que se acaba de guardar.");
 			return;
 		}
-		dtosGrupoFamiliar.setEliminarElementos();
+		dtosGrupoFamiliar.setEliminarElementos(elemento1);
+		elemento1 = -1;
 	}
 	
 	private void guardarCambios() {

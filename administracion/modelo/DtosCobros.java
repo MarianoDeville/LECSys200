@@ -341,7 +341,7 @@ public class DtosCobros {
 			idAlumnos[i] = matrizSelec[i][0];
 		}
 
-		if(!alumnosDAO.setActualizarFamila(idFamilia+"", idAlumnos, "1"))
+		if(!alumnosDAO.updateFamilia(idFamilia+"", idAlumnos, "1"))
 			return false;
 		AdministracionDAO administracionDAO = new AdministracionDAO();
 		

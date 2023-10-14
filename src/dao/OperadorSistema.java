@@ -137,7 +137,7 @@ public class OperadorSistema extends Conexion {
 				bandera = permisos[2][1] | permisos[2][2];
 				break;
 
-			case "GrupoFamiliarMySQL.getIntegrantes":
+			case "GrupoFamiliarMySQL.getGrupoFamiliar":
 			case "GrupoFamiliarMySQL.getListado":
 			case "GrupoFamiliarMySQL.isNombreFamilia":
 				bandera = checkLectura(1) | checkLectura(2);
@@ -147,7 +147,6 @@ public class OperadorSistema extends Conexion {
 				bandera = permisos[1][1] | permisos[2][1];
 				break;
 				
-			case "GrupoFamiliarMySQL.eliminarIntegrante":
 			case "GrupoFamiliarMySQL.update":
 				bandera = permisos[1][2] | permisos[2][2];
 				break;

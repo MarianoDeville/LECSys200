@@ -9,6 +9,5 @@ public interface GrupoFamiliarDAO {
 	public boolean setGrupoFamiliar(GrupoFamiliar familia);
 	public boolean update(GrupoFamiliar familia);
 	public boolean updateDeuda(int idGrupo, int modificarDeuda);
-	public boolean eliminarIntegrante(int idGrupo);
 	public boolean isNombreFamilia(String nombre);
 }

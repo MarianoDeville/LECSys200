@@ -22,7 +22,7 @@ public class DtosGrupoFamiliar {
 		grupoFamiliarDAO = new GrupoFamiliarMySQL();
 		familias = grupoFamiliarDAO.getListado("", "", est, busqueda);
 		String titulo[] = new String[] {"Nombre", "Integrantes"};
-		String cuerpo[][] = new String[familias.length][2];
+		String cuerpo[][] = new String[familias.length][3];
 
 		for(int i = 0 ; i < familias.length ; i++) {
 			
@@ -37,8 +37,8 @@ public class DtosGrupoFamiliar {
 					cuerpo[i][1] += ", ";
 			}
 		}
-		DefaultTableModel tablaModelo = new DefaultTableModel(cuerpo, titulo);
-		return tablaModelo;
+		DefaultTableModel tablaFamilia = new DefaultTableModel(cuerpo, titulo);
+		return tablaFamilia;
 	}
 	
 	public void setFamiliaSeleccionada(int pos) {

@@ -67,7 +67,7 @@ public class OperadorSistema extends Conexion {
 				break;
 									// Permisos para Administración.	///////////////////////////////////////////////
 			case "CtrlAdministracion.iniciar":
-			case "AdministracionDAO.getTablaCobros":
+			case "CobrosMySQL.getListado":
 			case "ComprasDAO.getOrdenesCompra":
 			case "ComprasDAO.getListadoAños":
 			case "ComprasDAO.getMontoCompra":
@@ -86,17 +86,17 @@ public class OperadorSistema extends Conexion {
 				bandera = checkLectura(1);
 				break;
 
-			case "AdministracionDAO.getUltimoRegistro":
+			case "CobrosMySQL.getUltimoRegistro":
 				bandera = checkLectura(1) | permisos[2][1];
 				break;
 			
-			case "AdministracionDAO.setCobro":
+			case "CobrosMySQL.setCobro":
 			case "PagosDAO.setPagoProveedor":
 			case "PagosDAO.setPagoEmpleado":
 				bandera = permisos[1][1] | permisos[2][1];
 				break;
 				
-			case "AdministracionDAO.setActualizarFacturas":
+			case "CobrosMySQL.update":
 				bandera = permisos[1][2];
 				break;
 				

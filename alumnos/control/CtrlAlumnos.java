@@ -108,8 +108,8 @@ public class CtrlAlumnos implements ActionListener {
 		if(e.getSource() == ventana.btn2C) {
 			
 			Listado ventanaCobrarHabilitar = new Listado("Cobro y habilitación");
-//			CtrlCobrarHabilitar ctrolCobrarHabilitar = new CtrlCobrarHabilitar(ventanaCobrarHabilitar);
-//			ctrolCobrarHabilitar.iniciar();
+			CtrlCobrarHabilitar ctrolCobrarHabilitar = new CtrlCobrarHabilitar(ventanaCobrarHabilitar);
+			ctrolCobrarHabilitar.iniciar();
 		}
 		
 		if(e.getSource() == ventana.btn2D) {

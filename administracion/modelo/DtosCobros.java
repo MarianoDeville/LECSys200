@@ -1,54 +1,3 @@
-/*****************************************************************************************************************************************************************/
-//										LISTADO DE MÉTODOS
-/*---------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-//	public boolean setBorrarDeuda()
-//	public boolean setActualizarFacturas(String listaFacturas[])
-// 	public int getMesActual()
-//	public String [] getMeses()
-//	public String [] getAños()
-//	public TableModel getTablaCobros()
-//	public int getMontoTotal()
-//	public String getCalculoCobro()
-//	public void setCantidadCuotasSeleccionadas(String cantidad)
-//	public String setRecargoMora(String recargo)
-//	public String [] getListadoConceptos()
-//	public int getIntegrantes()
-//	public TableModel getTablaDeudores(String busqueda, boolean pagoAdelantado)
-//	public void SetIntegrantes(String integrantes)
-//	public boolean guardarCobroGrupoExistente()
-//	public TableModel getTablaAlumnos(boolean reinscripción, boolean todos, String busqueda)
-//	public TableModel getTablaSeleccionados()
-//	public String getEmail()
-//	public String getNombre()
-//	public String getFactura()
-//	public String getHoraActual()
-//	public String getCuerpoEmail()
-//	public String getDescripcion()
-//	public String getNumeroRecibo()
-//	public String getFechaActual(String formato)
-//	public String [] getIdElementosSeleccionados()
-//	public int getIdFamilia()
-//	public int getSumaCuotas()
-//	public int getCalculoMontoTotal()
-//	public int getDescuentoGrupo()
-//	public int getCantidadElementos()
-//	public int getCantidadElementosSeleccionados()
-//	public void setIdFamilia(int id)
-//	public void setEmail(String mail)
-//	public void setBorrarSeleccionados()
-//	public void setEnviarEmail(boolean enviar)
-//	public void setNombre(String nombreFamilia)
-//	public void setFactura(String numeroFactura)
-//	public void setAlumnosSeleccionados(boolean seleccionados[])
-//	public String setInscripcion(String inscrip)
-//	public String setDescuentoGrupo(String descuento)
-//	public String setDescuentoContado(String desContado)
-//	public boolean guardarCobroGrupo()
-//	public boolean isReinscripcion()
-//	public String validarInformación()
-//	public void setElementoSeleccionado(int elemento)
-/*****************************************************************************************************************************************************************/
-
 package modelo;
 
 import java.util.Calendar;
@@ -56,19 +5,35 @@ import java.util.GregorianCalendar;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import control.CtrlLogErrores;
-import dao.AdministracionDAO;
+import dao.CobrosMySQL;
+import dao.GrupoFamiliarDAO;
+import dao.AlumnoDAO;
 import dao.AlumnoMySQL;
 import dao.GrupoFamiliarMySQL;
 
 public class DtosCobros {
 	
+	private GrupoFamiliarDAO grupoFamiliarDAO;
+	
+	private static Cobros cobro;
+	private Cobros cobros[];
+	
+	private static GrupoFamiliar familia;
+	private GrupoFamiliar familias[];
+	private Alumno alumnos[];
+	
+	private static boolean reinscripción;
+	
+	
+	
+	
+	/*
 	private static String matrizSelec[][] = null;
 	private static String email;
 	private static String nombre;
 	private static String descripcion;
 	private static String factura;
 	private static boolean enviarEmail;
-	private static boolean reinscripción;
 	private static int idFamilia;
 	private static int cantElementosSel;
 	private static int descuentoGrupo;
@@ -84,11 +49,244 @@ public class DtosCobros {
 	private int elementoSeleccionado;
 	private int cantidadCuotasSeleccionadas = 1;
 	private Calendar fechaSistema;
+	*/
 
+	
+	
+	
+	public TableModel getTablaAlumnos(boolean reinscripción, boolean todos, String busqueda) {
+		
+		String titulo[] = null;
+		Object cuerpo[][] = null;
+		DtosCobros.reinscripción = reinscripción;
+	
+		if(reinscripción) {
+			
+			titulo = new String[] {"Id", "Nombre familiar", "Cant. Integrantes",  "Email", "Sel"};
+			grupoFamiliarDAO = new GrupoFamiliarMySQL();
+			familias = grupoFamiliarDAO.getListado("ESTADO", "0", true, busqueda);
+			cuerpo = new Object[familias.length][5];	
+		} else {
+		
+			titulo = new String[] {"Leg.","Apellido","Nombre", "Dirección", "Sel"};
+			AlumnoDAO alumnosDAO = new AlumnoMySQL();
+			alumnos = alumnosDAO.getListado("GF", "", false, "apellido", busqueda);
+			cuerpo = new Object[alumnos.length][5];
+		}
+		
+		for(int i = 0; i < (reinscripción? familias:alumnos).length; i++) {
+
+			cuerpo[i][0] = reinscripción? familias[i].getId(): alumnos[i].getLegajo();
+			cuerpo[i][1] = reinscripción? familias[i].getNombre(): alumnos[i].getApellido();
+			cuerpo[i][2] = reinscripción? familias[i].getCantIntegrantes(): alumnos[i].getNombre();
+			cuerpo[i][3] = reinscripción? familias[i].getEmail(): alumnos[i].getDireccion();
+			cuerpo[i][4] = todos;
+		}
+		DefaultTableModel tablaAlumnos = new DefaultTableModel(cuerpo, titulo){
+				
+			private static final long serialVersionUID = 1L;
+			public boolean isCellEditable(int row, int column) {
+				
+				return column == 4? true: false;
+			}
+			public Class<?> getColumnClass(int column) {
+				
+				return column == 4? Boolean.class: String.class;
+		    }
+		};
+		return tablaAlumnos;
+	}
+
+	public void setSeleccionados(boolean seleccionados[]) {
+		
+		if(reinscripción) {
+
+			for(int i = 0 ; i < familias.length ; i++) {
+				
+				if(seleccionados[i]) {
+				
+					familia = familias[i];
+					break;
+				}
+			}
+		} else {
+
+			int cantSel = 0;
+			
+			for(int i = 0 ; i < seleccionados.length ; i++) {
+				
+				if(seleccionados[i])
+					cantSel++;
+			}
+			Alumno alumnosElegidos[] = new Alumno[cantSel];
+			familia.setIntegrantes(alumnosElegidos);
+			int e = 0;
+	
+			for(int i = 0 ; i < alumnos.length ; i++) {
+					
+				if(seleccionados[i]) {
+				
+					alumnosElegidos[e] = alumnos[i];
+					e++;
+				}
+			}
+			familia = new GrupoFamiliar();
+			familia.setIntegrantes(alumnosElegidos);
+			familia.setEmail(cantSel==1? alumnosElegidos[0].getEmail(): "");
+			familia.setNombre(cantSel==1? alumnosElegidos[0].getNombre(): "");
+			familia.setDescuento(0);
+		}
+	}
+	
+	public TableModel getTablaSeleccionados() {
+		
+		String titulo[] = {"Leg.", "Apellido", "Nombre", "Drirección", "Curso", "Valor cuota"};
+		Object respuesta[][] = new Object[familia.getIntegrantes().length][6];
+		
+		for(int i =0; i < familia.getIntegrantes().length; i++) {
+			
+			respuesta[i][0] = familia.getIntegrantes()[i].getLegajo();
+			respuesta[i][1] = familia.getIntegrantes()[i].getApellido();
+			respuesta[i][2] = familia.getIntegrantes()[i].getNombre();
+			respuesta[i][3] = familia.getIntegrantes()[i].getDireccion();
+			respuesta[i][4] = familia.getIntegrantes()[i].getCurso().getAño() + " " +
+								familia.getIntegrantes()[i].getCurso().getNivel() + " " +
+								familia.getIntegrantes()[i].getCurso().getNombreProfesor();
+			respuesta[i][5] = familia.getIntegrantes()[i].getCurso().getPrecio();
+		}
+		DefaultTableModel tablaAlumnos = new DefaultTableModel(respuesta,titulo);
+		return tablaAlumnos;
+	}
+	
+	public DefaultTableModel getTablaFamilias(boolean est, String busqueda) {
+		
+		grupoFamiliarDAO = new GrupoFamiliarMySQL();
+		familias = grupoFamiliarDAO.getListado("", "", est, busqueda);
+		String titulo[] = new String[] {"Nombre", "Integrantes", "Sel"};
+		Object cuerpo[][] = new Object[familias.length][3];
+
+		for(int i = 0 ; i < familias.length ; i++) {
+			
+			cuerpo[i][0] = familias[i].getNombre();
+			cuerpo[i][1] = "";
+			cuerpo[i][2] = false;
+
+			for(int e = 0; e < familias.length ; e++) {
+			
+				cuerpo[i][1] += familias[e].getIntegrantes()[i].getNombre() + " " + familias[e].getIntegrantes()[i].getApellido();
+				
+				if(e < familias.length - 1)
+					cuerpo[i][1] += ", ";
+			}
+		}
+		DefaultTableModel tablaFamilia = new DefaultTableModel(cuerpo, titulo) {
+			
+			private static final long serialVersionUID = 1L;
+			public boolean isCellEditable(int row, int column) {
+				
+				return column == 4? true: false;
+			}
+			public Class<?> getColumnClass(int column) {
+				
+				return column == 4? Boolean.class: String.class;
+		    }
+		};
+		return tablaFamilia;
+	}
+	
+	public void setFamiliaSeleccionada(int pos) {
+		
+		familia = familias[pos];
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public String getNombre() {
+		
+		return familia.getNombre();
+	}
+	
+	public void setNombre(String nombreFamilia) {
+		
+		familia.setNombre(nombreFamilia);
+	}
+	
+	public String getEmail() {
+		
+		return familia.getEmail();
+	}
+	
+	public void setEmail(String mail) {
+		
+		familia.setEmail(mail);
+	}
+	
+	public int getDescuentoGrupo() {
+		
+		return familia.getDescuento();
+	}
+	
+	public String setDescuentoGrupo(String descuento) {
+		
+		String mensage = null;
+		descuentoGrupo = 0;
+		
+		if(descuento.length() > 0) {
+			
+			try {
+				
+				descuentoGrupo = Integer.parseInt(descuento);
+			} catch (Exception e) {
+
+				mensage = "El valor del descuento por grupo familiar debe ser numérico.";
+			}
+		}
+		return mensage;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public boolean setBorrarDeuda() {
 		
 		long tiempo = System.currentTimeMillis();
-		GrupoFamiliarMySQL grupoFamiliarDAO = new GrupoFamiliarMySQL();
+		grupoFamiliarDAO = new GrupoFamiliarMySQL();
 
 		if(!grupoFamiliarDAO.setActualizarDeuda(idFamilia, -cantidadCuotasSeleccionadas))
 			return false;
@@ -102,7 +300,7 @@ public class DtosCobros {
 	public boolean setActualizarFacturas(String listaFacturas[]) {
 		
 		int e = 0;
-		AdministracionDAO administracionDAO = new AdministracionDAO();
+		CobrosMySQL administracionDAO = new CobrosMySQL();
 		
 		for(int i = 0; i < listaFacturas.length; i++) {
 			
@@ -151,7 +349,7 @@ public class DtosCobros {
 	public TableModel getTablaCobros(int mes, Object año) {
 		
 		String titulo[] = new String[] {"Fecha", "Nombre", "Concepto", "Hora", "Monto", "Factura"};
-		AdministracionDAO administracionDAO = new AdministracionDAO();
+		CobrosMySQL administracionDAO = new CobrosMySQL();
 		int temp = 0;
 		montoTotal = 0;
 		
@@ -189,12 +387,12 @@ public class DtosCobros {
 	
 	public boolean guardarCobroCuota() {
 
-		AdministracionDAO administracionDAO = new AdministracionDAO();
+		CobrosMySQL administracionDAO = new CobrosMySQL();
 		
 		if(!administracionDAO.setCobro())
 			return false;
 		nroCobro = administracionDAO.getUltimoRegistro();
-		GrupoFamiliarMySQL grupoFamiliarDAO = new GrupoFamiliarMySQL();
+		grupoFamiliarDAO = new GrupoFamiliarMySQL();
 		
 		if(!grupoFamiliarDAO.setActualizarDeuda(idFamilia, -cantidadCuotasSeleccionadas))
 			return false;
@@ -294,7 +492,7 @@ public class DtosCobros {
 		cantidadCuotas = Integer.parseInt(tablaRespuesta[elementoSeleccionado][3]);
 		sumaCuotas = Float.parseFloat(tablaRespuesta[elementoSeleccionado][4].replace(",", "."));
 		descuentoGrupo = Integer.parseInt(tablaRespuesta[elementoSeleccionado][5]);		
-		GrupoFamiliarMySQL grupoFamiliarDAO = new GrupoFamiliarMySQL();
+		grupoFamiliarDAO = new GrupoFamiliarMySQL();
 		matrizSelec = grupoFamiliarDAO.getGrupoFamiliar(idFamilia + "");	
 		integrantes = matrizSelec.length;
 		email = matrizSelec[0][7];
@@ -302,7 +500,7 @@ public class DtosCobros {
 
 	public TableModel getTablaDeudores(String busqueda, boolean pagoAdelantado) {
 		
-		GrupoFamiliarMySQL grupoFamiliarDAO = new GrupoFamiliarMySQL();
+		grupoFamiliarDAO = new GrupoFamiliarMySQL();
 		String titulo[] = new String[] {"Nombre", "Integrantes",  "Cuotas" ,"Valor cuota", "Desc.", "Total"};
 		tablaRespuesta = grupoFamiliarDAO.getGruposFamilias("", "", pagoAdelantado, busqueda);
 		String cuerpo[][] = new String[tablaRespuesta.length][8];
@@ -329,7 +527,7 @@ public class DtosCobros {
 	
 	public boolean guardarCobroGrupoExistente() {
 		
-		GrupoFamiliarMySQL grupoFamiliarDAO = new GrupoFamiliarMySQL();
+		grupoFamiliarDAO = new GrupoFamiliarMySQL();
 
 		if(!grupoFamiliarDAO.setActualizarGrupo(idFamilia, nombre, cantElementosSel + integrantes, descuentoGrupo, email, "1"))
 			return false;
@@ -343,72 +541,14 @@ public class DtosCobros {
 
 		if(!alumnosDAO.updateFamilia(idFamilia+"", idAlumnos, "1"))
 			return false;
-		AdministracionDAO administracionDAO = new AdministracionDAO();
+		CobrosMySQL administracionDAO = new CobrosMySQL();
 		
 		if(!administracionDAO.setCobro())
 			return false;
 		nroCobro = administracionDAO.getUltimoRegistro();
 		return true;
 	}
-	
-	public TableModel getTablaAlumnos(boolean reinscripción, boolean todos, String busqueda) {
-		
-		String titulo[] = null;
-		DtosCobros.reinscripción = reinscripción;
-	
-		if(reinscripción) {
-			
-			titulo = new String[] {"Id", "Nombre", "Cant. Integrantes",  "Email" , "Sel"};
-			GrupoFamiliarMySQL grupoFamiliarDAO = new GrupoFamiliarMySQL();
-			tablaRespuesta = grupoFamiliarDAO.getGruposFamilias("ESTADO", "0", true, busqueda);
-		} else {
-		
-			titulo = new String[] {"Leg.","Apellido","Nombre", "Dirección", "Sel"};
-			AlumnoMySQL alumnosDAO = new AlumnoMySQL();
-			tablaRespuesta = alumnosDAO.getListado("GF", "", false, "apellido", busqueda);
-		}
-		Object cuerpo[][] = new Object[tablaRespuesta.length][5];
-		
-		for(int i = 0 ; i < tablaRespuesta.length ; i++) {
 
-			cuerpo[i][0] = (reinscripción)?tablaRespuesta[i][0]:tablaRespuesta[i][0];
-			cuerpo[i][1] = (reinscripción)?tablaRespuesta[i][1]:tablaRespuesta[i][2];
-			cuerpo[i][2] = (reinscripción)?tablaRespuesta[i][2]:tablaRespuesta[i][1];
-			cuerpo[i][3] = (reinscripción)?tablaRespuesta[i][6]:tablaRespuesta[i][4];
-			cuerpo[i][4] = todos;
-		}
-		DefaultTableModel tablaModelo = new DefaultTableModel(cuerpo, titulo){
-
-			private static final long serialVersionUID = 1L;
-			public boolean isCellEditable(int row, int column) {
-				
-				return column == 4? true: false;
-			}
-			public Class<?> getColumnClass(int column) {
-				
-				return column == 4? Boolean.class: String.class;
-		    }
-		};
-		return tablaModelo;
-	}
-	
-	public TableModel getTablaSeleccionados() {
-		
-		String titulo[] = {"Leg.", "Apellido", "Nombre", "Drirección", "Curso", "Valor cuota"};
-		DefaultTableModel tabla = new DefaultTableModel(matrizSelec,titulo);
-		return tabla;
-	}
-	
-	public String getEmail() {
-		
-		return email;
-	}
-	
-	public String getNombre() {
-		
-		return nombre;
-	}
-	
 	public String getFactura() {
 		
 		return factura;
@@ -500,16 +640,6 @@ public class DtosCobros {
 		return montoTotal;
 	}
 	
-	public int getDescuentoGrupo() {
-		
-		return descuentoGrupo;
-	}
-	
-	public int getCantidadElementos() {
-		
-		return tablaRespuesta.length;
-	}
-	
 	public int getCantidadElementosSeleccionados() {
 		
 		return cantElementosSel;
@@ -519,12 +649,7 @@ public class DtosCobros {
 		
 		idFamilia = id;
 	}
-	
-	public void setEmail(String mail) {
-		
-		email = mail;
-	}
-	
+
 	public void setBorrarSeleccionados() {
 
 		email = "";
@@ -545,83 +670,10 @@ public class DtosCobros {
 		
 		enviarEmail = enviar;
 	}
-	
-	public void setNombre(String nombreFamilia) {
-		
-		nombre =nombreFamilia;
-	}
-	
+
 	public void setFactura(String numeroFactura) {
 		
 		factura = numeroFactura;
-	}
-	
-	public void setAlumnosSeleccionados(boolean seleccionados[]) {
-		
-		cantElementosSel = 0;
-		
-		for(int i = 0 ; i < seleccionados.length ; i++) {
-			
-			if(seleccionados[i])
-				cantElementosSel++;
-		}
-
-		if(reinscripción) {
-
-			idFamilia = 0;
-			
-			for(int i = 0 ; i < tablaRespuesta.length ; i++) {
-				
-				if(seleccionados[i]) {
-				
-					idFamilia = Integer.parseInt(tablaRespuesta[i][0]);
-					break;
-				}
-			}
-			
-			if(idFamilia != 0) {
-			
-				GrupoFamiliarMySQL grupoFamiliarDAO = new GrupoFamiliarMySQL();
-				matrizSelec = grupoFamiliarDAO.getGrupoFamiliar(idFamilia + "");
-				descuentoGrupo = Integer.parseInt(matrizSelec[0][6]);
-				email = matrizSelec[0][7];
-				sumaCuotas = 0;
-				nombre = matrizSelec[0][8];
-				cantElementosSel = matrizSelec.length;
-				
-				for(int i = 0 ; i < cantElementosSel ; i++) {
-					
-					sumaCuotas += Integer.parseInt(matrizSelec[i][5]);
-				}
-			}
-		} else {
-			
-			matrizSelec = new String[cantElementosSel][6];
-			int e = 0;
-			sumaCuotas = 0;
-			email = "";
-	
-			for(int i = 0 ; i < tablaRespuesta.length ; i++) {
-					
-				if(seleccionados[i]) {
-				
-					matrizSelec[e][0] = tablaRespuesta[i][0];
-					matrizSelec[e][1] = tablaRespuesta[i][2];
-					matrizSelec[e][2] = tablaRespuesta[i][1];
-					matrizSelec[e][3] = tablaRespuesta[i][4];
-					matrizSelec[e][4] = tablaRespuesta[i][7];
-					matrizSelec[e][5] = tablaRespuesta[i][16];
-					sumaCuotas += Float.parseFloat(matrizSelec[e][5]);
-					e++;
-					
-					if(cantElementosSel == 1) {
-						
-						nombre = matrizSelec[0][1] + ", " + matrizSelec[0][2];
-						email = tablaRespuesta[i][6];
-					}
-				}
-			}
-		}
 	}
 
 	public String setInscripcion(String inscrip) {
@@ -643,23 +695,7 @@ public class DtosCobros {
 		return mensage;
 	}
 	
-	public String setDescuentoGrupo(String descuento) {
-		
-		String mensage = null;
-		descuentoGrupo = 0;
-		
-		if(descuento.length() > 0) {
-			
-			try {
-				
-				descuentoGrupo = Integer.parseInt(descuento);
-			} catch (Exception e) {
 
-				mensage = "El valor del descuento por grupo familiar debe ser numérico.";
-			}
-		}
-		return mensage;
-	}
 	
 	public String setDescuentoContado(String desContado) {
 
@@ -681,8 +717,8 @@ public class DtosCobros {
  
 	public boolean guardarCobroGrupo() {
 		
-		GrupoFamiliarMySQL grupoFamiliarDAO = new GrupoFamiliarMySQL();
-		AdministracionDAO administracionDAO = new AdministracionDAO();
+		grupoFamiliarDAO = new GrupoFamiliarMySQL();
+		CobrosMySQL administracionDAO = new CobrosMySQL();
 
 		if(reinscripción) {
 			if(!grupoFamiliarDAO.setActualizarGrupo(idFamilia, nombre, cantElementosSel, descuentoGrupo, email, "1"))
@@ -708,7 +744,7 @@ public class DtosCobros {
 
 	public String validarInformación(boolean validarNombre, boolean validarInscripcion) {
 		
-		GrupoFamiliarMySQL grupoFamiliaDAO = new GrupoFamiliarMySQL();
+		grupoFamiliaDAO = new GrupoFamiliarMySQL();
 	
 		if(grupoFamiliaDAO.isNombreFamilia(nombre) && !reinscripción && validarNombre)
 			return "El nombre de familia ya está en uso.";

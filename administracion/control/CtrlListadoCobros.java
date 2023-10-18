@@ -85,7 +85,7 @@ public class CtrlListadoCobros implements ActionListener {
 
 		if(e.getSource() == ventana.btnVolver) {
 			
-			dtosCobros.setBorrarSeleccionados();
+			dtosCobros.deleteInfo();
 			ventana.dispose();
 		}
 	}

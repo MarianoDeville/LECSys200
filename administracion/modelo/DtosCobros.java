@@ -9,50 +9,36 @@ import dao.CobrosMySQL;
 import dao.GrupoFamiliarDAO;
 import dao.AlumnoDAO;
 import dao.AlumnoMySQL;
+import dao.CobrosDAO;
 import dao.GrupoFamiliarMySQL;
 
 public class DtosCobros {
 	
+	
 	private GrupoFamiliarDAO grupoFamiliarDAO;
-	
-	private static Cobros cobro;
+	private CobrosDAO cobrosDAO;
+	private Cobros cobro = new Cobros();
 	private Cobros cobros[];
-	
-	private static GrupoFamiliar familia;
 	private GrupoFamiliar familias[];
-	private Alumno alumnos[];
-	
+	private Alumno alumnos[];	
+	private static GrupoFamiliar familia;
 	private static boolean reinscripción;
-	
-	
-	
-	
+	private boolean enviarEmail;
+	private int nroCobro;
+	private float sumaCuotas;
+	private float descuentoContado;
+	private float inscripcion;
+	private float recargoMora;	
+
 	/*
 	private static String matrizSelec[][] = null;
-	private static String email;
-	private static String nombre;
-	private static String descripcion;
-	private static String factura;
-	private static boolean enviarEmail;
-	private static int idFamilia;
-	private static int cantElementosSel;
-	private static int descuentoGrupo;
-	private static float descuentoContado;
-	private static float montoTotal;
-	private static float sumaCuotas;
 	private static int cantidadCuotas;
-	private static int integrantes;
-	private static int nroCobro;
 	private String tablaRespuesta[][];
-	private float recargoMora;
-	private float inscripcion;
 	private int elementoSeleccionado;
 	private int cantidadCuotasSeleccionadas = 1;
 	private Calendar fechaSistema;
 	*/
 
-	
-	
 	
 	public TableModel getTablaAlumnos(boolean reinscripción, boolean todos, String busqueda) {
 		
@@ -119,6 +105,7 @@ public class DtosCobros {
 					cantSel++;
 			}
 			Alumno alumnosElegidos[] = new Alumno[cantSel];
+			familia = new GrupoFamiliar();
 			familia.setIntegrantes(alumnosElegidos);
 			int e = 0;
 	
@@ -130,10 +117,8 @@ public class DtosCobros {
 					e++;
 				}
 			}
-			familia = new GrupoFamiliar();
-			familia.setIntegrantes(alumnosElegidos);
 			familia.setEmail(cantSel==1? alumnosElegidos[0].getEmail(): "");
-			familia.setNombre(cantSel==1? alumnosElegidos[0].getNombre(): "");
+			familia.setNombre(cantSel==1? alumnosElegidos[0].getApellido() + " " + alumnosElegidos[0].getNombre(): "");
 			familia.setDescuento(0);
 		}
 	}
@@ -199,6 +184,129 @@ public class DtosCobros {
 		familia = familias[pos];
 	}
 	
+	public float getCalculoMontoTotal() {
+
+		float descuentoDeGrupo = 0;
+		float montoTotal = 0;
+		String descripcion = "Inscripción: " + String.format("%.2f",inscripcion) + ", primer cuota: " + String.format("%.2f",sumaCuotas);
+		
+		if(descuentoContado > 0)
+			descripcion += ", descuento pago contado: " + String.format("%.2f",descuentoContado);
+		montoTotal = sumaCuotas + inscripcion;
+		descuentoDeGrupo = sumaCuotas * familia.getDescuento() / 100;
+		montoTotal -= descuentoDeGrupo; 
+		
+		if(familia.getDescuento() > 0)
+			descripcion += ", descuento grupo familiar: " + descuentoDeGrupo;
+		montoTotal -= descuentoContado;
+		cobro.setConcepto(descripcion);
+		return montoTotal;
+	}
+
+	public String validarInformación(boolean validarNombre, boolean validarInscripcion) {
+		
+		grupoFamiliarDAO = new GrupoFamiliarMySQL();
+	
+		if(grupoFamiliarDAO.isNombreFamilia(familia.getNombre()) && !reinscripción && validarNombre)
+			return "El nombre de familia ya está en uso.";
+		
+		if(familia.getNombre().length() < 5)
+			return "El nombre de familia es demasiado corto.";
+		
+		if(enviarEmail) {
+			
+			if(familia.getEmail().length() < 6)
+				return "Debe llenar el campo email.";
+			
+			if(!familia.getEmail().contains("@") || familia.getEmail().contains(" "))
+				return "Error en el formato del email.";
+			
+			String partes[] = familia.getEmail().split("@");
+			
+			try {
+				
+				if(partes[1].length() < 3 || !partes[1].contains("."))
+					return "Error en el formato del email.";	
+				
+			} catch (Exception e) {
+				
+				return "Error en el formato del email.";	
+			}
+		}
+		
+		if(inscripcion < 1 && validarInscripcion)
+			return "La inscripción debe tener un valor.";
+		
+		return "";
+	}
+
+	public boolean guardarCobroGrupo() {
+		
+		grupoFamiliarDAO = new GrupoFamiliarMySQL();
+		CobrosMySQL administracionDAO = new CobrosMySQL();
+
+		if(reinscripción) {
+			if(!grupoFamiliarDAO.setGrupoFamiliar(familia))
+				return false;
+			
+		}else {
+		
+			if(!grupoFamiliarDAO.setGrupoFamiliar(familia))
+				return false;
+		}
+		
+		if(!administracionDAO.setCobro(cobro))
+			return false;
+
+		nroCobro = administracionDAO.getUltimoRegistro();
+		return true;
+	}
+	
+	public String getCuerpoEmail() {
+		
+		String temp = "Por la presente se deja constancia del pago realizado el día " + getFechaActual("") 
+					+ ", y el detalle del mismo:\n\n" + cobro.getConcepto().replaceAll(", ", "\n");
+		temp += "\nTotal: " + String.format("%.2f",cobro.getMonto());
+		return temp;
+	}
+
+	public void setFamiliaExistente(int pos) {
+		
+		Alumno integrantes[] = new Alumno[familia.getIntegrantes().length + familias[pos].getIntegrantes().length];
+		System.arraycopy(familias[pos].getIntegrantes(), 0, integrantes, 0, familias[pos].getIntegrantes().length);
+		System.arraycopy(familia.getIntegrantes(), 0, integrantes, familias[pos].getIntegrantes().length, familia.getIntegrantes().length);
+		familia = familias[pos];
+		familia.setIntegrantes(integrantes);
+		familia.setCantIntegrantes(integrantes.length);
+	}
+	
+	public boolean guardarCobroGrupoExistente() {
+		
+		grupoFamiliarDAO = new GrupoFamiliarMySQL();
+
+		if(!grupoFamiliarDAO.update(familia))
+			return false;
+		AlumnoDAO alumnosDAO = new AlumnoMySQL();
+
+		if(!alumnosDAO.updateFamilia(familia.getId(), familia.getIntegrantes(), 1))
+			return false;
+		cobrosDAO = new CobrosMySQL();
+		
+		if(!cobrosDAO.setCobro(cobro))
+			return false;
+		nroCobro = cobrosDAO.getUltimoRegistro();
+		return true;
+	}
+	
+	public void deleteInfo() {
+
+		familia = null;
+	}
+	
+	
+	
+	
+	
 	
 	
 	
@@ -239,21 +347,21 @@ public class DtosCobros {
 		familia.setEmail(mail);
 	}
 	
-	public int getDescuentoGrupo() {
+	public String getDescuentoGrupo() {
 		
-		return familia.getDescuento();
+		return familia.getDescuento() + "";
 	}
 	
 	public String setDescuentoGrupo(String descuento) {
 		
 		String mensage = null;
-		descuentoGrupo = 0;
+		familia.setDescuento(0);
 		
 		if(descuento.length() > 0) {
 			
 			try {
 				
-				descuentoGrupo = Integer.parseInt(descuento);
+				familia.setDescuento(Integer.parseInt(descuento));
 			} catch (Exception e) {
 
 				mensage = "El valor del descuento por grupo familiar debe ser numérico.";
@@ -261,6 +369,68 @@ public class DtosCobros {
 		}
 		return mensage;
 	}
+
+	public boolean getReinscripcion() {
+		
+		return DtosCobros.reinscripción;
+	}
+	
+	public String setDescuentoContado(String desContado) {
+
+		String mensage = null;
+		descuentoContado = 0;
+		
+		if(desContado.length() > 0) {
+			
+			try {
+				
+				descuentoContado = Float.parseFloat(desContado);
+			} catch (Exception e) {
+
+				mensage = "El valor del descuento por pago en efectivo debe ser numérico.";
+			}
+		}
+		return mensage;
+	}
+	
+	public String setInscripcion(String inscrip) {
+
+		String mensage = null;
+		inscripcion = 0;
+		
+		if(inscrip.length() > 0) {
+			
+			try {
+				
+				inscripcion = Float.parseFloat(inscrip) * familia.getIntegrantes().length;
+			} catch (Exception e) {
+
+				mensage = "El valor de la inscrioción debe ser numérico.";
+			}
+		} else
+			mensage = "Inscripción debe tener valor.";
+		return mensage;
+	}
+	
+	public void setEnviarEmail(boolean enviar) {
+		
+		enviarEmail = enviar;
+	}
+
+	public void setFactura(String numeroFactura) {
+		
+		cobro.setFactura(numeroFactura);
+	}
+ 
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -480,10 +650,6 @@ public class DtosCobros {
 		return listaCuotasDeuda;
 	}
 
-	public int getIntegrantes() {
-		
-		return integrantes;
-	}
 	
 	public void setInfoCobro() {
 
@@ -524,30 +690,6 @@ public class DtosCobros {
 		
 		DtosCobros.integrantes = Integer.parseInt(integrantes);
 	}
-	
-	public boolean guardarCobroGrupoExistente() {
-		
-		grupoFamiliarDAO = new GrupoFamiliarMySQL();
-
-		if(!grupoFamiliarDAO.setActualizarGrupo(idFamilia, nombre, cantElementosSel + integrantes, descuentoGrupo, email, "1"))
-			return false;
-		String idAlumnos[] = new String[matrizSelec.length];
-		AlumnoMySQL alumnosDAO = new AlumnoMySQL();
-		
-		for(int i = 0; i < matrizSelec.length; i++) {
-			
-			idAlumnos[i] = matrizSelec[i][0];
-		}
-
-		if(!alumnosDAO.updateFamilia(idFamilia+"", idAlumnos, "1"))
-			return false;
-		CobrosMySQL administracionDAO = new CobrosMySQL();
-		
-		if(!administracionDAO.setCobro())
-			return false;
-		nroCobro = administracionDAO.getUltimoRegistro();
-		return true;
-	}
 
 	public String getFactura() {
 		
@@ -561,14 +703,6 @@ public class DtosCobros {
 					+ (fechaSistema.get(Calendar.MINUTE)<10? "0" + fechaSistema.get(Calendar.MINUTE):fechaSistema.get(Calendar.MINUTE)) + ":" 
 					+ (fechaSistema.get(Calendar.SECOND)<10? "0" + fechaSistema.get(Calendar.SECOND):fechaSistema.get(Calendar.SECOND));		
 		return hora;
-	}
-	
-	public String getCuerpoEmail() {
-		
-		String temp = "Por la presente se deja constancia del pago realizado el día " + getFechaActual("") 
-					+ ", y el detalle del mismo:\n\n" + descripcion.replaceAll(", ", "\n");
-		temp += "\nTotal: " + String.format("%.2f",montoTotal);
-		return temp;
 	}
 	
 	public String getDescripcion() {
@@ -623,23 +757,6 @@ public class DtosCobros {
 		return sumaCuotas;
 	}
 	
-	public float getCalculoMontoTotal() {
-
-		float descuentoDeGrupo = 0;
-		descripcion = "Inscripción: " + String.format("%.2f",inscripcion) + ", primer cuota: " + String.format("%.2f",sumaCuotas);
-		
-		if(descuentoContado > 0)
-			descripcion += ", descuento pago contado: " + String.format("%.2f",descuentoContado);
-		montoTotal = sumaCuotas + inscripcion;
-		descuentoDeGrupo = sumaCuotas * descuentoGrupo / 100;
-		montoTotal -= descuentoDeGrupo; 
-		
-		if(descuentoGrupo > 0)
-			descripcion += ", descuento grupo familiar: " + descuentoDeGrupo;
-		montoTotal -= descuentoContado;
-		return montoTotal;
-	}
-	
 	public int getCantidadElementosSeleccionados() {
 		
 		return cantElementosSel;
@@ -650,133 +767,9 @@ public class DtosCobros {
 		idFamilia = id;
 	}
 
-	public void setBorrarSeleccionados() {
-
-		email = "";
-		nombre = "";
-		descripcion = "";
-		factura = "";
-		idFamilia = 0;
-		cantElementosSel = 0;
-		descuentoGrupo = 0;
-		descuentoContado = 0;
-		montoTotal = 0;
-		sumaCuotas = 0;
-		inscripcion = 0;		
-		matrizSelec = null;
-	}
-	
-	public void setEnviarEmail(boolean enviar) {
-		
-		enviarEmail = enviar;
-	}
-
-	public void setFactura(String numeroFactura) {
-		
-		factura = numeroFactura;
-	}
-
-	public String setInscripcion(String inscrip) {
-
-		String mensage = null;
-		inscripcion = 0;
-		
-		if(inscrip.length() > 0) {
-			
-			try {
-				
-				inscripcion = Float.parseFloat(inscrip) * cantElementosSel;
-			} catch (Exception e) {
-
-				mensage = "El valor de la inscrioción debe ser numérico.";
-			}
-		} else
-			mensage = "Inscripción debe tener valor.";
-		return mensage;
-	}
-	
-
-	
-	public String setDescuentoContado(String desContado) {
-
-		String mensage = null;
-		descuentoContado = 0;
-		
-		if(desContado.length() > 0) {
-			
-			try {
-				
-				descuentoContado = Float.parseFloat(desContado);
-			} catch (Exception e) {
-
-				mensage = "El valor del descuento por pago en efectivo debe ser numérico.";
-			}
-		}
-		return mensage;
-	}
- 
-	public boolean guardarCobroGrupo() {
-		
-		grupoFamiliarDAO = new GrupoFamiliarMySQL();
-		CobrosMySQL administracionDAO = new CobrosMySQL();
-
-		if(reinscripción) {
-			if(!grupoFamiliarDAO.setActualizarGrupo(idFamilia, nombre, cantElementosSel, descuentoGrupo, email, "1"))
-				return false;
-			
-		}else {
-		
-			if(!grupoFamiliarDAO.setGrupoFamiliar())
-				return false;
-		}
-		
-		if(!administracionDAO.setCobro())
-			return false;
-
-		nroCobro = administracionDAO.getUltimoRegistro();
-		return true;
-	}
-
 	public boolean isReinscripcion() {
 		
 		return reinscripción;
-	}
-
-	public String validarInformación(boolean validarNombre, boolean validarInscripcion) {
-		
-		grupoFamiliaDAO = new GrupoFamiliarMySQL();
-	
-		if(grupoFamiliaDAO.isNombreFamilia(nombre) && !reinscripción && validarNombre)
-			return "El nombre de familia ya está en uso.";
-		
-		if(nombre.length() < 5)
-			return "El nombre de familia es demasiado corto.";
-		
-		if(enviarEmail) {
-			
-			if(email.length() < 6)
-				return "Debe llenar el campo email.";
-			
-			if(!email.contains("@") || email.contains(" "))
-				return "Error en el formato del email.";
-			
-			String partes[] = email.split("@");
-			
-			try {
-				
-				if(partes[1].length() < 3 || !partes[1].contains("."))
-					return "Error en el formato del email.";	
-				
-			} catch (Exception e) {
-				
-				return "Error en el formato del email.";	
-			}
-		}
-		
-		if(inscripcion < 1 && validarInscripcion)
-			return "La inscripción debe tener un valor.";
-		
-		return "";
 	}
 
 	public void setElementoSeleccionado(int elemento) {

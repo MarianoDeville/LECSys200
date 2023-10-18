@@ -143,7 +143,7 @@ public class CtrlRealizarCobro implements ActionListener {
 
 		if(e.getSource() == ventana.btnVolver) {
 			
-			dtosCobros.setBorrarSeleccionados();
+			dtosCobros.deleteInfo();
 			ventana.dispose();
 		}
 	}
@@ -189,7 +189,7 @@ public class CtrlRealizarCobro implements ActionListener {
 			ventana.btnCobrar.setEnabled(false);
 			ventana.btnCentral.setEnabled(false);
 			ventana.comboBox.setEnabled(false);
-			dtosCobros.setBorrarSeleccionados();
+			dtosCobros.deleteInfo();
 			return;
 		}
 		ventana.lblMsgError.setForeground(Color.RED);
@@ -207,7 +207,7 @@ public class CtrlRealizarCobro implements ActionListener {
 				ventana.btnCobrar.setEnabled(false);
 				ventana.btnCentral.setEnabled(false);
 				ventana.comboBox.setEnabled(false);
-				dtosCobros.setBorrarSeleccionados();
+				dtosCobros.deleteInfo();
 				return;
 			} 
 			ventana.lblMsgError.setForeground(Color.RED);

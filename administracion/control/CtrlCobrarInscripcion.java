@@ -8,7 +8,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import modelo.DtosCobros;
-import modelo.DtosGrupoFamiliar;
 import vista.Cobro;
 import vista.ReciboCobro;
 
@@ -92,6 +91,7 @@ public class CtrlCobrarInscripcion implements ActionListener {
 		ventana.lbl2.setText("Inscripción:");
 		ventana.lbl3.setText("Descuento pago efectivo:");
 		ventana.lbl4.setText("Total a pagar:");
+		ventana.chckbxTabla2.setVisible(!dtosCobros.getReinscripcion());
 
 		if(dtosCobros.getEmail().length() > 2) {
 			
@@ -107,15 +107,6 @@ public class CtrlCobrarInscripcion implements ActionListener {
 		actualizarTabla();
 		actualizoSuma();
 		ventana.setVisible(true);
-	}
-		
-	private void limpiarOtros() {
-		
-		for(int i = 0; i < ventana.tabla2.getRowCount(); i++) {
-			
-			if(i != elemento || !ventana.chckbxTabla2.isSelected())
-				ventana.tabla2.setValueAt((boolean) false, i, 2);
-		}
 	}
 	
 	public void actionPerformed(ActionEvent e) {
@@ -144,7 +135,7 @@ public class CtrlCobrarInscripcion implements ActionListener {
 
 		if(e.getSource() == ventana.btnVolver) {
 			
-			dtosCobros.setBorrarSeleccionados();
+			dtosCobros.deleteInfo();
 			ventana.dispose();
 		}
 	}
@@ -182,8 +173,8 @@ public class CtrlCobrarInscripcion implements ActionListener {
 		if(haySeleccion) {
 
 			dtosCobros.setFamiliaSeleccionada(elemento);
-			ventana.txtNombre.setText(dtosCobros.getNombreFamilia());
-			ventana.txt1.setText(dtosCobros.getDescuento());
+			ventana.txtNombre.setText(dtosCobros.getNombre());
+			ventana.txt1.setText(dtosCobros.getDescuentoGrupo());
 			ventana.txtEmail.setText(dtosCobros.getEmail());
 		}
 	}
@@ -215,6 +206,15 @@ public class CtrlCobrarInscripcion implements ActionListener {
 		ventana.tabla2.getColumnModel().getColumn(2).setMaxWidth(50);
 	}
 	
+	private void limpiarOtros() {
+		
+		for(int i = 0; i < ventana.tabla2.getRowCount(); i++) {
+			
+			if(i != elemento || !ventana.chckbxTabla2.isSelected())
+				ventana.tabla2.setValueAt((boolean) false, i, 2);
+		}
+	}
+
 	private void registraCobro() {
 		
 		boolean bandera = false;
@@ -232,7 +232,7 @@ public class CtrlCobrarInscripcion implements ActionListener {
 
 			ventana.lblMsgError.setForeground(Color.BLUE);
 			ventana.lblMsgError.setText("Procesando la operación.");
-			
+
 			if(ventana.chckbxTabla2.isSelected()) {
 				
 				int i = 0;
@@ -241,14 +241,11 @@ public class CtrlCobrarInscripcion implements ActionListener {
 					
 					if((boolean) ventana.tabla2.getValueAt(i, 2)) {
 					
-						dtosGrupoFamiliar.setElementoSeleccionado(i);
+						dtosCobros.setFamiliaExistente(i);
 						break;
 					}
 					i++;
 				}
-				dtosGrupoFamiliar.setInformacionGrupo();
-				dtosCobros.setIdFamilia(Integer.parseInt(dtosGrupoFamiliar.getIdGrupoFamiliar()));
-				dtosCobros.SetIntegrantes(dtosGrupoFamiliar.getIntegrantes());
 				bandera = dtosCobros.guardarCobroGrupoExistente();
 			} else {
 				
@@ -274,7 +271,7 @@ public class CtrlCobrarInscripcion implements ActionListener {
 				ventana.lblMsgError.setForeground(Color.BLUE);
 				ventana.lblMsgError.setText("Operación almacenada en la base de datos.");
 				ventana.btnCobrar.setEnabled(false);
-				dtosCobros.setBorrarSeleccionados();
+				dtosCobros.deleteInfo();
 			}else {
 				
 				ventana.lblMsgError.setForeground(Color.RED);

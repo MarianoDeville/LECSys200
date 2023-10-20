@@ -55,8 +55,8 @@ public class CtrlAdministracion implements ActionListener {
 		if(e.getSource() == ventana.btn1A) {
 			
 			InterfaceBotones ventanaCobros = new InterfaceBotones("Gestión de cobros");
-//			CtrlCobros ctrlCobros = new CtrlCobros(ventanaCobros);
-//			ctrlCobros.iniciar();
+			CtrlCobros ctrlCobros = new CtrlCobros(ventanaCobros);
+			ctrlCobros.iniciar();
 		}
 		
 		if(e.getSource() == ventana.btn1B) {

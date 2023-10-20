@@ -138,8 +138,7 @@ public class CtrlCobrarCuota implements ActionListener {
 			JOptionPane.showMessageDialog(null, "No ha seleccionado ningún elemento.");
 			return;
 		}
-		dtosCobros.setElementoSeleccionado(elemento);
-		dtosCobros.setInfoCobro();
+		dtosCobros.setInfoCobro(elemento);
 		ventanaCobrar = new Cobro("Cobro de cuota");
 		CtrlRealizarCobro ctrolCobrar = new CtrlRealizarCobro(ventanaCobrar);
 		ctrolCobrar.iniciar();

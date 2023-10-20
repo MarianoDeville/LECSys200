@@ -24,16 +24,18 @@ public class DtosCobros {
 	private static Cobros cobro = new Cobros();
 	private static boolean reinscripción;
 	private boolean enviarEmail;
+	private int cantidadCuotasSeleccionadas = 1;
 	private float descuentoContado;
 	private float inscripcion;
 	private float recargoMora;	
+	private float sumatoria;
 
 	/*
 	private static String matrizSelec[][] = null;
 	private static int cantidadCuotas;
 	private String tablaRespuesta[][];
 	private int elementoSeleccionado;
-	private int cantidadCuotasSeleccionadas = 1;
+	
 	private Calendar fechaSistema;
 	*/
 
@@ -61,7 +63,7 @@ public class DtosCobros {
 
 			cuerpo[i][0] = reinscripción? familias[i].getId(): alumnos[i].getLegajo();
 			cuerpo[i][1] = reinscripción? familias[i].getNombre(): alumnos[i].getApellido();
-			cuerpo[i][2] = reinscripción? familias[i].getCantIntegrantes(): alumnos[i].getNombre();
+			cuerpo[i][2] = reinscripción? familias[i].getIntegrantes().length: alumnos[i].getNombre();
 			cuerpo[i][3] = reinscripción? familias[i].getEmail(): alumnos[i].getDireccion();
 			cuerpo[i][4] = todos;
 		}
@@ -349,7 +351,7 @@ public class DtosCobros {
 			float calculo = familias[i].getDeuda() * familias[i].getSumaPrecioCuotas();
 			calculo -= calculo * familias[i].getDescuento() /100;			
 			cuerpo[i][0] = familias[i].getNombre();
-			cuerpo[i][1] = familias[i].getCantIntegrantes();
+			cuerpo[i][1] = familias[i].getIntegrantes().length;
 			cuerpo[i][2] = familias[i].getDeuda();
 			cuerpo[i][3] = familias[i].getSumaPrecioCuotas();
 			cuerpo[i][4] = familias[i].getDescuento();
@@ -359,11 +361,188 @@ public class DtosCobros {
 		return tablaModelo;
 	}
 	
+	public void setInfoCobro(int elemento) {
+		
+		familia = familias[elemento];
+	}
+	
+	public String [] getListadoConceptos() {
+		
+		fechaSistema = new GregorianCalendar();
+		int mesActual = fechaSistema.get(Calendar.MONTH);
+		String meses[] = new String[] {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+		String listaCuotasDeuda[] = new String[familia.getDeuda() == 0? 2 : familia.getDeuda() + 1];
+		listaCuotasDeuda[0] = "Seleccione uno";
+
+		if(familia.getDeuda() > 0) {
+
+			if(mesActual + 1 >= familia.getDeuda()) {
+
+				listaCuotasDeuda[1] = meses[mesActual - familia.getDeuda() + 1];
+				
+				for(int aux = 2; aux < listaCuotasDeuda.length; aux++) {
+					
+					for(int i = 0; i < aux; i++) {
+					
+						if(i == 0)
+							listaCuotasDeuda[aux] = meses[mesActual - familia.getDeuda() + 1];
+						else
+							listaCuotasDeuda[aux] += ", " + meses[mesActual + 1 + i - familia.getDeuda()];
+					}
+				}
+			} else {
+			
+				for(int aux = 1; aux < listaCuotasDeuda.length; aux++) {
+					
+					String temp = (aux == 1)? " mes.":" meses."; 	
+					listaCuotasDeuda[aux] =aux + temp;
+				}
+			}
+		} else {
+			
+			listaCuotasDeuda[1] = meses[mesActual == 11? 0 : mesActual + 1];	
+		}
+		return listaCuotasDeuda;
+	}
+	
+	public String calculoDescuento() {
+		
+		return String.format("%.2f", familia.getDescuento() * familia.getSumaPrecioCuotas() /100);
+		
+	}
+
+	public String setRecargoMora(String recargo) {
+		
+		String mensaje = null;
+		
+		try {
+			
+			if(recargo.length() > 0)
+				recargoMora = Float.parseFloat(recargo);
+		} catch (Exception e) {
+			
+			mensaje = "El valor debe ser numérico.";
+		}
+		return mensaje;
+	}
+	
+	public String getCalculoCobro(String concepto) {
+		
+		float descuentoDeGrupo = 0;
+		float montoTotal;
+		cobro = new Cobros();
+		montoTotal = familia.getSumaPrecioCuotas() * cantidadCuotasSeleccionadas;
+		String descripcion = "Cuota correspondiente a " + concepto + ": " + montoTotal;
+		descuentoDeGrupo = montoTotal * familia.getDescuento() / 100;
+		montoTotal -= descuentoDeGrupo; 
+		
+		if(familia.getDescuento() > 0)
+			descripcion += ", descuento grupo familiar: " + descuentoDeGrupo;
+
+		if(recargoMora > 0)
+			descripcion += ", recargo por pago fuera de término: " + recargoMora;		
+		
+		if(descuentoContado > 0)
+			descripcion += ", descuento pago contado: " + descuentoContado;
+		montoTotal += recargoMora;
+		montoTotal -= descuentoContado;
+		descripcion += ", suma total: " + montoTotal;
+		cobro.setMonto(montoTotal);
+		cobro.setConcepto(descripcion);
+		return String.format("%.2f",montoTotal);
+	}
+	
+	public boolean guardarCobroCuota() {
+
+		cobrosDAO = new CobrosMySQL();
+		cobro.setNombre(familia.getNombre());
+		cobro.setIdGrupoFamiliar(familia.getId());
+		cobro.setId(cobrosDAO.setCobro(cobro));
+		grupoFamiliarDAO = new GrupoFamiliarMySQL();		
+		
+		if(cobro.getId() == 0)
+			return false;
+		
+		if(!grupoFamiliarDAO.updateDeuda(familia.getId(), -cantidadCuotasSeleccionadas))
+			return false;
+		return true;
+	}
+
+	public boolean setBorrarDeuda() {
+		
+		long tiempo = System.currentTimeMillis();
+		grupoFamiliarDAO = new GrupoFamiliarMySQL();
+
+		if(!grupoFamiliarDAO.updateDeuda(familia.getId(), -cantidadCuotasSeleccionadas))
+			return false;
+
+		DtosActividad dtosActividad = new DtosActividad();
+		tiempo = System.currentTimeMillis() - tiempo;
+		dtosActividad.registrarActividad("Borrado de deuda. Familia: " + familia.getNombre(), "Administración", tiempo);
+		return true;
+	}
+	
+	public String [] getAños() {
+		
+		fechaSistema = new GregorianCalendar();
+		String respuesta[] = new String[5];
+		
+		for(int i = 4 ; i >= 0 ; i--) {
+			
+			respuesta[i] = fechaSistema.get(Calendar.YEAR) - i +""; 
+		}
+		return respuesta;
+	}
+	
+	public String [] getMeses() {
+		
+		return new String[] {"- - - - -", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
+							 "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+	}
+	
+	public int getMesActual() {
+		
+		fechaSistema = new GregorianCalendar();
+		return fechaSistema.get(Calendar.MONTH) + 1;
+	}
+
+	public TableModel getTablaCobros(int mes, Object año) {
+		
+		String titulo[] = new String[] {"Fecha", "Nombre", "Concepto", "Hora", "Monto", "Factura"};
+		cobrosDAO = new CobrosMySQL();
+		int temp = 0;
+		sumatoria = 0;
+		
+		try {
+			
+			temp = Integer.parseInt((String)año);
+		} catch (Exception e) {
+			
+			CtrlLogErrores.guardarError("Error al convertir 'Object' año a 'int' en la clase: DtosCobros método: getTablaCobros()");
+		}
+		cobros = cobrosDAO.getListado(temp, mes);
+		
+		if(cobros != null) {
+			
+			for(int i = 0; i < cobros.length; i++) {
+				sumatoria += cobros[i].getMonto();
+			}
+		}
+		DefaultTableModel tablaModelo = new DefaultTableModel(tablaRespuesta, titulo){
+
+			private static final long serialVersionUID = 1L;
+			public boolean isCellEditable(int row, int column) {
+				return column > 4? true: false;
+			}
+		};
+		return tablaModelo;
+	}
+
 	
 	
 	
 	
-	
+
 	
 	
 	
@@ -509,55 +688,70 @@ public class DtosCobros {
 		return cobro.getConcepto();
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	public boolean setBorrarDeuda() {
-		
-		long tiempo = System.currentTimeMillis();
-		grupoFamiliarDAO = new GrupoFamiliarMySQL();
+	public String getSumaCuotas() {
 
-		if(!grupoFamiliarDAO.setActualizarDeuda(idFamilia, -cantidadCuotasSeleccionadas))
-			return false;
-
-		DtosActividad dtosActividad = new DtosActividad();
-		tiempo = System.currentTimeMillis() - tiempo;
-		dtosActividad.registrarActividad("Borrado de deuda. Familia: " + nombre, "Administración", tiempo);
-		return true;
+		return String.format("%.2f", familia.getSumaPrecioCuotas());
 	}
+	
+	public void setCantidadCuotasSeleccionadas(int cantidad) {
+		
+		cantidadCuotasSeleccionadas = cantidad;
+	}
+
+	public String getCantidadElementos() {
+		
+		return cobros.length + "";
+	}
+	
+	public String getMonto() {
+		
+		return String.format("%.2f", sumatoria);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
 
 	public boolean setActualizarFacturas(String listaFacturas[]) {
 		
@@ -583,173 +777,6 @@ public class DtosCobros {
 		}
 		return administracionDAO.setActualizarFacturas(matrizSelec);
 	}
-	
-	public int getMesActual() {
-		
-		fechaSistema = new GregorianCalendar();
-		return fechaSistema.get(Calendar.MONTH) + 1;
-	}
-	
-	public String [] getMeses() {
-		
-		return new String[] {"- - - - -", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
-							 "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
-	}
-	
-	public String [] getAños() {
-		
-		fechaSistema = new GregorianCalendar();
-		String respuesta[] = new String[5];
-		
-		for(int i = 4 ; i >= 0 ; i--) {
-			
-			respuesta[i] = fechaSistema.get(Calendar.YEAR) - i +""; 
-		}
-		return respuesta;
-	}
-	
-	public TableModel getTablaCobros(int mes, Object año) {
-		
-		String titulo[] = new String[] {"Fecha", "Nombre", "Concepto", "Hora", "Monto", "Factura"};
-		CobrosMySQL administracionDAO = new CobrosMySQL();
-		int temp = 0;
-		montoTotal = 0;
-		
-		try {
-			
-			temp = Integer.parseInt((String)año);
-		} catch (Exception e) {
-			
-			CtrlLogErrores.guardarError("Error al convertir 'Object' año a 'int' en la clase: DtosCobros método: getTablaCobros()");
-		}
-		tablaRespuesta = administracionDAO.getTablaCobros(temp, mes);
-		
-		if(tablaRespuesta != null) {
-			
-			cantElementosSel = tablaRespuesta.length;
-			
-			for(int i = 0; i < tablaRespuesta.length; i++) {
-				montoTotal += Float.parseFloat(tablaRespuesta[i][4].replace(",", "."));
-			}
-		}
-		DefaultTableModel tablaModelo = new DefaultTableModel(tablaRespuesta, titulo){
-
-			private static final long serialVersionUID = 1L;
-			public boolean isCellEditable(int row, int column) {
-				return column > 4? true: false;
-			}
-		};
-		return tablaModelo;
-	}
-	
-	public boolean guardarCobroCuota() {
-
-		CobrosMySQL administracionDAO = new CobrosMySQL();
-		
-		if(!administracionDAO.setCobro())
-			return false;
-		nroCobro = administracionDAO.getUltimoRegistro();
-		grupoFamiliarDAO = new GrupoFamiliarMySQL();
-		
-		if(!grupoFamiliarDAO.setActualizarDeuda(idFamilia, -cantidadCuotasSeleccionadas))
-			return false;
-		return true;
-	}
-	
-	public String getCalculoCobro(String concepto) {
-		
-		float descuentoDeGrupo = 0;
-		montoTotal = sumaCuotas * cantidadCuotasSeleccionadas;
-		descripcion = "Cuota correspondiente a " + concepto + ": " + montoTotal;
-		descuentoDeGrupo = montoTotal * descuentoGrupo / 100;
-		montoTotal -= descuentoDeGrupo; 
-		
-		if(descuentoGrupo > 0)
-			descripcion += ", descuento grupo familiar: " + descuentoDeGrupo;
-
-		if(recargoMora > 0)
-			descripcion += ", recargo por pago fuera de término: " + recargoMora;		
-		
-		if(descuentoContado > 0)
-			descripcion += ", descuento pago contado: " + descuentoContado;
-		montoTotal += recargoMora;
-		montoTotal -= descuentoContado;
-		descripcion += ", suma total: " + montoTotal;
-		return String.format("%.2f",montoTotal);
-	}
-	
-	public void setCantidadCuotasSeleccionadas(int cantidad) {
-		
-		cantidadCuotasSeleccionadas = cantidad;
-	}
-
-	public String setRecargoMora(String recargo) {
-		
-		String mensaje = null;
-		
-		try {
-			
-			if(recargo.length() > 0)
-				recargoMora = Float.parseFloat(recargo);
-		} catch (Exception e) {
-			
-			mensaje = "El valor debe ser numérico.";
-		}
-		return mensaje;
-	}
-	
-	public String [] getListadoConceptos() {
-	
-		fechaSistema = new GregorianCalendar();
-		int mesActual = fechaSistema.get(Calendar.MONTH);
-		String meses[] = new String[] {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
-		String listaCuotasDeuda[] = new String[cantidadCuotas == 0? 2 : cantidadCuotas + 1];
-		listaCuotasDeuda[0] = "Seleccione uno";
-
-		if(cantidadCuotas > 0) {
-
-			if(mesActual + 1 >= cantidadCuotas) {
-
-				listaCuotasDeuda[1] = meses[mesActual-cantidadCuotas+1];
-				
-				for(int aux = 2; aux < listaCuotasDeuda.length; aux++) {
-					
-					for(int i = 0; i < aux; i++) {
-					
-						if(i == 0)
-							listaCuotasDeuda[aux] = meses[mesActual - cantidadCuotas+1];
-						else
-							listaCuotasDeuda[aux] += ", " + meses[mesActual + 1 + i - cantidadCuotas];
-					}
-				}
-			} else {
-			
-				for(int aux = 1; aux < listaCuotasDeuda.length; aux++) {
-					
-					String temp = (aux == 1)? " mes.":" meses."; 	
-					listaCuotasDeuda[aux] =aux + temp;
-				}
-			}
-		} else {
-			
-			listaCuotasDeuda[1] = meses[mesActual == 11? 0 : mesActual + 1];	
-		}
-		return listaCuotasDeuda;
-	}
-
-	
-	public void setInfoCobro() {
-
-		idFamilia = Integer.parseInt(tablaRespuesta[elementoSeleccionado][0]);
-		nombre = tablaRespuesta[elementoSeleccionado][1];
-		cantidadCuotas = Integer.parseInt(tablaRespuesta[elementoSeleccionado][3]);
-		sumaCuotas = Float.parseFloat(tablaRespuesta[elementoSeleccionado][4].replace(",", "."));
-		descuentoGrupo = Integer.parseInt(tablaRespuesta[elementoSeleccionado][5]);		
-		grupoFamiliarDAO = new GrupoFamiliarMySQL();
-		matrizSelec = grupoFamiliarDAO.getGrupoFamiliar(idFamilia + "");	
-		integrantes = matrizSelec.length;
-		email = matrizSelec[0][7];
-	}
 
 	public void SetIntegrantes(String integrantes) {
 		
@@ -774,35 +801,5 @@ public class DtosCobros {
 			id[i] = matrizSelec[i][0];
 		}
 		return id;
-	}
-	
-	public int getIdFamilia() {
-		
-		return idFamilia;
-	}
-	
-	public float getSumaCuotas() {
-
-		return sumaCuotas;
-	}
-	
-	public int getCantidadElementosSeleccionados() {
-		
-		return cantElementosSel;
-	}
-	
-	public void setIdFamilia(int id) {
-		
-		idFamilia = id;
-	}
-
-	public boolean isReinscripcion() {
-		
-		return reinscripción;
-	}
-
-	public void setElementoSeleccionado(int elemento) {
-		
-		elementoSeleccionado = elemento;
 	}
 }

@@ -7,7 +7,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
-
 import modelo.DtosCobros;
 import vista.Cobro;
 import vista.ReciboCobro;
@@ -16,7 +15,6 @@ public class CtrlRealizarCobro implements ActionListener {
 	
 	private Cobro ventana;
 	private DtosCobros dtosCobros;
-	private float calculoDescuentoGrupo;
 	
 	public CtrlRealizarCobro(Cobro vista) {
 		
@@ -82,9 +80,8 @@ public class CtrlRealizarCobro implements ActionListener {
 			ventana.txtEmail.setVisible(true);
 			ventana.txtEmail.setText(dtosCobros.getEmail());
 		}
-		calculoDescuentoGrupo = dtosCobros.getDescuentoGrupo() * dtosCobros.getSumaCuotas() /100;
-		ventana.txt1.setText(String.format("%.2f", calculoDescuentoGrupo));
-		ventana.txt2.setText(String.format("%.2f", dtosCobros.getSumaCuotas()));
+		ventana.txt1.setText(dtosCobros.calculoDescuento());
+		ventana.txt2.setText(dtosCobros.getSumaCuotas());
 		ventana.setVisible(true);
 	}
 		
@@ -118,7 +115,7 @@ public class CtrlRealizarCobro implements ActionListener {
 	
 	public void actionPerformed(ActionEvent e) {
 		
-		if(e.getSource() == ventana.comboBox) {
+		if(e.getSource() == ventana.comboBox && ventana.isVisible()) {
 			
 			actualizar();
 		}

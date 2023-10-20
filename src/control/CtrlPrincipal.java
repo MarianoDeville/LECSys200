@@ -55,8 +55,8 @@ int algo;
 		if(e.getSource() == ventanaPrincipal.btnAdmin) {
 
 			InterfaceBotones ventanaAdministracion = new InterfaceBotones("Gestión administrativa");
-//			CtrlAdministracion ctrlAdmin = new CtrlAdministracion(ventanaAdministracion);
-//			ctrlAdmin.iniciar();
+			CtrlAdministracion ctrlAdmin = new CtrlAdministracion(ventanaAdministracion);
+			ctrlAdmin.iniciar();
 		}
 		
 		if(e.getSource() == ventanaPrincipal.btnAlumnos) {

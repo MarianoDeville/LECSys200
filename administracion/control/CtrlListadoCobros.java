@@ -56,12 +56,12 @@ public class CtrlListadoCobros implements ActionListener {
 	
 	public void actionPerformed(ActionEvent e) {
 		
-		if(e.getSource() == ventana.comboBox1) {
+		if(e.getSource() == ventana.comboBox1 && ventana.isVisible()) {
 			
 			actualizar();
 		}
 		
-		if(e.getSource() == ventana.comboBox2) {
+		if(e.getSource() == ventana.comboBox2 && ventana.isVisible()) {
 			
 			actualizar();
 		}
@@ -112,8 +112,8 @@ public class CtrlListadoCobros implements ActionListener {
 		ventana.tabla.getColumnModel().getColumn(4).setCellRenderer(derecha);
 		ventana.tabla.getColumnModel().getColumn(5).setMaxWidth(100);
 		ventana.tabla.getColumnModel().getColumn(5).setPreferredWidth(95);
-		ventana.txt2.setText(dtosCobros.getCantidadElementosSeleccionados() + "");
-		ventana.txt1.setText(dtosCobros.getMontoTotal() + "");
+		ventana.txt2.setText(dtosCobros.getCantidadElementos());
+		ventana.txt1.setText(dtosCobros.getMonto());
 	}
 	
 	private void guardarCambio() {

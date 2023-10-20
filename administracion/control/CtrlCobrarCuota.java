@@ -10,7 +10,6 @@ import java.awt.print.PrinterException;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableCellRenderer;
-
 import modelo.DtosCobros;
 import vista.Cobro;
 import vista.Listado;
@@ -20,9 +19,8 @@ public class CtrlCobrarCuota implements ActionListener {
 	private Listado ventana;
 	private DtosCobros dtosCobros;
 	private Cobro ventanaCobrar;
-	private int elemento;
-	private boolean bandera;
-	
+	private int elemento = -1;
+		
 	public CtrlCobrarCuota(Listado vista) {
 		
 		this.ventana = vista;
@@ -43,11 +41,9 @@ public class CtrlCobrarCuota implements ActionListener {
 		        if (e.getClickCount() == 1) {
 
 					elemento = ventana.tabla.getSelectedRow();
-					bandera = true;
 		        } else if(e.getClickCount() == 2) {
 		        	
 		        	elemento = ventana.tabla.getSelectedRow();
-		        	bandera = true;
 		        	procesarInfo();
 		        }
 		    }
@@ -56,7 +52,7 @@ public class CtrlCobrarCuota implements ActionListener {
 	
 	public void iniciar() {
 
-		bandera = false;
+		elemento = -1;
 		ventana.chckbx1.setText("<html>Pago adelantado</html>");
 		ventana.chckbx1.setSelected(false);
 		actualizar();
@@ -74,7 +70,7 @@ public class CtrlCobrarCuota implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 
-		if(e.getSource() == ventana.chckbx1) {
+		if(e.getSource() == ventana.chckbx1 && ventana.isVisible()) {
 			
 			actualizar();
 		}
@@ -137,17 +133,17 @@ public class CtrlCobrarCuota implements ActionListener {
 
 		ventana.tabla.clearSelection();
 		
-		if(!bandera) {
+		if(elemento == -1) {
 			
 			JOptionPane.showMessageDialog(null, "No ha seleccionado ningún elemento.");
 			return;
 		}
-		bandera = false;
 		dtosCobros.setElementoSeleccionado(elemento);
 		dtosCobros.setInfoCobro();
 		ventanaCobrar = new Cobro("Cobro de cuota");
 		CtrlRealizarCobro ctrolCobrar = new CtrlRealizarCobro(ventanaCobrar);
 		ctrolCobrar.iniciar();
 		ventanaCobrar.btnVolver.addActionListener(this);
+		elemento = -1;
 	}
 }

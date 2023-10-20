@@ -129,6 +129,7 @@ public class CtrlCobrarHabilitar implements ActionListener {
 
 			seleccionados[i] = (boolean)ventana.tabla.getValueAt(i, 4);
 		}
+		
 		return seleccionados;
 	}
 }

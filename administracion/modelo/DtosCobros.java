@@ -19,7 +19,7 @@ public class DtosCobros {
 	private CobrosDAO cobrosDAO;
 	private Cobros cobros[];
 	private GrupoFamiliar familias[];
-	private Alumno alumnos[];	
+	private Alumno alumnos[];
 	private static GrupoFamiliar familia;
 	private static Cobros cobro = new Cobros();
 	private static boolean reinscripción;
@@ -95,12 +95,13 @@ public class DtosCobros {
 		} else {
 
 			int cantSel = 0;
-			
+		
 			for(int i = 0 ; i < seleccionados.length ; i++) {
 				
 				if(seleccionados[i])
 					cantSel++;
 			}
+
 			Alumno alumnosElegidos[] = new Alumno[cantSel];
 			familia = new GrupoFamiliar();
 			familia.setIntegrantes(alumnosElegidos);
@@ -178,7 +179,9 @@ public class DtosCobros {
 	
 	public void setFamiliaSeleccionada(int pos) {
 		
-		familia = familias[pos];
+		familia.setNombre(familias[pos].getNombre());
+		familia.setEmail(familias[pos].getEmail());
+		familia.setDescuento(familias[pos].getDescuento());
 	}
 	
 	public float getCalculoMontoTotal() {
@@ -333,6 +336,28 @@ public class DtosCobros {
 
 		familia = null;
 	}
+
+	public TableModel getTablaDeudores(String busqueda, boolean pagoAdelantado) {
+		
+		grupoFamiliarDAO = new GrupoFamiliarMySQL();
+		String titulo[] = new String[] {"Nombre", "Integrantes",  "Cuotas" ,"Valor cuota", "Desc.", "Total"};
+		familias = grupoFamiliarDAO.getListado("", "", pagoAdelantado, busqueda);
+		Object cuerpo[][] = new Object[familias.length][8];
+		
+		for(int i = 0; i < cuerpo.length; i ++) {
+
+			float calculo = familias[i].getDeuda() * familias[i].getSumaPrecioCuotas();
+			calculo -= calculo * familias[i].getDescuento() /100;			
+			cuerpo[i][0] = familias[i].getNombre();
+			cuerpo[i][1] = familias[i].getCantIntegrantes();
+			cuerpo[i][2] = familias[i].getDeuda();
+			cuerpo[i][3] = familias[i].getSumaPrecioCuotas();
+			cuerpo[i][4] = familias[i].getDescuento();
+			cuerpo[i][5] = String.format("%.2f",calculo);			
+		}
+		DefaultTableModel tablaModelo = new DefaultTableModel(cuerpo, titulo);
+		return tablaModelo;
+	}
 	
 	
 	
@@ -483,6 +508,8 @@ public class DtosCobros {
 		
 		return cobro.getConcepto();
 	}
+	
+	
 	
 	
 	
@@ -724,28 +751,6 @@ public class DtosCobros {
 		email = matrizSelec[0][7];
 	}
 
-	public TableModel getTablaDeudores(String busqueda, boolean pagoAdelantado) {
-		
-		grupoFamiliarDAO = new GrupoFamiliarMySQL();
-		String titulo[] = new String[] {"Nombre", "Integrantes",  "Cuotas" ,"Valor cuota", "Desc.", "Total"};
-		tablaRespuesta = grupoFamiliarDAO.getGruposFamilias("", "", pagoAdelantado, busqueda);
-		String cuerpo[][] = new String[tablaRespuesta.length][8];
-		
-		for(int i = 0; i < cuerpo.length; i ++) {
-
-			float calculo = Integer.parseInt(tablaRespuesta[i][3]) * Float.parseFloat(tablaRespuesta[i][4].replace(",", "."));
-			calculo -= calculo * Integer.parseInt(tablaRespuesta[i][5]) /100;			
-			cuerpo[i][0] = tablaRespuesta[i][1];
-			cuerpo[i][1] = tablaRespuesta[i][2];
-			cuerpo[i][2] = tablaRespuesta[i][3];
-			cuerpo[i][3] = tablaRespuesta[i][4];
-			cuerpo[i][4] = tablaRespuesta[i][5];
-			cuerpo[i][5] = String.format("%.2f",calculo);			
-		}
-		DefaultTableModel tablaModelo = new DefaultTableModel(cuerpo, titulo);
-		return tablaModelo;
-	}
-	
 	public void SetIntegrantes(String integrantes) {
 		
 		DtosCobros.integrantes = Integer.parseInt(integrantes);

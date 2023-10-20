@@ -115,8 +115,8 @@ public class CtrlAlumnos implements ActionListener {
 		if(e.getSource() == ventana.btn2D) {
 			
 			Listado ventanaCobrarCuota = new Listado("Cobro de cuota");
-//			CtrlCobrarCuota ctrlCobrarCuota = new CtrlCobrarCuota(ventanaCobrarCuota);
-//			ctrlCobrarCuota.iniciar();
+			CtrlCobrarCuota ctrlCobrarCuota = new CtrlCobrarCuota(ventanaCobrarCuota);
+			ctrlCobrarCuota.iniciar();
 		}
 		
 		if(e.getSource() == ventana.btnVolver) {

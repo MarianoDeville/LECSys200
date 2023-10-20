@@ -231,14 +231,13 @@ public class GrupoFamiliarMySQL extends Conexion implements GrupoFamiliarDAO{
 			stm.setInt(1, familia.getId());
 			stm.executeUpdate();
 			pprStm = "UPDATE `lecsys2.00`.alumnos SET estado = 1, idGrupoFamiliar = ? WHERE legajo = ?";
-			stm = this.conexion.prepareStatement(pprStm);
-			
+						
 			for(int i = 0; i < familia.getIntegrantes().length; i++) {
-				
+			
+				stm = this.conexion.prepareStatement(pprStm);
 				stm.setInt(1, familia.getId());
 				stm.setInt(2, familia.getIntegrantes()[i].getLegajo());
 				stm.executeUpdate();
-				
 			}
 		} catch (Exception e) {
 	
@@ -263,25 +262,25 @@ public class GrupoFamiliarMySQL extends Conexion implements GrupoFamiliarDAO{
 		int nuevaDeuda = 0;
 		DtosActividad dtosActividad = new DtosActividad();
 		String where = idGrupo == 0? "WHERE estado = '1'" : "WHERE idGrupoFamiliar = '" + idGrupo + "'";
-		String comandoStatement = "SELECT deuda FROM grupoFamiliar " + where;
+		String cmdStm = "SELECT deuda FROM grupoFamiliar ";
 		
 		try {
 			
 			this.conectar();
-			PreparedStatement stm = this.conexion.prepareStatement(comandoStatement);
+			PreparedStatement stm = this.conexion.prepareStatement(cmdStm);
 			ResultSet rs = stm.executeQuery();
 			
 			if(rs.next()) 
 				nuevaDeuda = rs.getInt(1) + modificarDeuda;
-			comandoStatement = "UPDATE `lecsys2.00`.grupoFamiliar SET deuda = ? " + where;
-			stm = this.conexion.prepareStatement(comandoStatement);
+			cmdStm = "UPDATE `lecsys2.00`.grupoFamiliar SET deuda = ? " + where;
+			stm = this.conexion.prepareStatement(cmdStm);
 			stm.setInt(1, nuevaDeuda);
 			stm.executeUpdate();
 		} catch (Exception e) {
 	
 			CtrlLogErrores.guardarError(e.getMessage());
 			CtrlLogErrores.guardarError("GrupoFamiliarMySQL, setActualizarDeuda()");
-			CtrlLogErrores.guardarError(comandoStatement);
+			CtrlLogErrores.guardarError(cmdStm);
 			bandera = false;
 		} finally {
 			

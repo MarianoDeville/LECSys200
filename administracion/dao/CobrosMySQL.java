@@ -58,14 +58,14 @@ public class CobrosMySQL extends Conexion implements CobrosDAO{
 	}
 	
 	@Override
-	public boolean setCobro(Cobros cobro) {
+	public int setCobro(Cobros cobro) {
 
-		boolean bandera = true;
+		int id = 0;
 		long tiempo = System.currentTimeMillis();
 		DtosActividad dtosActividad = new DtosActividad();
 		String pprStm ="INSERT INTO `lecsys2.00`.cobros "
 						+ "(idGrupoFamiliar, nombre, concepto, fecha, hora, monto, factura) "
-						+ "VALUES (?, ?, ?, DATE(NOW), TIME(NOW), ?, ?)";
+						+ "VALUES (?, ?, ?, DATE(NOW()), TIME(NOW()), ?, ?)";
 		
 		try {
 			
@@ -77,19 +77,27 @@ public class CobrosMySQL extends Conexion implements CobrosDAO{
 			stm.setFloat(4, cobro.getMonto());
 			stm.setString(5, cobro.getFactura());
 			stm.executeUpdate();
+			
+			pprStm = "SELECT MAX(idCobros) FROM `lecsys2.00`.cobros";
+			stm = this.conexion.prepareStatement(pprStm);
+			ResultSet rs = stm.executeQuery();
+
+			if(rs.next())
+				id = rs.getInt(1);			
+			
+			
 		} catch (Exception e) {
 	
 			CtrlLogErrores.guardarError(e.getMessage());
 			CtrlLogErrores.guardarError("CobrosMySQL, setCobro()");
 			CtrlLogErrores.guardarError(pprStm);
-			bandera = false;
 		} finally {
 			
 			this.cerrar();
 		}
 		tiempo = System.currentTimeMillis() - tiempo;
 		dtosActividad.registrarActividad("Registro cobro de inscripción.", "Administración", tiempo);
-		return bandera;
+		return id;
 	}
 	
 	@Override
@@ -126,7 +134,7 @@ public class CobrosMySQL extends Conexion implements CobrosDAO{
 		dtosActividad.registrarActividad("Actualización del número de factura en cobros.", "Administración", tiempo);
 		return bandera;
 	}
-	
+/*	
 	@Override
 	public int getUltimoRegistro() {
 
@@ -150,5 +158,5 @@ public class CobrosMySQL extends Conexion implements CobrosDAO{
 			this.cerrar();
 		}
 		return valor;
-	}
+	}*/
 }

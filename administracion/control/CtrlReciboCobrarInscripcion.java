@@ -6,7 +6,6 @@ import java.awt.print.PageFormat;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import javax.swing.JOptionPane;
-
 import modelo.DtosCobros;
 import vista.ReciboCobro;
 

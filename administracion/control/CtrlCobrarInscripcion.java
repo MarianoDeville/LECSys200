@@ -201,9 +201,13 @@ public class CtrlCobrarInscripcion implements ActionListener {
 
 		ventana.txtTabla2.setVisible(ventana.chckbxTabla2.isSelected());
 		ventana.scrollTabla2.setVisible(ventana.chckbxTabla2.isSelected());
-		ventana.tabla2.setModel(dtosCobros.getTablaFamilias(true, ventana.txtTabla2.getText()));
-		ventana.tabla2.getColumnModel().getColumn(2).setPreferredWidth(40);
-		ventana.tabla2.getColumnModel().getColumn(2).setMaxWidth(50);
+		
+		if(ventana.chckbxTabla2.isSelected()) {
+			
+			ventana.tabla2.setModel(dtosCobros.getTablaFamilias(true, ventana.txtTabla2.getText()));
+			ventana.tabla2.getColumnModel().getColumn(2).setPreferredWidth(40);
+			ventana.tabla2.getColumnModel().getColumn(2).setMaxWidth(50);
+		}
 	}
 	
 	private void limpiarOtros() {

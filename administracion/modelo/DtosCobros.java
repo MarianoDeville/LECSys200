@@ -14,18 +14,16 @@ import dao.GrupoFamiliarMySQL;
 
 public class DtosCobros {
 	
-	
+	private GregorianCalendar fechaSistema;
 	private GrupoFamiliarDAO grupoFamiliarDAO;
 	private CobrosDAO cobrosDAO;
-	private Cobros cobro = new Cobros();
 	private Cobros cobros[];
 	private GrupoFamiliar familias[];
 	private Alumno alumnos[];	
 	private static GrupoFamiliar familia;
+	private static Cobros cobro = new Cobros();
 	private static boolean reinscripción;
 	private boolean enviarEmail;
-	private int nroCobro;
-	private float sumaCuotas;
 	private float descuentoContado;
 	private float inscripcion;
 	private float recargoMora;	
@@ -39,7 +37,6 @@ public class DtosCobros {
 	private Calendar fechaSistema;
 	*/
 
-	
 	public TableModel getTablaAlumnos(boolean reinscripción, boolean todos, String busqueda) {
 		
 		String titulo[] = null;
@@ -156,9 +153,9 @@ public class DtosCobros {
 			cuerpo[i][1] = "";
 			cuerpo[i][2] = false;
 
-			for(int e = 0; e < familias.length ; e++) {
+			for(int e = 0; e < familias[i].getIntegrantes().length ; e++) {
 			
-				cuerpo[i][1] += familias[e].getIntegrantes()[i].getNombre() + " " + familias[e].getIntegrantes()[i].getApellido();
+				cuerpo[i][1] += familias[i].getIntegrantes()[e].getNombre() + " " + familias[i].getIntegrantes()[e].getApellido();
 				
 				if(e < familias.length - 1)
 					cuerpo[i][1] += ", ";
@@ -169,11 +166,11 @@ public class DtosCobros {
 			private static final long serialVersionUID = 1L;
 			public boolean isCellEditable(int row, int column) {
 				
-				return column == 4? true: false;
+				return column == 2? true: false;
 			}
 			public Class<?> getColumnClass(int column) {
 				
-				return column == 4? Boolean.class: String.class;
+				return column == 2? Boolean.class: String.class;
 		    }
 		};
 		return tablaFamilia;
@@ -188,6 +185,12 @@ public class DtosCobros {
 
 		float descuentoDeGrupo = 0;
 		float montoTotal = 0;
+		float sumaCuotas = 0;
+		
+		for(int i = 0; i < familia.getIntegrantes().length; i++) {
+			
+			sumaCuotas += familia.getIntegrantes()[i].getCurso().getPrecio();
+		}
 		String descripcion = "Inscripción: " + String.format("%.2f",inscripcion) + ", primer cuota: " + String.format("%.2f",sumaCuotas);
 		
 		if(descuentoContado > 0)
@@ -200,6 +203,7 @@ public class DtosCobros {
 			descripcion += ", descuento grupo familiar: " + descuentoDeGrupo;
 		montoTotal -= descuentoContado;
 		cobro.setConcepto(descripcion);
+		cobro.setMonto(montoTotal);
 		return montoTotal;
 	}
 
@@ -242,23 +246,26 @@ public class DtosCobros {
 
 	public boolean guardarCobroGrupo() {
 		
+		cobro.setIdGrupoFamiliar(familia.getId());
+		familia.setEstado(1);
 		grupoFamiliarDAO = new GrupoFamiliarMySQL();
-		CobrosMySQL administracionDAO = new CobrosMySQL();
+		cobrosDAO = new CobrosMySQL();
 
 		if(reinscripción) {
-			if(!grupoFamiliarDAO.setGrupoFamiliar(familia))
-				return false;
 			
+			if(!grupoFamiliarDAO.update(familia))
+				return false;
 		}else {
 		
-			if(!grupoFamiliarDAO.setGrupoFamiliar(familia))
+			cobro.setIdGrupoFamiliar(grupoFamiliarDAO.setGrupoFamiliar(familia));
+			
+			if(cobro.getIdGrupoFamiliar() == 0)
 				return false;
 		}
+		cobro.setId(cobrosDAO.setCobro(cobro));
 		
-		if(!administracionDAO.setCobro(cobro))
+		if(cobro.getId() == 0)
 			return false;
-
-		nroCobro = administracionDAO.getUltimoRegistro();
 		return true;
 	}
 	
@@ -276,6 +283,7 @@ public class DtosCobros {
 		System.arraycopy(familias[pos].getIntegrantes(), 0, integrantes, 0, familias[pos].getIntegrantes().length);
 		System.arraycopy(familia.getIntegrantes(), 0, integrantes, familias[pos].getIntegrantes().length, familia.getIntegrantes().length);
 		familia = familias[pos];
+		familia.setEstado(1);
 		familia.setIntegrantes(integrantes);
 		familia.setCantIntegrantes(integrantes.length);
 	}
@@ -286,22 +294,60 @@ public class DtosCobros {
 
 		if(!grupoFamiliarDAO.update(familia))
 			return false;
-		AlumnoDAO alumnosDAO = new AlumnoMySQL();
-
-		if(!alumnosDAO.updateFamilia(familia.getId(), familia.getIntegrantes(), 1))
-			return false;
 		cobrosDAO = new CobrosMySQL();
+		cobro.setIdGrupoFamiliar(familia.getId());		
+		cobro.setId(cobrosDAO.setCobro(cobro));
 		
-		if(!cobrosDAO.setCobro(cobro))
+		if(cobro.getId() == 0)
 			return false;
-		nroCobro = cobrosDAO.getUltimoRegistro();
 		return true;
+	}
+	
+	public String getFechaActual(String formato) {
+		
+		fechaSistema = new GregorianCalendar();
+		String fecha = null;
+		if(formato.equals("A")) {
+		
+			fecha = fechaSistema.get(Calendar.YEAR) + "/" 
+				  + (fechaSistema.get(Calendar.MONTH)+1) + "/" 
+				  + fechaSistema.get(Calendar.DAY_OF_MONTH);
+		} else {
+			
+			fecha = fechaSistema.get(Calendar.DAY_OF_MONTH) + "/"
+				  + (fechaSistema.get(Calendar.MONTH)+1) + "/"
+				  + fechaSistema.get(Calendar.YEAR);
+		}
+		return fecha;
+	}
+
+	public String getNumeroRecibo() {
+		
+		String numero = String.format("%012d", cobro.getId());
+		StringBuilder sb = new StringBuilder(numero);
+		sb.insert(4, '-');
+		return sb.toString();
 	}
 	
 	public void deleteInfo() {
 
 		familia = null;
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
 	
 	
 	
@@ -335,6 +381,7 @@ public class DtosCobros {
 	public void setNombre(String nombreFamilia) {
 		
 		familia.setNombre(nombreFamilia);
+		cobro.setNombre(nombreFamilia);
 	}
 	
 	public String getEmail() {
@@ -417,11 +464,29 @@ public class DtosCobros {
 		enviarEmail = enviar;
 	}
 
+	public String getFactura() {
+		
+		return cobro.getFactura();
+	}
+	
 	public void setFactura(String numeroFactura) {
 		
 		cobro.setFactura(numeroFactura);
 	}
- 
+	
+	public float getMontoTotal() {
+		
+		return cobro.getMonto();
+	}
+	
+	public String getDescripcion() {
+		
+		return cobro.getConcepto();
+	}
+	
+	
+	
+	
 	
 	
 	
@@ -548,11 +613,6 @@ public class DtosCobros {
 			}
 		};
 		return tablaModelo;
-	}
-	
-	public float getMontoTotal() {
-		
-		return montoTotal;
 	}
 	
 	public boolean guardarCobroCuota() {
@@ -691,11 +751,6 @@ public class DtosCobros {
 		DtosCobros.integrantes = Integer.parseInt(integrantes);
 	}
 
-	public String getFactura() {
-		
-		return factura;
-	}
-	
 	public String getHoraActual() {
 		
 		fechaSistema = new GregorianCalendar();
@@ -704,38 +759,7 @@ public class DtosCobros {
 					+ (fechaSistema.get(Calendar.SECOND)<10? "0" + fechaSistema.get(Calendar.SECOND):fechaSistema.get(Calendar.SECOND));		
 		return hora;
 	}
-	
-	public String getDescripcion() {
-		
-		return descripcion;
-	}
-	
-	public String getNumeroRecibo() {
-		
-		String numero = String.format("%012d", nroCobro);
-		StringBuilder sb = new StringBuilder(numero);
-		sb.insert(4, '-');
-		return sb.toString();
-	}
-	
-	public String getFechaActual(String formato) {
-		
-		fechaSistema = new GregorianCalendar();
-		String fecha = null;
-		if(formato.equals("A")) {
-		
-			fecha = fechaSistema.get(Calendar.YEAR) + "/" 
-				  + (fechaSistema.get(Calendar.MONTH)+1) + "/" 
-				  + fechaSistema.get(Calendar.DAY_OF_MONTH);
-		} else {
-			
-			fecha = fechaSistema.get(Calendar.DAY_OF_MONTH) + "/"
-				  + (fechaSistema.get(Calendar.MONTH)+1) + "/"
-				  + fechaSistema.get(Calendar.YEAR);
-		}
-		return fecha;
-	}
-	
+
 	public String [] getIdElementosSeleccionados() {
 		
 		String id[] = new String[cantElementosSel];

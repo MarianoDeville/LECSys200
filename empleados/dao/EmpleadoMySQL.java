@@ -44,7 +44,7 @@ public class EmpleadoMySQL extends Conexion implements EmpleadoDAO{
 			
 			bandera = false;
 			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("EmpleadosMySQL, setNuevo()");
+			CtrlLogErrores.guardarError("EmpleadoMySQL, setNuevo()");
 		} finally {
 			
 			this.cerrar();
@@ -61,38 +61,38 @@ public class EmpleadoMySQL extends Conexion implements EmpleadoDAO{
 		boolean bandera = true;
 		long tiempo = System.currentTimeMillis();
 		DtosActividad dtosActividad = new DtosActividad();
-		
+		String pprStm = "";
 		try {
 			
 			this.conectar();
-			
-			PreparedStatement stm = this.conexion.prepareStatement("UPDATE `lecsys2.00`.persona SET "
-					 + "nombre = ?, apellido = ?, dni = ?, dirección = ?, fechaNacimiento = ?, teléfono = ?, email = ? "
-					 + "WHERE idPersona = ?");
+			pprStm = "UPDATE `lecsys2.00`.persona SET "
+					 + "nombre = ?, apellido = ?, dirección = ?, fechaNacimiento = ?, teléfono = ?, email = ? "
+					 + "WHERE dni = ?";
+			PreparedStatement stm = this.conexion.prepareStatement(pprStm);
 			stm.setString(1, empleado.getNombre());
 			stm.setString(2, empleado.getApellido());
-			stm.setString(3, empleado.getDni());
-			stm.setString(4, empleado.getDireccion());
-			stm.setString(5, empleado.getFechaNacimiento());
-			stm.setString(6, empleado.getTelefono());
-			stm.setString(7, empleado.getEmail());
+			stm.setString(3, empleado.getDireccion());
+			stm.setString(4, empleado.getFechaNacimiento());
+			stm.setString(5, empleado.getTelefono());
+			stm.setString(6, empleado.getEmail());
+			stm.setString(7, empleado.getDni());
 			stm.executeUpdate();
-			stm = this.conexion.prepareStatement("UPDATE `lecsys2.00`.empleados SET "
-					+ "sueldo = ?, estado = ?, sector = ?, cargo = ?, tipo = ? fechaBaja = ?"
-					+ "WHERE legajo = ? ");
+			pprStm = "UPDATE `lecsys2.00`.empleados SET sueldo = ?, estado = ?, sector = ?, cargo = ?, tipo = ? ";
+			pprStm += " ,fechaBaja = " + empleado.getFechaBaja() != null? "DATE(NOW()) ": "NULL "; 
+			pprStm += "WHERE legajo = ?";
+			stm = this.conexion.prepareStatement(pprStm);
 			stm.setFloat(1, empleado.getSalario());
 			stm.setInt(2, empleado.getEstado());
 			stm.setString(3, empleado.getSector());
 			stm.setString(4, empleado.getCargo());
 			stm.setString(5, empleado.getRelacion());
-			stm.setString(6, empleado.getFechaBaja());
-			stm.setInt(2, empleado.getLegajo());
+			stm.setInt(6, empleado.getLegajo());
 			stm.executeUpdate();
 		} catch (Exception e) {
-			
+
 			bandera = false;
 			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("EmpleadosDAO, update()");
+			CtrlLogErrores.guardarError("EmpleadoMySQL, update()");
 		} finally {
 			
 			this.cerrar();
@@ -131,7 +131,7 @@ public class EmpleadoMySQL extends Conexion implements EmpleadoDAO{
 		}catch (Exception e) {
 			
 			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("EmpleadoDAO, getEmpleado()");
+			CtrlLogErrores.guardarError("EmpleadoMySQL, getEmpleado()");
 		} finally {
 			
 			this.cerrar();
@@ -199,7 +199,7 @@ public class EmpleadoMySQL extends Conexion implements EmpleadoDAO{
 		}catch (Exception e) {
 			
 			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("EmpleadosDAO, getListado()");
+			CtrlLogErrores.guardarError("EmpleadoMySQL, getListado()");
 			CtrlLogErrores.guardarError(comandoStatement);
 		} finally {
 			
@@ -208,85 +208,29 @@ public class EmpleadoMySQL extends Conexion implements EmpleadoDAO{
 		return empleados;
 	}
 	
-	
-	
+	@Override
+	public int getLegajoLibre() {
+		
+		int legajo = 0;
 
-	/*
-	public String [][] getEmpleadosActivos() {
-		
-		String matriz [][] = null;
-		String comandoStatement = "SELECT CONCAT (persona.nombre , CONCAT (\", \", apellido)) AS nombre, empleados.idEmpleado "
-								+ "FROM empleados "
-				 				+ "JOIN persona on empleados.idPersona = persona.idPersona "
-				 				+ "WHERE empleados.estado = 1 "
-				 				+ "ORDER BY apellido, nombre";
-		
 		try {
 			
 			this.conectar();
 			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stm.executeQuery(comandoStatement);
-			rs.last();	
-			matriz = new String[rs.getRow()][2];
-			rs.beforeFirst();
-			int i=0;
+			ResultSet rs = stm.executeQuery("SELECT MAX(legajo) FROM `lecsys2.00`.empleados");
 
-			while (rs.next()) {
+			if(rs.next()) {
 				
-				matriz[i][0] = rs.getString(1);
-				matriz[i][1] = rs.getString(2);
-				i++;
+				legajo = rs.getInt(1);
 			}
 		}catch (Exception e) {
 			
 			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("EmpleadosDAO, getEmpleadosActivos()");
-			CtrlLogErrores.guardarError(comandoStatement);
+			CtrlLogErrores.guardarError("EmpleadoMySQL, getLegajoLibre()");
 		} finally {
 			
 			this.cerrar();
 		}
-		return matriz;
+		return (legajo + 1);
 	}
-
-	public String [][] getEmpleados(boolean estado, String filtrado) {
-		
-		String matriz[][] = null;
-		String comandoStatement = "SELECT empleados.idEmpleado, persona.nombre, apellido, sector, cargo , tipo "
-								+ "FROM empleados "
-				 				+ "JOIN persona on empleados.idPersona = persona.idPersona "
-				 				+ "WHERE (empleados.estado = " + (estado? "1 ":"0 ") + " AND (apellido LIKE '" + filtrado + "%' OR nombre LIKE '" + filtrado + "%')) "
-				 				+ "ORDER BY apellido, nombre";
-		
-		try {
-			
-			this.conectar();
-			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stm.executeQuery(comandoStatement);
-			rs.last();	
-			matriz = new String[rs.getRow()][6];
-			rs.beforeFirst();
-			int i=0;
-
-			while (rs.next()) {
-				
-				matriz[i][0] = rs.getString(1);
-				matriz[i][1] = rs.getString(2);
-				matriz[i][2] = rs.getString(3);
-				matriz[i][3] = rs.getString(4);
-				matriz[i][4] = rs.getString(5);
-				matriz[i][5] = rs.getString(6);
-				i++;
-			}
-		}catch (Exception e) {
-			
-			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("EmpleadosDAO, getEmpleados(boolean estado, String filtrado)");
-			CtrlLogErrores.guardarError(comandoStatement);
-		} finally {
-			
-			this.cerrar();
-		}
-		return matriz;
-	}*/
 }

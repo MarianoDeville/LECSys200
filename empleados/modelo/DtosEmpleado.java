@@ -357,7 +357,13 @@ public class DtosEmpleado {
 		CronogramaDAO cronogramaDAO = new CronogramaMySQL();
 		bandera = cronogramaDAO.setCronograma(horarios);
 		return bandera;
-	}	
+	}
+	
+	public String getNuevoLegajo() {
+		
+		EmpleadoDAO empleados = new EmpleadoMySQL();
+		return empleados.getLegajoLibre() + "";
+	}
 
 	public String getLegajo() {
 		
@@ -387,6 +393,10 @@ public class DtosEmpleado {
 
 	public void setEstado(int estado) {
 		
+		if(estado == 0 && empleado.getEstado() == 1)
+			empleado.setFechaBaja("cargar baja");
+		else
+			empleado.setFechaBaja(null);
 		DtosEmpleado.empleado.setEstado(estado);
 	}
 	

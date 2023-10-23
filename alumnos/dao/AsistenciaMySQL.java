@@ -5,35 +5,48 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import control.CtrlLogErrores;
 import modelo.DtosActividad;
-import modelo.DtosAlumno;
+import modelo.ResumenAsistencia;
+import modelo.Asistencia;
 
 public class AsistenciaMySQL extends Conexion implements AsistenciaDAO {
 
-	private int faltas;
-	private int presente;
-	private int tarde;
-
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	@Override
-	public boolean setAsistencia(int fila) {
+	public boolean setAsistencia(Asistencia asistencia[]) {
 
 		boolean bandera = true;
 		long tiempo = System.currentTimeMillis();
-		DtosAlumno dtosAlumno = new DtosAlumno();
 		DtosActividad dtosActividad = new DtosActividad();
 
 		try {
 			
 			this.conectar();
-			PreparedStatement stm = this.conexion.prepareStatement("INSERT INTO faltas (idAlumnos, fecha, estado, idCurso) VALUES (?, ?, ?, ?)");
-			stm.setInt(1, dtosAlumno.getAsistencia("Legajo",fila));
-//			stm.setString(2, dtosAlumno.getFechaActual(false));
-			stm.setInt(3, dtosAlumno.getAsistencia("Estado",fila));
-//			stm.setInt(4, Integer.parseInt(dtosAlumno.getCurso()));
-			stm.executeUpdate();
+			PreparedStatement stm = this.conexion.prepareStatement("INSERT INTO faltas (idAlumnos, fecha, estado, idCurso) VALUES (?, DATE(NOW)), ?, ?)");
+			
+			for(int i = 0; i < asistencia.length; i++) {
+				
+				stm.setInt(1, asistencia[i].getLegajo());
+				stm.setInt(2, asistencia[i].getEstado());
+				stm.setInt(3, asistencia[i].getIdCurso());
+				stm.executeUpdate();
+			}
 		} catch (Exception e) {
 	
 			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("AlumnosDAO, setAsistencia()");
+			CtrlLogErrores.guardarError("AsistenciaMySQL, setAsistencia()");
 			bandera = false;
 		} finally {
 			
@@ -62,7 +75,7 @@ public class AsistenciaMySQL extends Conexion implements AsistenciaDAO {
 		}catch (Exception e) {
 			
 			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("AlumnosDAO, isAsistenciaTomada()");
+			CtrlLogErrores.guardarError("AsistenciaMySQL, isAsistenciaTomada()");
 			CtrlLogErrores.guardarError(comandoStatement);
 		} finally {
 			
@@ -108,7 +121,7 @@ public class AsistenciaMySQL extends Conexion implements AsistenciaDAO {
 		}catch (Exception e) {
 			
 			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("AlumnosDAO, tablaAsistenciasAlumnos()");
+			CtrlLogErrores.guardarError("AsistenciaMySQL, tablaAsistenciasAlumnos()");
 			CtrlLogErrores.guardarError(comandoStatement);
 		} finally {
 			
@@ -118,8 +131,9 @@ public class AsistenciaMySQL extends Conexion implements AsistenciaDAO {
 	}
 	
 	@Override
-	public void getInfoAsistencia(String idAlumno) {
+	public ResumenAsistencia getInfoAsistencia(String idAlumno) {
 		
+		ResumenAsistencia resumen = new ResumenAsistencia();
 		String comando = "SELECT COUNT(*) FROM faltas WHERE (idAlumnos = " + idAlumno + " AND YEAR(fecha) = YEAR(NOW())";
 		try {
 			
@@ -128,43 +142,26 @@ public class AsistenciaMySQL extends Conexion implements AsistenciaDAO {
 			ResultSet rs = stm.executeQuery(comando + " AND estado = 0)");
 			
 			if (rs.next()) 
-				faltas = rs.getInt(1);	
+				resumen.setFaltas(rs.getInt(1));	
 
 			rs = stm.executeQuery(comando + " AND estado = 1)");
 			
 			if (rs.next()) 
-				presente = rs.getInt(1);
+				resumen.setPresente(rs.getInt(1));
 			
 			rs = stm.executeQuery(comando + " AND estado = 2)");
 			
 			if (rs.next()) 
-				tarde = rs.getInt(1);
+				resumen.setTarde(rs.getInt(1));
 			
 		}catch (Exception e) {
 			
 			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("AlumnosDAO, getInfoAsistencia()");
+			CtrlLogErrores.guardarError("AsistenciaMySQL, getInfoAsistencia()");
 		} finally {
 			
 			this.cerrar();
 		}
-	}
-	
-	@Override
-	public String getFaltas() {
-		
-		return faltas + "";
-	}
-	
-	@Override
-	public String getPresente() {
-		
-		return presente + "";
-	}
-	
-	@Override
-	public String getTarde() {
-		
-		return tarde + "";
+		return resumen;
 	}
 }

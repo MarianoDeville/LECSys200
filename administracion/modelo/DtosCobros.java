@@ -2,6 +2,7 @@ package modelo;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import control.CtrlLogErrores;
@@ -29,15 +30,6 @@ public class DtosCobros {
 	private float inscripcion;
 	private float recargoMora;	
 	private float sumatoria;
-
-	/*
-	private static String matrizSelec[][] = null;
-	private static int cantidadCuotas;
-	private String tablaRespuesta[][];
-	private int elementoSeleccionado;
-	
-	private Calendar fechaSistema;
-	*/
 
 	public TableModel getTablaAlumnos(boolean reinscripción, boolean todos, String busqueda) {
 		
@@ -277,8 +269,8 @@ public class DtosCobros {
 	public String getCuerpoEmail() {
 		
 		String temp = "Por la presente se deja constancia del pago realizado el día " + getFechaActual("") 
-					+ ", y el detalle del mismo:\n\n" + cobro.getConcepto().replaceAll(", ", "\n");
-		temp += "\nTotal: " + String.format("%.2f",cobro.getMonto());
+					+ ", y el detalle del mismo:\n\n" + cobro.getConcepto().replaceAll(", ", "\n")
+					+ "\nTotal: " + String.format("%.2f",cobro.getMonto());
 		return temp;
 	}
 
@@ -475,7 +467,6 @@ public class DtosCobros {
 
 		if(!grupoFamiliarDAO.updateDeuda(familia.getId(), -cantidadCuotasSeleccionadas))
 			return false;
-
 		DtosActividad dtosActividad = new DtosActividad();
 		tiempo = System.currentTimeMillis() - tiempo;
 		dtosActividad.registrarActividad("Borrado de deuda. Familia: " + familia.getNombre(), "Administración", tiempo);
@@ -508,7 +499,8 @@ public class DtosCobros {
 
 	public TableModel getTablaCobros(int mes, Object año) {
 		
-		String titulo[] = new String[] {"Fecha", "Nombre", "Concepto", "Hora", "Monto", "Factura"};
+		String titulo[] = new String[] {"Fecha", "Hora", "Nombre", "Concepto", "Monto", "Factura"};
+		Object cuerpo[][];
 		cobrosDAO = new CobrosMySQL();
 		int temp = 0;
 		sumatoria = 0;
@@ -521,14 +513,19 @@ public class DtosCobros {
 			CtrlLogErrores.guardarError("Error al convertir 'Object' año a 'int' en la clase: DtosCobros método: getTablaCobros()");
 		}
 		cobros = cobrosDAO.getListado(temp, mes);
-		
-		if(cobros != null) {
+		cuerpo = new Object[cobros.length][6];
 			
-			for(int i = 0; i < cobros.length; i++) {
-				sumatoria += cobros[i].getMonto();
-			}
+		for(int i = 0; i < cobros.length; i++) {
+			
+			cuerpo[i][0] = cobros[i].getFecha();
+			cuerpo[i][1] = cobros[i].getHora();
+			cuerpo[i][2] = cobros[i].getNombre();
+			cuerpo[i][3] = cobros[i].getConcepto();
+			cuerpo[i][4] = cobros[i].getMonto();
+			cuerpo[i][5] = cobros[i].getFactura();
+			sumatoria += cobros[i].getMonto();
 		}
-		DefaultTableModel tablaModelo = new DefaultTableModel(tablaRespuesta, titulo){
+		DefaultTableModel tablaModelo = new DefaultTableModel(cuerpo, titulo){
 
 			private static final long serialVersionUID = 1L;
 			public boolean isCellEditable(int row, int column) {
@@ -538,45 +535,26 @@ public class DtosCobros {
 		return tablaModelo;
 	}
 
-	
-	
-	
-	
+	public boolean setActualizarFacturas(JTable listado) {
+		
+		int cant = 0;
+		Cobros cobrosActualizados[] = new Cobros[listado.getRowCount()];
+		
+		for(int i = 0; i < listado.getRowCount(); i++) {
+		
+			if(!listado.getValueAt(i, 4).equals(cobros[i].getFactura())) {
+			
+				cobrosActualizados[cant] = cobros[i];
+				cobrosActualizados[cant].setFactura((String)listado.getValueAt(i, 5));
+				cant++;
+			}
+		}
+		Cobros respuesta[] = new Cobros[cant];
+		System.arraycopy(cobrosActualizados, 0, respuesta, 0, cant);
+		cobrosDAO = new CobrosMySQL();
+		return cobrosDAO.update(respuesta);
+	}
 
-	
-	
-	
-	
-	
-	
-	
-
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	public String getNombre() {
 		
 		return familia.getNombre();
@@ -706,100 +684,5 @@ public class DtosCobros {
 	public String getMonto() {
 		
 		return String.format("%.2f", sumatoria);
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-
-	public boolean setActualizarFacturas(String listaFacturas[]) {
-		
-		int e = 0;
-		CobrosMySQL administracionDAO = new CobrosMySQL();
-		
-		for(int i = 0; i < listaFacturas.length; i++) {
-			
-			if(!listaFacturas[i].equals(tablaRespuesta[i][5]))
-				e++;
-		}
-		matrizSelec = new String[e][2];
-		e = 0;
-		
-		for(int i = 0; i < tablaRespuesta.length; i++) {
-			
-			if(!listaFacturas[i].equals(tablaRespuesta[i][5])) {
-				
-				matrizSelec[e][0] = tablaRespuesta[i][6];
-				matrizSelec[e][1] = listaFacturas[i];
-				e++;
-			}
-		}
-		return administracionDAO.setActualizarFacturas(matrizSelec);
-	}
-
-	public void SetIntegrantes(String integrantes) {
-		
-		DtosCobros.integrantes = Integer.parseInt(integrantes);
-	}
-
-	public String getHoraActual() {
-		
-		fechaSistema = new GregorianCalendar();
-	    String hora = (fechaSistema.get(Calendar.AM_PM)==0? fechaSistema.get(Calendar.HOUR):fechaSistema.get(Calendar.HOUR)+12) + ":" 
-					+ (fechaSistema.get(Calendar.MINUTE)<10? "0" + fechaSistema.get(Calendar.MINUTE):fechaSistema.get(Calendar.MINUTE)) + ":" 
-					+ (fechaSistema.get(Calendar.SECOND)<10? "0" + fechaSistema.get(Calendar.SECOND):fechaSistema.get(Calendar.SECOND));		
-		return hora;
-	}
-
-	public String [] getIdElementosSeleccionados() {
-		
-		String id[] = new String[cantElementosSel];
-		
-		for(int i = 0 ; i < cantElementosSel ; i++) {
-			
-			id[i] = matrizSelec[i][0];
-		}
-		return id;
 	}
 }

@@ -6,6 +6,7 @@ import javax.swing.table.DefaultTableModel;
 import control.CtrlLogErrores;
 import dao.AlumnoDAO;
 import dao.AlumnoMySQL;
+import dao.AsistenciaDAO;
 import dao.CursosDAO;
 import dao.CursosMySQL;
 import dao.EmpleadoDAO;
@@ -16,6 +17,7 @@ import dao.PersonaMySQL;
 public class DtosAlumno {
 	
 	private AlumnoDAO alumnosDAO;
+	private AsistenciaDAO asistenciaDAO;
 	private static Alumno alumno = new Alumno();
 	private CursoXtnd cursos[];
 	private Alumno alumnos[];
@@ -24,14 +26,14 @@ public class DtosAlumno {
 	private String mesNacimiento;
 	private String diaNacimiento;
 	private String cantAlumnos;
-	private static String msg;	
-	
+	private String msg;	
+	private Object [][] tablaAsistencia;
 	
 	
 /*	
 	private static String resultadoExamen;
 	private static String tipoExamen;
-	private static Object [][] tablaAsistencia;
+	
 	private int escrito1;
 	private int escrito2;
 	private int finalEscrito;
@@ -248,7 +250,73 @@ public class DtosAlumno {
 		DefaultTableModel tablaModelo = new DefaultTableModel(tabla, titulo);
 		return tablaModelo;
 	}
+	
+	public String getFechaActual(boolean formato) {
+		
+		Calendar fechaSistema = new GregorianCalendar();
+		String fecha = null;
+		if(formato) {
+			
+			fecha = fechaSistema.get(Calendar.DAY_OF_MONTH) + "/" 
+				  + (fechaSistema.get(Calendar.MONTH)+1) + "/" 
+				  + fechaSistema.get(Calendar.YEAR);
+		} else {
+			
+			fecha = fechaSistema.get(Calendar.YEAR) + "/" 
+				  + (fechaSistema.get(Calendar.MONTH)+1) + "/" 
+				  + fechaSistema.get(Calendar.DAY_OF_MONTH);
+		}
+		return fecha;
+	}
+	
+	public DefaultTableModel getTablaAsistencia(int pos) {
+		
+		alumnosDAO = new AlumnoMySQL();
+		String titulo[] = {"Leg.", "Nombre", "Apellido", "Presente", "Tarde"};
+		alumnos = alumnosDAO.getListado("Curso", cursos[pos].getId() + "", true, "", "");
+		tablaAsistencia = null;
+		if(alumnos != null) {
+			
+			tablaAsistencia = new Object[alumnos.length][5];
+			
+			for(int i = 0 ; i < alumnos.length ; i++) {
+				
+				tablaAsistencia[i][0] = alumnos[i].getLegajo();
+				tablaAsistencia[i][1] = alumnos[i].getNombre();
+				tablaAsistencia[i][2] = alumnos[i].getApellido();
+				tablaAsistencia[i][3] = false;
+				tablaAsistencia[i][4] = false;
+			}
+		}
+		DefaultTableModel tablaModelo = new DefaultTableModel(tablaAsistencia, titulo){
 
+			private static final long serialVersionUID = 1L;
+			public boolean isCellEditable(int row, int column) {
+				
+				return column > 2? true: false;
+			}
+			
+			public Class<?> getColumnClass(int column) {
+				
+				return column > 2? Boolean.class: String.class;
+		    }
+		};
+		return tablaModelo;
+	}
+	
+	public void setTablaAsistencia(int fila, int columna, boolean valor) {
+		
+		if(fila < tablaAsistencia.length) {
+			
+			if(columna < tablaAsistencia[fila].length && columna > 2) {
+				
+				tablaAsistencia[fila][columna] = valor;
+			}
+		}
+	}
+
+	
+	
 	
 	
 	
@@ -454,6 +522,12 @@ public class DtosAlumno {
 	
 	
 	
+	
+	
+	
+	
+	
+	
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////// Por revisar	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
@@ -556,48 +630,6 @@ public class DtosAlumno {
 			}
 		}
 		return 0;
-	}
-	
-
-	
-	public DefaultTableModel getTablaAsistencia(int cursoSeleccionado) {
-		
-		alumnosDAO = new AlumnoMySQL();
-		String titulo[] = {"Leg.", "Nombre", "Apellido", "Presente", "Tarde"};
-		String respuesta[][] = alumnosDAO.getListado("Curso", idCursos[cursoSeleccionado], true, "", "");
-		tablaAsistencia = null;
-		cantAlumnos = "0";
-		if(respuesta != null) {
-			
-			tablaAsistencia = new Object[respuesta.length][5];
-			cantAlumnos = respuesta.length + "";
-			
-			for(int i = 0 ; i < respuesta.length ; i++) {
-				
-				tablaAsistencia[i][0] = respuesta[i][0];
-				tablaAsistencia[i][1] = respuesta[i][1];
-				tablaAsistencia[i][2] = respuesta[i][2];
-				tablaAsistencia[i][3] = false;
-				tablaAsistencia[i][4] = false;
-			}
-		} else {
-			
-			tablaAsistencia = null;
-		}
-		DefaultTableModel tablaModelo = new DefaultTableModel(tablaAsistencia, titulo){
-
-			private static final long serialVersionUID = 1L;
-			public boolean isCellEditable(int row, int column) {
-				
-				return column > 2? true: false;
-			}
-			
-			public Class<?> getColumnClass(int column) {
-				
-				return column > 2? Boolean.class: String.class;
-		    }
-		};
-		return tablaModelo;
 	}
 
 	public DefaultTableModel getTablaRegistroAsistencia(int cursoSeleccionado, int mesSeleccionado) {
@@ -706,27 +738,6 @@ public class DtosAlumno {
 		return tablaModelo;
 	}
 	
-	public String getFechaActual(boolean formato) {
-		
-		Calendar fechaSistema = new GregorianCalendar();
-		String fecha = null;
-		if(formato) {
-			
-			fecha = fechaSistema.get(Calendar.DAY_OF_MONTH) + "/" 
-				  + (fechaSistema.get(Calendar.MONTH)+1) + "/" 
-				  + fechaSistema.get(Calendar.YEAR);
-		} else {
-			
-			fecha = fechaSistema.get(Calendar.YEAR) + "/" 
-				  + (fechaSistema.get(Calendar.MONTH)+1) + "/" 
-				  + fechaSistema.get(Calendar.DAY_OF_MONTH);
-		}
-		return fecha;
-	}
-	
-
-
-	
 	public String [] getListaMeses() {
 		
 		return new String[] {"Todos","Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"};
@@ -740,17 +751,6 @@ public class DtosAlumno {
 	public String [][] getHorariosCursos() {
 		
 		return horariosCursos;
-	}
-	
-	public void setTablaAsistencia(int fila, int columna, boolean valor) {
-		
-		if(fila < tablaAsistencia.length) {
-			
-			if(columna < tablaAsistencia[fila].length && columna > 2) {
-				
-				tablaAsistencia[fila][columna] = valor;
-			}
-		}
 	}
 
 	public void guardarResultados(String [][] tablaResultados) {

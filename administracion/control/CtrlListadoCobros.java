@@ -7,7 +7,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableCellRenderer;
-
 import modelo.DtosCobros;
 import vista.Listado;
 
@@ -15,7 +14,6 @@ public class CtrlListadoCobros implements ActionListener {
 
 	private Listado ventana;
 	private DtosCobros dtosCobros;
-	private boolean bandera;
 	
 	public CtrlListadoCobros(Listado vista) {
 		
@@ -30,7 +28,6 @@ public class CtrlListadoCobros implements ActionListener {
 	
 	public void iniciar() {
 
-		bandera = false;
 		ventana.lblComboBox1.setVisible(true);
 		ventana.lblComboBox1.setText("Año:");
 		ventana.comboBox1.setVisible(true);
@@ -92,15 +89,10 @@ public class CtrlListadoCobros implements ActionListener {
 
 	private void actualizar() {
 		
-		if(!bandera) {
-			
-			bandera = true;
-			return;
-		}
 		DefaultTableCellRenderer derecha = new DefaultTableCellRenderer();
 		derecha.setHorizontalAlignment(JLabel.RIGHT);
 		ventana.tabla.setModel(dtosCobros.getTablaCobros(ventana.comboBox2.getSelectedIndex(),
-																	  ventana.comboBox1.getSelectedItem()));
+														 ventana.comboBox1.getSelectedItem()));
 		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(90);
 		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(70);
 		ventana.tabla.getColumnModel().getColumn(1).setMaxWidth(250);
@@ -118,14 +110,9 @@ public class CtrlListadoCobros implements ActionListener {
 	
 	private void guardarCambio() {
 		
-		String listaFacturas[] = new String[ventana.tabla.getRowCount()];
-		
-		for(int i = 0; i < listaFacturas.length; i++) {
-			
-			listaFacturas[i] = (String) ventana.tabla.getValueAt(i, 5);
-		}
-		
-		if(!dtosCobros.setActualizarFacturas(listaFacturas))
+		if(dtosCobros.setActualizarFacturas(ventana.tabla))
+			JOptionPane.showMessageDialog(null, "Se actualizó la información en la base de datos.");
+		else
 			JOptionPane.showMessageDialog(null, "No se pudo actualizar la información.");
 	}
 }

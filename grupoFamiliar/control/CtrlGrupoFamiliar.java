@@ -15,14 +15,14 @@ import modelo.DtosGrupoFamiliar;
 public class CtrlGrupoFamiliar implements ActionListener {
 
 	private ABML ventana;
-	private DtosGrupoFamiliar dtos;
+	private DtosGrupoFamiliar dtosFamilia;
 	private ListadoDoble ventanaEditarGrupo;
 	private int elemento = -1;
 	
 	public CtrlGrupoFamiliar(ABML vista) {
 		
 		this.ventana = vista;
-		this.dtos = new DtosGrupoFamiliar();
+		this.dtosFamilia = new DtosGrupoFamiliar();
 		this.ventana.chckbx1.addActionListener(this);
 		this.ventana.btnEditar.addActionListener(this);
 		this.ventana.btnVolver.addActionListener(this);
@@ -97,7 +97,7 @@ public class CtrlGrupoFamiliar implements ActionListener {
 	private void actualizar() {
 
 		elemento = -1;
-		ventana.tabla.setModel(dtos.getTablaFamilias(ventana.chckbx1.isSelected(), ventana.txt1.getText()));
+		ventana.tabla.setModel(dtosFamilia.getTablaFamilias(ventana.chckbx1.isSelected(), ventana.txt1.getText()));
 		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(200);
 		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(250);
 		ventana.tabla.setDefaultEditor(Object.class, null);
@@ -111,7 +111,7 @@ public class CtrlGrupoFamiliar implements ActionListener {
 			JOptionPane.showMessageDialog(null, "No ha seleccionado ningún elemento.");
 			return;
 		}
-		dtos.setFamiliaSeleccionada(elemento);
+		dtosFamilia.setFamiliaSeleccionada(elemento);
 		elemento = -1;
 		ventanaEditarGrupo = new ListadoDoble("Edicion de la información del grupo.");
 		CtrlEditarGrupoFamiliar ctrlEditarGrupo = new CtrlEditarGrupoFamiliar(ventanaEditarGrupo);

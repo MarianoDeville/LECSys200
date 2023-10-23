@@ -134,29 +134,4 @@ public class CobrosMySQL extends Conexion implements CobrosDAO{
 		dtosActividad.registrarActividad("Actualización del número de factura en cobros.", "Administración", tiempo);
 		return bandera;
 	}
-/*	
-	@Override
-	public int getUltimoRegistro() {
-
-		int valor = 0;
-		
-		try {
-			
-			this.conectar();
-			Statement stm = this.conexion.createStatement();
-			ResultSet rs = stm.executeQuery("SELECT MAX(idCobros) FROM `lecsys2.00`.cobros");
-
-			if(rs.next())
-				valor = rs.getInt(1);
-
-		}catch (Exception e) {
-			
-			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("CobrosMySQL, getUltimoRegistro()");
-		} finally {
-			
-			this.cerrar();
-		}
-		return valor;
-	}*/
 }

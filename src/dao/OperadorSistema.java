@@ -63,6 +63,7 @@ public class OperadorSistema extends Conexion {
 			case "UsuariosMySQL.updateTiempoPass":
 			case "UsuariosMySQL.isNombreUsado":
 			case "PersonaMySQL.isDNIDuplicado":
+			case "EmpleadoMySQL.getLegajoLibre":	
 				bandera = true;
 				break;
 									// Permisos para Administración.	///////////////////////////////////////////////
@@ -81,7 +82,7 @@ public class OperadorSistema extends Conexion {
 			case "PagosDAO.getDetallePagoProveedor":
 			case "PagosDAO.getPagosEmpleado":
 			case "PagosDAO.getHistorialPagos":
-			case "EmpleadosMySQL.getEmpleado":
+			case "EmpleadoMySQL.getEmpleado":
 			case "EstadisticasDAO.getEstadisticasAnuales":
 				bandera = checkLectura(1);
 				break;
@@ -106,10 +107,10 @@ public class OperadorSistema extends Conexion {
 				break;
 									// Permisos para Alumnos.	///////////////////////////////////////////////
 			case "CtrlAlumnos.iniciar":
-			case "AlumnoMySQL.isAsistenciaTomada":
-			case "AlumnoMySQL.getAsistencias":
-			case "AlumnoMySQL.getInfoAsistencia":
-			case "AlumnoMySQL.getExamen":
+			case "AsistenciaMySQL.isAsistenciaTomada":
+			case "AsistenciaMySQL.getAsistencias":
+			case "AsistenciaMySQL.getInfoAsistencia":
+			case "ExamenesMySQL.getExamen":
 				bandera = checkLectura(2);
 				break;	
 
@@ -132,8 +133,8 @@ public class OperadorSistema extends Conexion {
 				bandera = permisos[1][2] | permisos[2][2];
 				break;
 				
-			case "AlumnoMySQL.setExamen":
-			case "AlumnoMySQL.setAsistencia":
+			case "ExamenesMySQL.setExamen":
+			case "AsistenciaMySQL.setAsistencia":
 				bandera = permisos[2][1] | permisos[2][2];
 				break;
 
@@ -244,7 +245,7 @@ public class OperadorSistema extends Conexion {
 				bandera = permisos[6][1];
 				break;
 				
-			case "EmpleadoMySQL.setActualizarEmpleado":
+			case "EmpleadoMySQL.update":
 				bandera = permisos[6][2];
 				break;
 				

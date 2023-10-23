@@ -14,14 +14,14 @@ import modelo.DtosGrupoFamiliar;
 public class CtrlEditarGrupoFamiliar implements ActionListener {
 
 	private ListadoDoble ventana;
-	private DtosGrupoFamiliar dtosGrupoFamiliar;
+	private DtosGrupoFamiliar dtosFamilia;
 	private int elemento1 = -1;
 	private int elemento2 = -1;
 	
 	public CtrlEditarGrupoFamiliar(ListadoDoble vista) {
 		
 		this.ventana = vista;
-		this.dtosGrupoFamiliar = new DtosGrupoFamiliar();
+		this.dtosFamilia = new DtosGrupoFamiliar();
 		this.ventana.btnAgregar.addActionListener(this);
 		this.ventana.btnQuitar.addActionListener(this);
 		this.ventana.btnGuardar.addActionListener(this);
@@ -51,8 +51,8 @@ public class CtrlEditarGrupoFamiliar implements ActionListener {
 	
 		ventana.btnEliminar.setVisible(false);
 		ventana.btnQuitar.setVisible(true);
-		ventana.txt1Tabla1.setText(dtosGrupoFamiliar.getNombreFamilia());
-		ventana.txt2Tabla1.setText(dtosGrupoFamiliar.getDescuento());
+		ventana.txt1Tabla1.setText(dtosFamilia.getNombreFamilia());
+		ventana.txt2Tabla1.setText(dtosFamilia.getDescuento());
 		ventana.panelListado.remove(ventana.txt3Tabla1);
 		ventana.panelListado.remove(ventana.lblTxt3Tabla1);
 		ventana.checkBoxActivos.setVisible(false);
@@ -64,14 +64,14 @@ public class CtrlEditarGrupoFamiliar implements ActionListener {
 
 		elemento1 = -1;
 		elemento2 = -1;
-		ventana.tabla1.setModel(dtosGrupoFamiliar.getTablaFamilia());
+		ventana.tabla1.setModel(dtosFamilia.getTablaFamilia());
 		ventana.tabla1.getColumnModel().getColumn(0).setPreferredWidth(40);
 		ventana.tabla1.getColumnModel().getColumn(0).setMaxWidth(50);
 		ventana.tabla1.getColumnModel().getColumn(3).setPreferredWidth(40);
 		ventana.tabla1.getColumnModel().getColumn(3).setMaxWidth(50);
 		ventana.tabla1.setDefaultEditor(Object.class, null);
 		ventana.tabla1.clearSelection();
-		ventana.tabla2.setModel(dtosGrupoFamiliar.getTablaAlumnos(ventana.txt1Tabla2.getText(),true));
+		ventana.tabla2.setModel(dtosFamilia.getTablaAlumnos(ventana.txt1Tabla2.getText(),true));
 		ventana.tabla2.getColumnModel().getColumn(0).setPreferredWidth(40);
 		ventana.tabla2.getColumnModel().getColumn(0).setMaxWidth(50);
 		ventana.tabla2.setDefaultEditor(Object.class, null);
@@ -111,12 +111,12 @@ public class CtrlEditarGrupoFamiliar implements ActionListener {
 			return;
 		}
 
-		if(dtosGrupoFamiliar.isRepetido(elemento2) ) {
+		if(dtosFamilia.isRepetido(elemento2) ) {
 			
 			JOptionPane.showMessageDialog(null, "El elemento seleccionado ya fue agregado.");
 			return;
 		}
-		dtosGrupoFamiliar.setAgregarElementos(elemento2);
+		dtosFamilia.setAgregarElementos(elemento2);
 		elemento2 = -1;
 	}
 	
@@ -139,7 +139,7 @@ public class CtrlEditarGrupoFamiliar implements ActionListener {
 			JOptionPane.showMessageDialog(null, "No se puede eliminar un elemento que se acaba de guardar.");
 			return;
 		}
-		dtosGrupoFamiliar.setEliminarElementos(elemento1);
+		dtosFamilia.setEliminarElementos(elemento1);
 		elemento1 = -1;
 	}
 	
@@ -147,10 +147,10 @@ public class CtrlEditarGrupoFamiliar implements ActionListener {
 		
 		if(JOptionPane.showConfirmDialog(null, "¿Esta seguro?", "Alerta!", JOptionPane.YES_NO_OPTION) == 0) {
 			
-			dtosGrupoFamiliar.setNombreFamilia(ventana.txt1Tabla1.getText());
-			dtosGrupoFamiliar.setDescuento(ventana.txt2Tabla1.getText());
+			dtosFamilia.setNombreFamilia(ventana.txt1Tabla1.getText());
+			dtosFamilia.setDescuento(ventana.txt2Tabla1.getText());
 
-			if(dtosGrupoFamiliar.guardarCambios()) {
+			if(dtosFamilia.guardarCambios()) {
 				
 				ventana.lblMsgError.setForeground(Color.BLUE);
 				ventana.lblMsgError.setText("Se han guardado los cambios en la base de datos.");
@@ -164,7 +164,7 @@ public class CtrlEditarGrupoFamiliar implements ActionListener {
 			} else {
 				
 				ventana.lblMsgError.setForeground(Color.RED);
-				ventana.lblMsgError.setText(dtosGrupoFamiliar.getMsgError());
+				ventana.lblMsgError.setText(dtosFamilia.getMsgError());
 			}
 		}			
 	}

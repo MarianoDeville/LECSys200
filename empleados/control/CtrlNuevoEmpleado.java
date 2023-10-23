@@ -18,11 +18,15 @@ public class CtrlNuevoEmpleado implements ActionListener {
 		this.ventana = vista;
 		this.dtosEmpleado = new DtosEmpleado();
 		this.ventana.btnGuardar.addActionListener(this);
+		this.ventana.btnImprimir.addActionListener(this);
 		this.ventana.btnVolver.addActionListener(this);
 	}
 	
 	public void iniciar() {
 
+		ventana.btnImprimir.setText("Nuevo");
+		ventana.btnImprimir.setEnabled(false);
+		ventana.btnImprimir.setVisible(true);
 		ventana.lblcomboBox1.setText("Sector:");
 		ventana.comboBox1.setModel(new DefaultComboBoxModel<String>(dtosEmpleado.getListaSectores()));
 		ventana.lblcomboBox2.setText("Relación:");
@@ -37,6 +41,7 @@ public class CtrlNuevoEmpleado implements ActionListener {
 		ventana.lblTxt2.setVisible(true);
 		ventana.txt2.setVisible(true);
 		ventana.setMinimumSize(new Dimension(450, 580));
+		ventana.txtLegajo.setText(dtosEmpleado.getNuevoLegajo());
 		ventana.setVisible(true);
 	}
 	
@@ -47,6 +52,11 @@ public class CtrlNuevoEmpleado implements ActionListener {
 			guardar();
 		}
 
+		if(e.getSource() == ventana.btnImprimir) {
+		
+			nuevo();
+		}
+		
 		if(e.getSource() == ventana.btnVolver) {
 			
 			ventana.dispose();
@@ -85,7 +95,7 @@ public class CtrlNuevoEmpleado implements ActionListener {
 				
 				ventana.lblMsgError.setForeground(Color.BLUE);
 				ventana.lblMsgError.setText("Registro guardado con éxito.");
-				bloquear();
+				bloquear(false);
 			} else {
 				
 				ventana.lblMsgError.setForeground(Color.RED);
@@ -94,21 +104,40 @@ public class CtrlNuevoEmpleado implements ActionListener {
 		}
 	}
 	
-	private void bloquear() {
+	private void bloquear(boolean accion) {
 		
-		ventana.btnGuardar.setEnabled(false);
-		ventana.comboBox1.setEnabled(false);
-		ventana.comboBox2.setEnabled(false);
-		ventana.txtNombre.setEnabled(false);
-		ventana.txtApellido.setEnabled(false);
-		ventana.txtDNI.setEnabled(false);
-		ventana.txtAño.setEnabled(false); 
-		ventana.txtMes.setEnabled(false); 
-		ventana.txtDia.setEnabled(false);
-		ventana.txtDireccion.setEnabled(false);
-		ventana.txtEmail.setEnabled(false);
-		ventana.txtTelefono.setEnabled(false);
-		ventana.txt1.setEnabled(false);
-		ventana.txt2.setEnabled(false);
+		ventana.btnGuardar.setEnabled(accion);
+		ventana.comboBox1.setEnabled(accion);
+		ventana.comboBox2.setEnabled(accion);
+		ventana.txtNombre.setEnabled(accion);
+		ventana.txtApellido.setEnabled(accion);
+		ventana.txtDNI.setEnabled(accion);
+		ventana.txtAño.setEnabled(accion); 
+		ventana.txtMes.setEnabled(accion); 
+		ventana.txtDia.setEnabled(accion);
+		ventana.txtDireccion.setEnabled(accion);
+		ventana.txtEmail.setEnabled(accion);
+		ventana.txtTelefono.setEnabled(accion);
+		ventana.txt1.setEnabled(accion);
+		ventana.txt2.setEnabled(accion);
+		ventana.btnImprimir.setEnabled(!accion);
+	}
+	
+	private void nuevo() {
+		
+		ventana.txtLegajo.setText(dtosEmpleado.getNuevoLegajo());
+		ventana.txtNombre.setText("");
+		ventana.txtApellido.setText("");
+		ventana.txtDNI.setText("");
+		ventana.txtAño.setText(""); 
+		ventana.txtMes.setText(""); 
+		ventana.txtDia.setText("");
+		ventana.txtDireccion.setText("");
+		ventana.txtEmail.setText("");
+		ventana.txtTelefono.setText("");
+		ventana.txt1.setText("");
+		ventana.txt2.setText("");
+		ventana.lblMsgError.setText("");
+		bloquear(true);
 	}
 }

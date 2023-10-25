@@ -1,17 +1,17 @@
 package dao;
 
-import modelo.Asistencia;
+import modelo.Alumno;
 import modelo.ResumenAsistencia;
 
 public interface AsistenciaDAO {
 
+	public boolean setAsistencia(Alumno alumnso[]);
+	public Alumno [] getListado(int idCurso, boolean reducido, int mes);
 	
 	
 	
 	
-	
-	public boolean setAsistencia(Asistencia asistencia[]);
 	public ResumenAsistencia getInfoAsistencia(String idAlumno);
-	public boolean isAsistenciaTomada(String idCurso, boolean reducido);
-	public String [][] getAsistencias(String idCurso, boolean reducido, int mes);
+	public boolean isAsistenciaTomada(int idCurso, boolean reducido);
+	
 }

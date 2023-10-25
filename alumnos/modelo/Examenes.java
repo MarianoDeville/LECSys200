@@ -3,12 +3,11 @@ package modelo;
 public class Examenes {
 
 	private int id;
-	private int legajoAlumno;
 	private String fecha;
 	private String tipo;
 	private int nota;
 	private int legajoProfesor;
-	private int idCurso;
+	private int idCruso;
 	
 	public Examenes() {
 		
@@ -22,16 +21,6 @@ public class Examenes {
 	public void setId(int id) {
 		
 		this.id = id;
-	}
-
-	public int getLegajoAlumno() {
-		
-		return legajoAlumno;
-	}
-
-	public void setLegajoAlumno(int legajoAlumno) {
-		
-		this.legajoAlumno = legajoAlumno;
 	}
 
 	public String getFecha() {
@@ -74,13 +63,13 @@ public class Examenes {
 		this.legajoProfesor = legajoProfesor;
 	}
 
-	public int getIdCurso() {
+	public int getIdCruso() {
 		
-		return idCurso;
+		return idCruso;
 	}
 
-	public void setIdCurso(int idCurso) {
+	public void setIdCruso(int idCruso) {
 		
-		this.idCurso = idCurso;
+		this.idCruso = idCruso;
 	}
 }

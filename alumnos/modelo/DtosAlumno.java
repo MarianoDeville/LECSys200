@@ -2,38 +2,38 @@ package modelo;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import control.CtrlLogErrores;
 import dao.AlumnoDAO;
 import dao.AlumnoMySQL;
 import dao.AsistenciaDAO;
+import dao.AsistenciaMySQL;
 import dao.CursosDAO;
 import dao.CursosMySQL;
 import dao.EmpleadoDAO;
 import dao.EmpleadoMySQL;
+import dao.ExamenesDAO;
+import dao.ExamenesMySQL;
 import dao.PersonaDAO;
 import dao.PersonaMySQL;
 
 public class DtosAlumno {
 	
-	private AlumnoDAO alumnosDAO;
-	private AsistenciaDAO asistenciaDAO;
 	private static Alumno alumno = new Alumno();
-	private CursoXtnd cursos[];
+	private AlumnoDAO alumnosDAO;
 	private Alumno alumnos[];
+	private AsistenciaDAO asistenciaDAO;
+	private CursoXtnd cursos[];
 	private Empleado docentes[];
+	private Examenes examen;
 	private String añoNacimiento;
 	private String mesNacimiento;
 	private String diaNacimiento;
 	private String cantAlumnos;
-	private String msg;	
-	private Object [][] tablaAsistencia;
-	
-	
-/*	
-	private static String resultadoExamen;
-	private static String tipoExamen;
-	
+	private String msg;
 	private int escrito1;
 	private int escrito2;
 	private int finalEscrito;
@@ -43,9 +43,10 @@ public class DtosAlumno {
 	private int oral1;
 	private int oral2;
 	private int finalOral;
-	private String ausente;
-	private String presente;
-	private String tarde;
+	
+/*	
+	private static String resultadoExamen;
+	private static String tipoExamen;
 */
 	public String [] getOrdenamiento() {
 		
@@ -114,17 +115,6 @@ public class DtosAlumno {
 		return tablaModelo;
 	}
 
-	private String calcularTiempo(int num) {
-		
-		String resultado =(int) num / 2 + "";
-		
-		if (num % 2 == 0)
-			resultado += ":00";
-		else
-			resultado += ":30";
-		return resultado;
-	}
-	
 	public String checkInformacion(boolean checDNI) {
 
 		if(alumno.getNombre().length() < 3)
@@ -219,6 +209,9 @@ public class DtosAlumno {
 
 	public String getIdCriterio(String criterio, int pos) {
 
+		if(pos < 0)
+			return null;
+		
 		if(criterio.equals("Curso"))
 			return cursos[pos].getId() + "";
 		
@@ -272,9 +265,12 @@ public class DtosAlumno {
 	public DefaultTableModel getTablaAsistencia(int pos) {
 		
 		alumnosDAO = new AlumnoMySQL();
+		Object tablaAsistencia[][] = null;
 		String titulo[] = {"Leg.", "Nombre", "Apellido", "Presente", "Tarde"};
-		alumnos = alumnosDAO.getListado("Curso", cursos[pos].getId() + "", true, "", "");
-		tablaAsistencia = null;
+
+		if(cursos.length > 0)
+			alumnos = alumnosDAO.getListado("Curso", cursos[pos].getId() + "", true, "", "");
+		
 		if(alumnos != null) {
 			
 			tablaAsistencia = new Object[alumnos.length][5];
@@ -303,22 +299,180 @@ public class DtosAlumno {
 		};
 		return tablaModelo;
 	}
-	
-	public void setTablaAsistencia(int fila, int columna, boolean valor) {
+
+	public boolean guardoAsistencia(JTable tablaAsistencia) {
 		
-		if(fila < tablaAsistencia.length) {
+		if(tablaAsistencia.getRowCount() == 0) {
 			
-			if(columna < tablaAsistencia[fila].length && columna > 2) {
-				
-				tablaAsistencia[fila][columna] = valor;
-			}
+			msg = "No hay información para guardar.";
+			return false;
 		}
+		asistenciaDAO = new AsistenciaMySQL();
+		
+		if(asistenciaDAO.isAsistenciaTomada(alumno.getIdCurso(), true)) {
+			
+			msg = "La asistencia para este curso y fecha ya fue tomada.";
+			return false;
+		}
+		alumnos = new Alumno[tablaAsistencia.getRowCount()];
+		
+		for(int i = 0; i < alumnos.length; i++) {
+
+			int estado = 0;
+			alumnos[i] = new Alumno();
+			alumnos[i].setLegajo((int)tablaAsistencia.getValueAt(i, 0));
+			alumnos[i].setNombre((String)tablaAsistencia.getValueAt(i, 1));
+			alumnos[i].setApellido((String)tablaAsistencia.getValueAt(i, 2));
+			alumnos[i].setIdCurso(alumno.getIdCurso());
+			alumnos[i].setAsistencias(new Asistencia[1]);
+			
+			if((boolean)tablaAsistencia.getValueAt(i, 4))
+				estado = 2;
+			else if((boolean)tablaAsistencia.getValueAt(i, 3))
+				estado = 1;
+			
+			Asistencia asist[] = new Asistencia[1];
+			asist[0].setEstado(estado);
+			alumnos[i].setAsistencias(asist);
+		}
+
+		if(asistenciaDAO.setAsistencia(alumnos)) {
+
+			msg = "Se actualizó la información en la base de datos.";
+			return true;
+		}
+		msg = "Error al intentar guardar la información.";		
+		return false;
 	}
 
+	public DefaultTableModel getTablaRegistroAsistencia(int pos, int mes) {
+		
+		asistenciaDAO = new AsistenciaMySQL();
+		alumnos = null;
+		msg = "";
+		String titulo[] = {"Leg.", "Nombre", "Apellido"};
+		String cuerpo[][] = null;
+
+		if(cursos.length > 0)
+			alumnos = asistenciaDAO.getListado(cursos[pos].getId(), true, mes);
+		
+		if(alumnos != null) {
+			
+			titulo = new String[alumnos[0].getAsistencias().length + 3];
+			String temp[] = titulo;			
+			System.arraycopy(temp, 0, titulo, 0, 3);
+
+			for(int i = 3 ; i < titulo.length ; i++) {
+			
+				titulo[i] = alumnos[0].getAsistencias()[i - 3].getFecha();
+			}
+			cuerpo = new String[alumnos.length][titulo.length];
+
+			try {
+				
+				for(int i = 0 ; i < alumnos.length ; i++) {
+					
+					cuerpo[i][0] = alumnos[i].getLegajo() + "";
+					cuerpo[i][1] = alumnos[i].getNombre();
+					cuerpo[i][2] = alumnos[i].getApellido();
+					
+					for(int e = 3; e < titulo.length; e++) {
+						
+						if(alumnos[i].getEstado() == 0) {
+							
+							cuerpo[i][e] = "Falta";
+						} else if(alumnos[i].getEstado() == 1) {
+							
+							cuerpo[i][e] = "Presente";
+						}else if(alumnos[i].getEstado() == 2) {
+							
+							cuerpo[i][e] = "Tarde";
+						}	
+					}
+				}
+			} catch (Exception e) {
+				
+				cuerpo = null;
+				msg = "Existe un día que se ha tomado duplicada la asistencia.";
+				CtrlLogErrores.guardarError(e.getMessage() + msg);
+				CtrlLogErrores.guardarError("DtosAlumno, getTablaRegistroAsistencia()");
+			}
+		}
+		DefaultTableModel tablaModelo = new DefaultTableModel(cuerpo, titulo);
+		return tablaModelo;
+	}
 	
+	public DefaultTableModel getTablaExamenes(int pos) {
+
+		alumnosDAO = new AlumnoMySQL();
+		Object cuerpo[][] = null;
+		String titulo[] = {"Leg.", "Nombre", "Apellido", "Resultado"};
+		
+		if(pos != -1)
+			alumnos = alumnosDAO.getListado("Curso", cursos[pos] + "", true, "", "");
+
+		if(alumnos != null) {
+		
+			cuerpo = new Object [alumnos.length][4];
+			
+			for(int i = 0 ; i < alumnos.length ; i++) {
+
+				cuerpo[i][0] = alumnos[i].getLegajo();
+				cuerpo[i][1] = alumnos[i].getNombre();
+				cuerpo[i][2] = alumnos[i].getApellido();
+				cuerpo[i][3] = "";
+			}
+		} else {
+			
+			cuerpo = null;
+		}
+		DefaultTableModel tablaModelo = new DefaultTableModel(cuerpo, titulo){
+
+			private static final long serialVersionUID = 1L;
+			public boolean isCellEditable(int row, int column) {
+				return column > 2? true: false;
+			}
+		};
+		return tablaModelo;
+	}
+
+	public boolean guardarResultados(JTable tabla) {
+		
+		boolean bandera = true;
+
+		for(int i = 0 ; i < tabla.getRowCount() ; i++) {
+			
+			String valor = (String) tabla.getValueAt(i, 3);
+			
+			if(!isNumeric(valor) && !valor.equals("-")) {
+
+				msg = "Las notas deben ser numéricas o guión.";
+				return false;
+			}
+		}
+
+		for(int i = 0; i < tabla.getRowCount(); i++) {
+			
+			if(!tabla.getValueAt(i, 3).equals("-"))
+				examen.setNota((int) tabla.getValueAt(i, 3));
+			else 
+				examen.setNota(-1);
+			
+			alumnos[i].setExamenes(new Examenes[1]);
+			alumnos[i].getExamenes()[0] = examen;
+		}
+		ExamenesDAO examenesDAO = new ExamenesMySQL();		
+		bandera = examenesDAO.setExamen(alumnos);
+		
+		if(bandera)
+			msg = "Notas guardadas.";
+		else
+			msg = "Error al intentar guardar las notas.";
+		return bandera; 
+	}
 	
-	
-	
+
+
 	
 	
 	
@@ -354,7 +508,7 @@ public class DtosAlumno {
 	
 
 	
-	
+
 	
 	public String getMsg() {
 		
@@ -433,7 +587,6 @@ public class DtosAlumno {
 			DtosAlumno.alumno.setDni(dni);
 		else
 			DtosAlumno.alumno.setDni("");
-		
 	}
 
 	public String getTelefono() {
@@ -478,7 +631,8 @@ public class DtosAlumno {
 	
 	public void setCurso(int pos) {
 		
-		DtosAlumno.alumno.setIdCurso(cursos[pos].getId());
+		if(pos > -1)
+			DtosAlumno.alumno.setIdCurso(cursos[pos].getId());
 	}
 
 	public boolean getEstado() {
@@ -500,12 +654,85 @@ public class DtosAlumno {
 		
 		return cantAlumnos;
 	}
+	
+	public String [] getListaMeses() {
+		
+		return new String[] {"Todos","Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"};
+	}
 
+	public String [] getListaTipoExamen() {
+		
+		return new String[] {"1º Escrito","2º Escrito","1º Oral", "2º Oral", "1º Comportamiento", "2º Comportamiento"};
+	}
+
+	public void setDatosExamen(int pos) {
+		
+		examen = new Examenes();
+		examen.setIdCruso(cursos[pos].getId());
+		examen.setLegajoProfesor(cursos[pos].getLegajoProfesor());
+	}
+	
+	public void setTipoExamen(String tipo) {
+		
+		examen.setTipo(tipo);
+	}
+	
+	public boolean setFecha(String fecha) {
+		
+		fecha = fecha.replaceAll("/","-");
+		
+		if(fecha.length() != 10 || !fecha.contains("-")) {
+			
+			msg = "El formato de la fecha es incorrecto. Ej. 25-10-2020";
+			return false;
+		}		
+		examen.setFecha(fecha);
+		return true;
+	}
+	
+	public String getNombreCurso() {
+		
+		return alumno.getCurso().getAño() + " " + alumno.getCurso().getNivel();
+	}
+	
+	public String getNombreProfesor() {
+
+		return alumno.getCurso().getNombreProfesor();
+	}
+
+	
+	
+	
+	
+	
+	
+	
 	
 
 	
 
+	private String calcularTiempo(int num) {
+		
+		String resultado =(int) num / 2 + "";
+		
+		if (num % 2 == 0)
+			resultado += ":00";
+		else
+			resultado += ":30";
+		return resultado;
+	}
 	
+	private boolean isNumeric(String cadena) {
+		
+		try {
+			
+			Double.parseDouble(cadena);
+			return true;
+		} catch (NumberFormatException e){
+			
+			return false;
+		}
+	}
 
 	
 
@@ -533,16 +760,6 @@ public class DtosAlumno {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	
 	
-	
-	
-	public void cargarAsistencia() {
-		
-		alumnosDAO = new AlumnoMySQL();
-		alumnosDAO.getInfoAsistencia(legajo);
-		ausente = alumnosDAO.getFaltas();
-		presente = alumnosDAO.getPresente();
-		tarde = alumnosDAO.getTarde();
-	}
 	
 	public void cargarNotas() {
 		
@@ -606,13 +823,7 @@ public class DtosAlumno {
 		}
 		return 0;
 	}
-	
-	public String getNombreProfesor() {
 
-		String temp[] = nombreCursos[getCursoSeleccionado()].split(" ");
-		return temp[2] + " " + temp[3];
-	}
-	
 	public int getAsistencia(String campo, int fila) {
 		
 		if(campo.equals("Legajo")) {
@@ -632,204 +843,8 @@ public class DtosAlumno {
 		return 0;
 	}
 
-	public DefaultTableModel getTablaRegistroAsistencia(int cursoSeleccionado, int mesSeleccionado) {
-		
-		alumnosDAO = new AlumnoMySQL();
-		msg = "";
-		String titulo[] = {""};
-		String titulo1[] = {"Leg.", "Nombre", "Apellido"};
-		String cuerpo[][] = null;
-		String respuesta[][] = alumnosDAO.getAsistencias(idCursos[cursoSeleccionado], true, mesSeleccionado);
-		
-		if(respuesta != null) {
-			
-			String titulo2[] = new String [respuesta.length];
-			titulo = new String[titulo1.length + titulo2.length];
-	
-			for(int i = 0 ; i < titulo.length ; i++) {
-			
-				titulo[i] = i < 3? titulo1[i]: respuesta[i - 3][2];
-			}
-			respuesta = alumnosDAO.getListado("Curso", idCursos[cursoSeleccionado], true, "", "");
-			
-			if(respuesta != null) {
-				
-				cuerpo = new String[respuesta.length][titulo.length];
-	
-				for(int i = 0 ; i < respuesta.length ; i++) {
-					
-					cuerpo[i][0] = respuesta[i][0];
-					cuerpo[i][1] = respuesta[i][1];
-					cuerpo[i][2] = respuesta[i][2];
-				}
-			} else {
-	
-				cuerpo = null;
-			}
-			respuesta = alumnosDAO.getAsistencias(idCursos[cursoSeleccionado], false, mesSeleccionado);
-			
-			try {
-				
-				for( int e = 0 ; e < cuerpo.length ; e++) {
-				
-					int f = 3;
-				
-					for(int i = 0 ; i < respuesta.length  ; i++) {
-						
-						if(cuerpo[e][0].equals(respuesta[i][1])) {
-							
-							cuerpo[e][f] = respuesta[i][2];
-					
-							if(respuesta[i][3].equals("0")) {
-								
-								cuerpo[e][f] = "Falta";
-							} else if(respuesta[i][3].equals("1")) {
-								
-								cuerpo[e][f] = "Presente";
-							}else if(respuesta[i][3].equals("2")) {
-								
-								cuerpo[e][f] = "Tarde";
-							}
-							f++;
-						}
-					}
-				}
-			} catch (Exception e) {
-				
-				cuerpo = null;
-				msg = "Existe un día que se ha tomado duplicada la asistencia.";
-				CtrlLogErrores.guardarError(e.getMessage() + msg);
-				CtrlLogErrores.guardarError("DtosAlumno, getTablaRegistroAsistencia()");
-			}
-		}
-		DefaultTableModel tablaModelo = new DefaultTableModel(cuerpo, titulo);
-		return tablaModelo;
-	}
-	
-	public DefaultTableModel getTablaExamenes(int cursoSeleccionado) {
-
-		alumnosDAO = new AlumnoMySQL();
-		String cuerpo[][] = null;
-		String titulo[] = {"Leg.", "Nombre", "Apellido", "Resultado"};
-		String respuesta[][] = alumnosDAO.getListado("Curso", idCursos[cursoSeleccionado], true, "", "");
-
-		if(respuesta != null) {
-		
-			cuerpo = new String [respuesta.length][4];
-			
-			for(int i = 0 ; i < respuesta.length ; i++) {
-
-				cuerpo[i][0] = respuesta[i][0];
-				cuerpo[i][1] = respuesta[i][1];
-				cuerpo[i][2] = respuesta[i][2];
-				cuerpo[i][3] = "";
-			}
-		} else {
-			
-			cuerpo = null;
-		}
-		DefaultTableModel tablaModelo = new DefaultTableModel(cuerpo, titulo){
-
-			private static final long serialVersionUID = 1L;
-			public boolean isCellEditable(int row, int column) {
-				return column > 2? true: false;
-			}
-		};
-		return tablaModelo;
-	}
-	
-	public String [] getListaMeses() {
-		
-		return new String[] {"Todos","Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"};
-	}
-	
-	public String [] getListaTipoExamen() {
-		
-		return new String[] {"1º Escrito","2º Escrito","1º Oral", "2º Oral", "1º Comportamiento", "2º Comportamiento"};
-	}
-
 	public String [][] getHorariosCursos() {
 		
 		return horariosCursos;
 	}
-
-	public void guardarResultados(String [][] tablaResultados) {
-		
-		boolean bandera = true;
-		
-		for(int i = 0 ; i < tablaResultados.length ; i++) {
-			
-			if(!isNumeric(tablaResultados[i][1])) {
-				
-				if(!tablaResultados[i][1].equals("-")) {
-
-					msg = "Las notas deben ser numéricas o guión.";
-					return ;
-				}
-			}
-		}
-		CursosMySQL cursosDAO = new CursosMySQL();
-		
-		if(cursosDAO.isExamenCargado(idCurso, tipoExamen)) {
-			
-			msg = "El exámen no se puede cargar, ya está cargado.";
-			return;
-		}
-			
-		for(int i = 0 ; i < tablaResultados.length ; i++) {
-			
-			if(!tablaResultados[i][1].equals("-")) {
-				
-				legajo = tablaResultados[i][0];
-				resultadoExamen = tablaResultados[i][1];
-				idProfesor = idProfesores[getCursoSeleccionado()];
-	
-				if(bandera) {
-					
-					msg = "Notas almacenadas correctamente.";
-					bandera = alumnosDAO.setExamen();
-				} else {
-					
-					msg = "Error al intentar almacenar las notas.";
-					alumnosDAO.setExamen();
-				}
-			}
-		}
-		return; 
-	}
-
-	public boolean guardoAsistencia() {
-		
-		alumnosDAO = new AlumnoMySQL();
-
-		if(alumnosDAO.isAsistenciaTomada(idCurso, true)) {
-			
-			msg = "La asistencia para este curso y fecha ya fue tomada.";
-			return false;
-		}
-
-		for(int fila = 0 ; fila < tablaAsistencia.length ; fila++) {
-			
-			if(!alumnosDAO.setAsistencia(fila)) {
-
-				msg = "Error al intentar guardar la información.";
-				return false;
-			}
-		}
-		msg = "Se actualizó la información en la base de datos.";
-		return true;
-	}
-
-	private boolean isNumeric(String cadena) {
-		
-		try {
-			
-			Double.parseDouble(cadena);
-			return true;
-		} catch (NumberFormatException e){
-			
-			return false;
-		}
-	}
-
 }

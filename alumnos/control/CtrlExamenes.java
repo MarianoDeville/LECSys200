@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.awt.print.PrinterException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
-
 import modelo.DtosAlumno;
 import vista.Listado;
 
@@ -46,56 +45,22 @@ public class CtrlExamenes implements ActionListener {
 		actualizar();
 		ventana.setVisible(true);
 	}
-	
-	private void actualizar() {
-		
-		ventana.tabla.setModel(dtosAlumno.getTablaExamenes(ventana.comboBox1.getSelectedIndex()));
-		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(40);
-		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(50);
-		ventana.btn1B.setEnabled(true);
-	}
-	
+
 	public void actionPerformed(ActionEvent e) {
 
-		if(e.getSource() == ventana.comboBox1) {
+		if(e.getSource() == ventana.comboBox1 && ventana.isVisible()) {
 			
 			actualizar();
 		}
 		
 		if(e.getSource() == ventana.comboBox2) {
 			
-			ventana.btn1B.setEnabled(true);
+			ventana.btn1B.setEnabled(ventana.tabla.getRowCount() != 0);
 		}
 		
 		if(e.getSource() == ventana.btn1B) {
 			
-			int cantAlumnos = ventana.tabla.getRowCount();
-			String notas [][] = new String [cantAlumnos][3];
-			dtosAlumno.setCurso(ventana.comboBox1.getSelectedIndex());
-			dtosAlumno.setTipoExamen((String)ventana.comboBox2.getSelectedItem());
-			String fechaCargada = ventana.txt1.getText();
-			fechaCargada = fechaCargada.replaceAll("/","-");
-
-			if(fechaCargada.length() == 10 && fechaCargada.contains("-")) {
-
-				String[] fecha = fechaCargada.split("-");
-				dtosAlumno.setFechaDia(fecha[0]);
-				dtosAlumno.setFechaMes(fecha[1]);
-				dtosAlumno.setFechaAño(fecha[2]);
-				
-				for(int i = 0 ; i < cantAlumnos ; i++) {
-					
-					notas[i][0] = (String)ventana.tabla.getValueAt(i, 0);
-					notas[i][1] = (String)ventana.tabla.getValueAt(i, 3);
-				}
-				
-				dtosAlumno.guardarResultados(notas);
-				ventana.btn1B.setEnabled(false);
-				JOptionPane.showMessageDialog(null,dtosAlumno.getMsg());
-			} else {
-				
-				JOptionPane.showMessageDialog(null, "El formato de la fecha es incorrecto. Ej. 25-10-2020");
-			}
+			guardar();
 		}
 		
 		if(e.getSource() == ventana.btnImprimir) {
@@ -113,5 +78,27 @@ public class CtrlExamenes implements ActionListener {
 			
 			ventana.dispose();
 		}
+	}
+	
+	private void actualizar() {
+		
+		ventana.tabla.setModel(dtosAlumno.getTablaExamenes(ventana.comboBox1.getSelectedIndex()));
+		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(40);
+		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(50);
+		ventana.btn1B.setEnabled(ventana.tabla.getRowCount() != 0);
+		ventana.btnImprimir.setEnabled(ventana.tabla.getRowCount() != 0);
+	}
+	
+	private void guardar() {
+		
+		dtosAlumno.setDatosExamen(ventana.comboBox1.getSelectedIndex());
+		dtosAlumno.setTipoExamen((String)ventana.comboBox2.getSelectedItem());
+
+		if(dtosAlumno.setFecha(ventana.txt1.getText())) {
+			
+			if(dtosAlumno.guardarResultados(ventana.tabla))
+				ventana.btn1B.setEnabled(false);
+		}
+		JOptionPane.showMessageDialog(null,dtosAlumno.getMsg());
 	}
 }

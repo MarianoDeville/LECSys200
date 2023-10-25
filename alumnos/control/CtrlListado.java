@@ -54,19 +54,7 @@ public class CtrlListado implements ActionListener {
 		actualizar();
 		ventana.setVisible(true);
 	}
-	
-	private void actualizar() {
-		
-		elemento = -1;
-		ventana.tabla.setModel(dtosAlumno.getListadoAlumnos((String)ventana.comboBox1.getSelectedItem() 
-															,dtosAlumno.getIdCriterio((String)ventana.comboBox1.getSelectedItem(),
-																						ventana.comboBox2.getSelectedIndex())));
-		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(40);
-		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(50);
-		ventana.tabla.setDefaultEditor(Object.class, null);
-		ventana.txt1.setText(dtosAlumno.getCantAlumnos());
-	}
-	
+
 	public void actionPerformed(ActionEvent e) {
 
 		if(e.getSource() == ventana.comboBox1 && ventana.isVisible()) {
@@ -103,6 +91,20 @@ public class CtrlListado implements ActionListener {
 		}
 	}
 	
+	private void actualizar() {
+		
+		elemento = -1;
+		ventana.tabla.setModel(dtosAlumno.getListadoAlumnos((String)ventana.comboBox1.getSelectedItem() 
+															,dtosAlumno.getIdCriterio((String)ventana.comboBox1.getSelectedItem(),
+																						ventana.comboBox2.getSelectedIndex())));
+		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(40);
+		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(50);
+		ventana.tabla.setDefaultEditor(Object.class, null);
+		ventana.txt1.setText(dtosAlumno.getCantAlumnos());
+		ventana.btnImprimir.setEnabled(ventana.tabla.getRowCount() != 0);
+		ventana.btn1A.setEnabled(ventana.tabla.getRowCount() != 0);
+	}
+	
 	private void informe() {
 		
 		if(elemento == -1) {
@@ -115,6 +117,5 @@ public class CtrlListado implements ActionListener {
 		InformeAlumno ventanaInforme = new InformeAlumno("Informe académico");
 		CtrlInformeAlumno ctrlInforme = new CtrlInformeAlumno(ventanaInforme);
 		ctrlInforme.iniciar();
-
 	}
 }

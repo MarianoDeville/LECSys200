@@ -94,7 +94,7 @@ public class CtrlAlumnos implements ActionListener {
 		if(e.getSource() == ventana.btn2A) {
 			
 			Listado ventanaAsistencia = new Listado("Tomar asistencia");
-			CtrlAsistenciaAlumnos ctrlAsistenciaAlumnos = new CtrlAsistenciaAlumnos(ventanaAsistencia);
+			CtrlTomarAsistencia ctrlAsistenciaAlumnos = new CtrlTomarAsistencia(ventanaAsistencia);
 			ctrlAsistenciaAlumnos.iniciar();
 		}
 		

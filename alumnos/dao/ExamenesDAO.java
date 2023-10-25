@@ -1,7 +1,10 @@
 package dao;
 
+import modelo.Alumno;
+import modelo.Examenes;
+
 public interface ExamenesDAO {
 
-	public boolean setExamen();
-	public String [][] getExamen(String idAlumno);
+	public boolean setExamen(Alumno alumnos[]);
+	public Examenes [] getExamenes(int legajo);
 }

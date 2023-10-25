@@ -5,16 +5,15 @@ import java.awt.event.ActionListener;
 import java.awt.print.PrinterException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
-
 import modelo.DtosAlumno;
 import vista.Listado;
 
-public class CtrlAsistenciaAlumnos implements ActionListener {
+public class CtrlTomarAsistencia implements ActionListener {
 
 	private Listado ventana;
 	private DtosAlumno dtosAlumno;
 	
-	public CtrlAsistenciaAlumnos(Listado vista) {
+	public CtrlTomarAsistencia(Listado vista) {
 		
 		this.ventana = vista;
 		this.dtosAlumno = new DtosAlumno();
@@ -39,38 +38,17 @@ public class CtrlAsistenciaAlumnos implements ActionListener {
 		actualizar();
 		ventana.setVisible(true);
 	}
-	
-	private void actualizar() {
-		
-		ventana.tabla.setModel(dtosAlumno.getTablaAsistencia(ventana.comboBox1.getSelectedIndex()));
-		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(50);
-		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(60);
-		ventana.tabla.getColumnModel().getColumn(3).setPreferredWidth(65);
-		ventana.tabla.getColumnModel().getColumn(3).setMaxWidth(70);
-		ventana.tabla.getColumnModel().getColumn(4).setPreferredWidth(80);
-		ventana.tabla.getColumnModel().getColumn(4).setMaxWidth(80);
-		ventana.btn1B.setEnabled(true);
-	}
-	
+
 	public void actionPerformed(ActionEvent e) {
 	
-		if(e.getSource() == ventana.comboBox1) {
+		if(e.getSource() == ventana.comboBox1 && ventana.isVisible()) {
 			
 			actualizar();
 		}
 		
 		if(e.getSource() == ventana.btn1B) {
 			
-			for(int i = 0 ; i < ventana.tabla.getRowCount() ; i++) {
-				
-				dtosAlumno.setTablaAsistencia(i, 3, (boolean)ventana.tabla.getValueAt(i, 3));
-				dtosAlumno.setTablaAsistencia(i, 4, (boolean)ventana.tabla.getValueAt(i, 4));
-			}
-			dtosAlumno.setCurso(ventana.comboBox1.getSelectedIndex());
-			
-			if(dtosAlumno.guardoAsistencia()) 
-				ventana.btn1B.setEnabled(false);
-			JOptionPane.showMessageDialog(null, dtosAlumno.getMsg());
+			guardar();
 		}
 		
 		if(e.getSource() == ventana.btnImprimir) {
@@ -89,5 +67,26 @@ public class CtrlAsistenciaAlumnos implements ActionListener {
 
 			ventana.dispose();
 		}
+	}	
+	
+	private void actualizar() {
+		
+		ventana.tabla.setModel(dtosAlumno.getTablaAsistencia(ventana.comboBox1.getSelectedIndex()));
+		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(50);
+		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(60);
+		ventana.tabla.getColumnModel().getColumn(3).setPreferredWidth(65);
+		ventana.tabla.getColumnModel().getColumn(3).setMaxWidth(70);
+		ventana.tabla.getColumnModel().getColumn(4).setPreferredWidth(80);
+		ventana.tabla.getColumnModel().getColumn(4).setMaxWidth(80);
+		ventana.btn1B.setEnabled(true);
+	}
+	
+	private void guardar() {
+
+		dtosAlumno.setCurso(ventana.comboBox1.getSelectedIndex());
+		
+		if(dtosAlumno.guardoAsistencia(ventana.tabla)) 
+			ventana.btn1B.setEnabled(false);
+		JOptionPane.showMessageDialog(null, dtosAlumno.getMsg());
 	}
 }

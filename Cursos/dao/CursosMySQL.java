@@ -266,33 +266,4 @@ public class CursosMySQL extends Conexion implements CursosDAO{
 		dtosActividad.registrarActividad("Editar un curso.", "Cursos.", tiempo);
 		return bandera;
 	}
-
-	@Override
-	public boolean isExamenCargado(String idCurso, String examen) {
-
-		boolean bandera = false;
-		String cmdStm = "SELECT curso.idCurso FROM `lecsys2.00`.curso "
-						+ "JOIN `lecsys2.00`.examenes ON curso.idCurso = examenes.idCurso "
-						+ "WHERE (estado = 1 AND curso.idCurso = " + idCurso + " AND tipo = '" + examen + "' AND YEAR(fecha)=YEAR(NOW())) "
-						+ "GROUP BY curso.idCurso";
-
-		try {
-			
-			this.conectar();
-			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stm.executeQuery(cmdStm);
-
-			if(rs.next())
-				bandera =true;
-		} catch (Exception e) {
-			
-			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("CursosMySQL, isExamenCargado()");
-			CtrlLogErrores.guardarError(cmdStm);
-		} finally {
-			
-			this.cerrar();
-		}
-		return bandera;
-	}
 }

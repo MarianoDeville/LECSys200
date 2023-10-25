@@ -77,6 +77,7 @@ public class CtrlABMLAlumnos implements ActionListener {
 		ventana.tabla.getColumnModel().getColumn(7).setPreferredWidth(80);
 		ventana.tabla.getColumnModel().getColumn(7).setMaxWidth(80);
 		ventana.tabla.setDefaultEditor(Object.class, null);
+		ventana.btnImprimir.setEnabled(ventana.tabla.getRowCount() != 0);
 		ventana.tabla.clearSelection();
 	}
 	

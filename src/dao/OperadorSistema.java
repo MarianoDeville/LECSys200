@@ -108,9 +108,9 @@ public class OperadorSistema extends Conexion {
 									// Permisos para Alumnos.	///////////////////////////////////////////////
 			case "CtrlAlumnos.iniciar":
 			case "AsistenciaMySQL.isAsistenciaTomada":
-			case "AsistenciaMySQL.getAsistencias":
+			case "AsistenciaMySQL.getListado":
 			case "AsistenciaMySQL.getInfoAsistencia":
-			case "ExamenesMySQL.getExamen":
+			case "ExamenesMySQL.getExamenes":
 				bandera = checkLectura(2);
 				break;	
 

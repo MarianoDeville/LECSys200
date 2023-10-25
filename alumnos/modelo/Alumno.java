@@ -9,24 +9,12 @@ public class Alumno extends Persona {
 	private int grupoFamiliar;
 	private String fechaBaja;
 	private CursoXtnd curso;
+	private Asistencia asistencias[];
+	private Examenes examenes[];
 
 	public Alumno() {
         
     }
-    
-	public Alumno(int legajo, int idCurso, String fechaIngreso, int estado, int grupoFamiliar, String fechaBaja,
-			String dni, String nombre, String apellido, String direccion, String fechaNacimiento, String telefono,
-			String email, CursoXtnd curso) {
-		
-		super(dni, nombre, apellido, direccion, fechaNacimiento, telefono, email);
-		this.legajo = legajo;
-		this.idCurso = idCurso;
-		this.fechaIngreso = fechaIngreso;
-		this.estado = estado;
-		this.grupoFamiliar = grupoFamiliar;
-		this.fechaBaja = fechaBaja;
-		this.curso = curso;
-	}
 
 	public int getLegajo() {
 		
@@ -96,5 +84,25 @@ public class Alumno extends Persona {
 	public void setCurso(CursoXtnd curso) {
 		
 		this.curso = curso;
+	}
+
+	public Asistencia[] getAsistencias() {
+		
+		return asistencias;
+	}
+
+	public void setAsistencias(Asistencia asistencias[]) {
+		
+		this.asistencias = asistencias;
+	}
+
+	public Examenes[] getExamenes() {
+		
+		return examenes;
+	}
+
+	public void setExamenes(Examenes examenes[]) {
+		
+		this.examenes = examenes;
 	}
 }

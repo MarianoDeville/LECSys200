@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
-
 import modelo.DtosAlumno;
 import vista.Listado;
 
@@ -37,28 +36,15 @@ public class CtrlRegistroAsistencia implements ActionListener {
 		ventana.setVisible(true);
 		actualizar();
 	}
-	
-	private void actualizar() {
-		
-		ventana.tabla.setModel(dtosAlumno.getTablaRegistroAsistencia(ventana.comboBox1.getSelectedIndex(), 
-																						ventana.comboBox2.getSelectedIndex()));
-		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(45);
-		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(55);
-		ventana.tabla.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		ventana.tabla.doLayout();
-		
-		if(!dtosAlumno.getMsg().equals(""))
-			JOptionPane.showMessageDialog(null, dtosAlumno.getMsg());
-	}
-	
+
 	public void actionPerformed(ActionEvent e) {
 		
-		if(e.getSource() == ventana.comboBox1) {
+		if(e.getSource() == ventana.comboBox1 && ventana.isVisible()) {
 			
 			actualizar();
 		}
 		
-		if(e.getSource() == ventana.comboBox2) {
+		if(e.getSource() == ventana.comboBox2 && ventana.isVisible()) {
 			
 			actualizar();
 		}
@@ -79,5 +65,19 @@ public class CtrlRegistroAsistencia implements ActionListener {
 			
 			ventana.dispose();
 		}
+	}	
+	
+	private void actualizar() {
+		
+		ventana.tabla.setModel(dtosAlumno.getTablaRegistroAsistencia(ventana.comboBox1.getSelectedIndex(), 
+																	ventana.comboBox2.getSelectedIndex()));
+		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(45);
+		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(55);
+		ventana.tabla.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		ventana.tabla.doLayout();
+		ventana.btnImprimir.setEnabled(ventana.tabla.getRowCount() != 0);
+
+		if(!dtosAlumno.getMsg().equals(""))
+			JOptionPane.showMessageDialog(null, dtosAlumno.getMsg());
 	}
 }

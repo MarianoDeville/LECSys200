@@ -8,5 +8,4 @@ public interface CursosDAO {
 	public boolean [][] getTablaSemanal(int idCurso, int legajo, int aula);
 	public boolean setCurso(CursoXtnd curso);
 	public boolean update(CursoXtnd curso);
-	public boolean isExamenCargado(String idCurso, String examen);
 }

@@ -2,8 +2,6 @@ package modelo;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-
-import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import control.CtrlLogErrores;
@@ -22,32 +20,22 @@ import dao.PersonaMySQL;
 
 public class DtosAlumno {
 	
-	private static Alumno alumno = new Alumno();
 	private AlumnoDAO alumnosDAO;
-	private Alumno alumnos[];
 	private AsistenciaDAO asistenciaDAO;
+	private ExamenesDAO examenesDAO;
+	private static Alumno alumno = new Alumno();	
+	private Alumno alumnos[];
 	private CursoXtnd cursos[];
 	private Empleado docentes[];
 	private Examenes examen;
+	private ResumenAsistencia resAsis;
+	private ResumenExamenes resExm;
 	private String añoNacimiento;
 	private String mesNacimiento;
 	private String diaNacimiento;
 	private String cantAlumnos;
 	private String msg;
-	private int escrito1;
-	private int escrito2;
-	private int finalEscrito;
-	private int comportamiento1;
-	private int comportamiento2;
-	private int finalComportamiento;
-	private int oral1;
-	private int oral2;
-	private int finalOral;
-	
-/*	
-	private static String resultadoExamen;
-	private static String tipoExamen;
-*/
+
 	public String [] getOrdenamiento() {
 		
 		return new String [] {"Legajo", "Nombre", "Apellido", "DNI", "Dirección", "Curso"};
@@ -153,6 +141,12 @@ public class DtosAlumno {
 		
 		alumnosDAO = new AlumnoMySQL();
 		return alumnosDAO.setNuevo(alumno);
+	}
+	
+	public String getNuevoLegajo() {
+		
+		alumnosDAO = new AlumnoMySQL();
+		return alumnosDAO.getLegajoLibre() + "";
 	}
 	
 	public int getCursoSeleccionado() {
@@ -356,7 +350,7 @@ public class DtosAlumno {
 		if(cursos.length > 0)
 			alumnos = asistenciaDAO.getListado(cursos[pos].getId(), true, mes);
 		
-		if(alumnos != null) {
+		if(alumnos != null && alumnos.length > 0) {
 			
 			titulo = new String[alumnos[0].getAsistencias().length + 3];
 			String temp[] = titulo;			
@@ -409,7 +403,7 @@ public class DtosAlumno {
 		String titulo[] = {"Leg.", "Nombre", "Apellido", "Resultado"};
 		
 		if(pos != -1)
-			alumnos = alumnosDAO.getListado("Curso", cursos[pos] + "", true, "", "");
+			alumnos = alumnosDAO.getListado("Curso", cursos[pos].getId() + "", true, "", "");
 
 		if(alumnos != null) {
 		
@@ -422,9 +416,6 @@ public class DtosAlumno {
 				cuerpo[i][2] = alumnos[i].getApellido();
 				cuerpo[i][3] = "";
 			}
-		} else {
-			
-			cuerpo = null;
 		}
 		DefaultTableModel tablaModelo = new DefaultTableModel(cuerpo, titulo){
 
@@ -461,7 +452,7 @@ public class DtosAlumno {
 			alumnos[i].setExamenes(new Examenes[1]);
 			alumnos[i].getExamenes()[0] = examen;
 		}
-		ExamenesDAO examenesDAO = new ExamenesMySQL();		
+		examenesDAO = new ExamenesMySQL();		
 		bandera = examenesDAO.setExamen(alumnos);
 		
 		if(bandera)
@@ -471,9 +462,60 @@ public class DtosAlumno {
 		return bandera; 
 	}
 	
+	public void cargarResumenAsistencia() {
+		
+		asistenciaDAO = new AsistenciaMySQL();
+		resAsis = asistenciaDAO.getInfoAsistencia(alumno.getLegajo());
+	}
 
-
-	
+	public void cargarNotas() {
+		
+		resExm = new ResumenExamenes();
+		examenesDAO = new ExamenesMySQL();
+		alumno.setExamenes(examenesDAO.getExamenes(alumno.getLegajo()));
+		
+		for(int i = 0; i < alumno.getExamenes().length; i++) {
+			
+			switch (alumno.getExamenes()[i].getTipo()) {
+			
+				case "1º Escrito": {
+					
+					resExm.setEscrito1(alumno.getExamenes()[i].getNota());
+					break;	
+				}
+				
+				case "2º Escrito": {
+					
+					resExm.setEscrito2(alumno.getExamenes()[i].getNota());
+					break;	
+				}
+				
+				case "1º Oral": {
+					
+					resExm.setOral1(alumno.getExamenes()[i].getNota());
+					break;	
+				}
+				
+				case "2º Oral": {
+					
+					resExm.setOral2(alumno.getExamenes()[i].getNota());
+					break;	
+				}
+				
+				case "1º Comportamiento": {
+					
+					resExm.setComportamiento1(alumno.getExamenes()[i].getNota());
+					break;	
+				}
+				
+				case "2º Comportamiento": {
+					
+					resExm.setComportamiento2(alumno.getExamenes()[i].getNota());
+					break;	
+				}
+			}	
+		}
+	}
 	
 	
 	
@@ -700,16 +742,65 @@ public class DtosAlumno {
 		return alumno.getCurso().getNombreProfesor();
 	}
 
+	public String getPresente() {
+		
+		return resAsis.getPresente() + "";
+	}
 	
+	public String getAusente() {
+		
+		return resAsis.getFaltas() + "";
+	}	
 	
+	public String getTarde() {
+		
+		return resAsis.getTarde() + "";
+	}
 	
+	public String getEscrito1() {
+		
+		return resExm.getEscrito1() +"";
+	}
 	
+	public String getEscrito2() {
+		
+		return resExm.getEscrito2() +"";
+	}
 	
+	public String getComportamiento1() {
+		
+		return resExm.getComportamiento1() + "";
+	}	
 	
+	public String getComportamiento2() {
+		
+		return resExm.getComportamiento2() + "";
+	}	
 	
+	public String getOral1() {
+		
+		return resExm.getOral1() + "";
+	}	
 	
+	public String getOral2() {
+		
+		return resExm.getOral2() + "";
+	}
+	
+	public String getFinalEscrito() {
 
+		return resExm.getEscrito1() + resExm.getEscrito2() / 2 + "";
+	}
 	
+	public String getFinalComportamiento() {
+	
+		return resExm.getComportamiento1() + resExm.getComportamiento2() / 2 + "";
+	}
+	
+	public String getFinalOral() {
+	
+		return resExm.getOral1() + resExm.getOral2() / 2 + "";
+	}
 
 	private String calcularTiempo(int num) {
 		
@@ -732,119 +823,5 @@ public class DtosAlumno {
 			
 			return false;
 		}
-	}
-
-	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////// Por revisar	////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-	
-	
-	
-	public void cargarNotas() {
-		
-		alumnosDAO = new AlumnoMySQL();
-		String respuest[][] = alumnosDAO.getExamen(legajo);
-		
-		for(int i = 0; i < respuest.length; i++) {
-			
-			switch (respuest[i][1]) {
-			
-				case "1º Escrito": {
-					
-					escrito1 = conviertoInt(respuest[i][2]);
-					break;	
-				}
-				
-				case "2º Escrito": {
-					
-					escrito2 = conviertoInt(respuest[i][2]);
-					break;	
-				}
-				
-				case "1º Oral": {
-					
-					oral1 = conviertoInt(respuest[i][2]);
-					break;	
-				}
-				
-				case "2º Oral": {
-					
-					oral2 = conviertoInt(respuest[i][2]);
-					break;	
-				}
-				
-				case "1º Comportamiento": {
-					
-					comportamiento1 = conviertoInt(respuest[i][2]);
-					break;	
-				}
-				
-				case "2º Comportamiento": {
-					
-					comportamiento2 = conviertoInt(respuest[i][2]);
-					break;	
-				}
-			}	
-			
-			finalEscrito = (escrito1 + escrito2) / 2;
-			finalComportamiento = (comportamiento1 + comportamiento2) / 2;
-			finalOral = (oral1 + oral2) / 2;
-		}
-	}
-	
-	private int conviertoInt(String valor) {
-
-		try {
-			
-			return Integer.parseInt(valor);
-		} catch (Exception e) {
-		
-		}
-		return 0;
-	}
-
-	public int getAsistencia(String campo, int fila) {
-		
-		if(campo.equals("Legajo")) {
-			
-			return Integer.parseInt((String)tablaAsistencia[fila][0]);
-		} else if(campo.equals("Estado")) {
-			
-			if((boolean)tablaAsistencia[fila][4]) {
-				
-				return 2;
-			}
-			if((boolean)tablaAsistencia[fila][3]) {
-				
-				return 1;
-			}
-		}
-		return 0;
-	}
-
-	public String [][] getHorariosCursos() {
-		
-		return horariosCursos;
 	}
 }

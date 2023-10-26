@@ -35,17 +35,13 @@ public class CtrlInformeAlumno implements ActionListener {
 		ventana.txtCurso.setText(dtosAlumno.getNombreCurso());
 		ventana.txtProfesor.setEditable(false);
 		ventana.txtProfesor.setText(dtosAlumno.getNombreProfesor());
-		
-		dtosAlumno.cargarAsistencia();
-		
-		
+		dtosAlumno.cargarResumenAsistencia();
 		ventana.txtPresentismo.setEditable(false);
 		ventana.txtPresentismo.setText(dtosAlumno.getPresente());
 		ventana.txtFaltas.setEditable(false);
 		ventana.txtFaltas.setText(dtosAlumno.getAusente());
 		ventana.txtTarde.setEditable(false);
 		ventana.txtTarde.setText(dtosAlumno.getTarde());
-		
 		dtosAlumno.cargarNotas();
 		ventana.txtEscrito1.setEditable(false);
 		ventana.txtEscrito1.setText(dtosAlumno.getEscrito1());
@@ -72,35 +68,39 @@ public class CtrlInformeAlumno implements ActionListener {
 		
 		if(e.getSource() == ventana.btnImprimir) {
 
-			Color colorPanel = ventana.panel.getBackground();
-			ventana.panel.setBackground(Color.WHITE);
-			ventana.btnImprimir.setVisible(false);
-			ventana.btnVolver.setVisible(false);
-			PrinterJob imprimir = PrinterJob.getPrinterJob();
-			PageFormat preformat = imprimir.defaultPage();
-			PageFormat postformat = imprimir.pageDialog(preformat);
-			imprimir.setPrintable(new Printer(ventana.panel), postformat);
-			
-			if (imprimir.printDialog()) {
-				
-				try {
-					
-					imprimir.print();
-				} catch (PrinterException f) {
-					
-					JOptionPane.showMessageDialog(null, "Error al intentar imprimir.");
-					CtrlLogErrores.guardarError(f.getMessage());
-				}
-			}
-			
-			ventana.panel.setBackground(colorPanel);
-			ventana.btnImprimir.setVisible(true);
-			ventana.btnVolver.setVisible(true);
+			imprimir();
 		}		
 		
 		if(e.getSource() == ventana.btnVolver) {
 
 			ventana.dispose();
 		}
+	}
+	
+	private void imprimir() {
+		
+		Color colorPanel = ventana.panel.getBackground();
+		ventana.panel.setBackground(Color.WHITE);
+		ventana.btnImprimir.setVisible(false);
+		ventana.btnVolver.setVisible(false);
+		PrinterJob imprimir = PrinterJob.getPrinterJob();
+		PageFormat preformat = imprimir.defaultPage();
+		PageFormat postformat = imprimir.pageDialog(preformat);
+		imprimir.setPrintable(new Printer(ventana.panel), postformat);
+		
+		if (imprimir.printDialog()) {
+			
+			try {
+				
+				imprimir.print();
+			} catch (PrinterException f) {
+				
+				JOptionPane.showMessageDialog(null, "Error al intentar imprimir.");
+				CtrlLogErrores.guardarError(f.getMessage());
+			}
+		}
+		ventana.panel.setBackground(colorPanel);
+		ventana.btnImprimir.setVisible(true);
+		ventana.btnVolver.setVisible(true);
 	}
 }

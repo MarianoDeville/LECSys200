@@ -77,9 +77,9 @@ public class EmpleadoMySQL extends Conexion implements EmpleadoDAO{
 			stm.setString(6, empleado.getEmail());
 			stm.setString(7, empleado.getDni());
 			stm.executeUpdate();
-			pprStm = "UPDATE `lecsys2.00`.empleados SET sueldo = ?, estado = ?, sector = ?, cargo = ?, tipo = ? ";
-			pprStm += " ,fechaBaja = " + empleado.getFechaBaja() != null? "DATE(NOW()) ": "NULL "; 
-			pprStm += "WHERE legajo = ?";
+			pprStm = "UPDATE `lecsys2.00`.empleados SET sueldo = ?, estado = ?, sector = ?, cargo = ?, tipo = ?, fechaBaja = "
+					+ (empleado.getFechaBaja() != null? "DATE(NOW()) ": "NULL ") 
+					+ "WHERE legajo = ?";
 			stm = this.conexion.prepareStatement(pprStm);
 			stm.setFloat(1, empleado.getSalario());
 			stm.setInt(2, empleado.getEstado());
@@ -93,6 +93,7 @@ public class EmpleadoMySQL extends Conexion implements EmpleadoDAO{
 			bandera = false;
 			CtrlLogErrores.guardarError(e.getMessage());
 			CtrlLogErrores.guardarError("EmpleadoMySQL, update()");
+			CtrlLogErrores.guardarError(pprStm);
 		} finally {
 			
 			this.cerrar();

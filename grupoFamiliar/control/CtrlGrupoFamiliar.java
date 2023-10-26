@@ -84,12 +84,15 @@ public class CtrlGrupoFamiliar implements ActionListener {
 			
 			if(e.getSource() == ventanaEditarGrupo.btnVolver) {
 				
+				ventanaEditarGrupo = null;
 				actualizar();
 			}
 		}
 
 		if(e.getSource() == ventana.btnVolver) {
 
+			if(ventanaEditarGrupo != null)
+				ventanaEditarGrupo.dispose();
 			ventana.dispose();
 		}
 	}
@@ -105,6 +108,12 @@ public class CtrlGrupoFamiliar implements ActionListener {
 	}
 	
 	private void editar() {
+		
+		if(ventanaEditarGrupo != null) {
+
+			JOptionPane.showMessageDialog(null, "Le ventana \"Editar\" ya se encuentra abierta.");
+			return;
+		}
 		
 		if(elemento == -1) {
 			

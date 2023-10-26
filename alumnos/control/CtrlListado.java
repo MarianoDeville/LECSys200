@@ -14,6 +14,7 @@ public class CtrlListado implements ActionListener {
 
 	private Listado ventana;
 	private DtosAlumno dtosAlumno;
+	private InformeAlumno ventanaInforme;
 	private int elemento = -1;
 	
 	public CtrlListado(Listado vista) {
@@ -87,6 +88,8 @@ public class CtrlListado implements ActionListener {
 		
 		if(e.getSource() == ventana.btnVolver) {
 
+			if(ventanaInforme != null)
+				ventanaInforme.dispose();
 			ventana.dispose();
 		}
 	}
@@ -114,7 +117,7 @@ public class CtrlListado implements ActionListener {
 		}
 		dtosAlumno.setAlumnoSeleccionado(elemento);
 		elemento = -1;
-		InformeAlumno ventanaInforme = new InformeAlumno("Informe académico");
+		ventanaInforme = new InformeAlumno("Informe académico");
 		CtrlInformeAlumno ctrlInforme = new CtrlInformeAlumno(ventanaInforme);
 		ctrlInforme.iniciar();
 	}

@@ -85,16 +85,14 @@ public class CtrlABMLAlumnos implements ActionListener {
 
 		if(e.getSource() == ventana.btnNuevo) {
 			
-			ventanaNuevoAlumno = new Nuevo("Nuevo alumno.");
-			CtrlNuevoAlumno ctrlNuevoAlumno = new CtrlNuevoAlumno(ventanaNuevoAlumno);
-			ctrlNuevoAlumno.iniciar();
-			ventanaNuevoAlumno.btnVolver.addActionListener(this);
+			nuevo();
 		}
 		
 		if(ventanaNuevoAlumno != null) {
 			
 			if(e.getSource() == ventanaNuevoAlumno.btnVolver) {
 				
+				ventanaNuevoAlumno = null;
 				actualizar();
 			}
 		}
@@ -108,6 +106,7 @@ public class CtrlABMLAlumnos implements ActionListener {
 			
 			if(e.getSource() == ventanaEditarAlumno.btnVolver) {
 				
+				ventanaEditarAlumno = null;
 				actualizar();
 			}
 		}
@@ -135,12 +134,36 @@ public class CtrlABMLAlumnos implements ActionListener {
 		
 		if(e.getSource() == ventana.btnVolver) {
 			
+			if(ventanaNuevoAlumno != null)
+				ventanaNuevoAlumno.dispose();
+			if(ventanaEditarAlumno != null)
+				ventanaEditarAlumno.dispose();
 			ventana.dispose();
 		}
 	}
 	
-	private void editar() {
+	private void nuevo() {
+		
+		if(ventanaNuevoAlumno != null) {
 
+			JOptionPane.showMessageDialog(null, "Le ventana \"Nuevo\" ya se encuentra abierta.");
+			return;
+		}
+		
+		ventanaNuevoAlumno = new Nuevo("Nuevo alumno.");
+		CtrlNuevoAlumno ctrlNuevoAlumno = new CtrlNuevoAlumno(ventanaNuevoAlumno);
+		ctrlNuevoAlumno.iniciar();
+		ventanaNuevoAlumno.btnVolver.addActionListener(this);
+	}
+	
+	private void editar() {
+		
+		if(ventanaEditarAlumno != null) {
+
+			JOptionPane.showMessageDialog(null, "Le ventana \"Editar\" ya se encuentra abierta.");
+			return;
+		}
+		
 		if(elemento == -1) {
 
 			JOptionPane.showMessageDialog(null, "Debe seleccionar un elemento para editar.");

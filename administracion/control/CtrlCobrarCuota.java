@@ -44,7 +44,7 @@ public class CtrlCobrarCuota implements ActionListener {
 		        } else if(e.getClickCount() == 2) {
 		        	
 		        	elemento = ventana.tabla.getSelectedRow();
-		        	procesarInfo();
+		        	cobrar();
 		        }
 		    }
 		});
@@ -77,7 +77,7 @@ public class CtrlCobrarCuota implements ActionListener {
 		
 		if(e.getSource() == ventana.btn1A) {
 			
-			procesarInfo();
+			cobrar();
 		}
 		
 		if(ventanaCobrar != null) {
@@ -101,6 +101,8 @@ public class CtrlCobrarCuota implements ActionListener {
 		
 		if(e.getSource() == ventana.btnVolver) {
 			
+			if(ventanaCobrar != null)
+				ventanaCobrar.dispose();
 			ventana.dispose();
 		}
 	}
@@ -129,9 +131,15 @@ public class CtrlCobrarCuota implements ActionListener {
 		ventana.txt1.setText(ventana.tabla.getRowCount() + "");
 	}
 	
-	private void procesarInfo() {
+	private void cobrar() {
 
 		ventana.tabla.clearSelection();
+		
+		if(ventanaCobrar != null) {
+
+			JOptionPane.showMessageDialog(null, "Le ventana \"Cobrar\" ya se encuentra abierta.");
+			return;
+		}
 		
 		if(elemento == -1) {
 			

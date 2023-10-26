@@ -15,7 +15,7 @@ public class ExamenesMySQL extends Conexion implements ExamenesDAO{
 		boolean bandera = true;
 		long tiempo = System.currentTimeMillis();
 		DtosActividad dtosActividad = new DtosActividad();
-		String pprStm = "INSERT INTO examenes (idAlumno, fecha, tipo, nota, idProfesor, idCurso) "
+		String pprStm = "INSERT INTO `lecsys2.00`.examenes (idAlumno, fecha, tipo, nota, idProfesor, idCurso) "
 						+ "VALUES (?, ?, ?, ?, ?, ?)";
 		
 		try {
@@ -52,7 +52,7 @@ public class ExamenesMySQL extends Conexion implements ExamenesDAO{
 	public Examenes [] getExamenes(int legajo) {
 
 		Examenes examenes[] = null;
-		String cmdStm = "SELECT id, fecha, tipo, nota, idProfesor FROM examenes WHERE idAlumno = ?";
+		String cmdStm = "SELECT id, fecha, tipo, nota, idProfesor FROM `lecsys2.00`.examenes WHERE idAlumno = ?";
 		
 		try {
 			

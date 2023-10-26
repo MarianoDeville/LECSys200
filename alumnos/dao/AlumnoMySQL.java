@@ -171,7 +171,7 @@ public class AlumnoMySQL extends Conexion implements AlumnoDAO {
 		} catch (Exception e) {
 	
 			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("AlumnosDAO, setActualizarAlumno()");
+			CtrlLogErrores.guardarError("AlumnoMySQL, update()");
 			CtrlLogErrores.guardarError(pprStm);
 			bandera = false;
 		} finally {
@@ -183,7 +183,31 @@ public class AlumnoMySQL extends Conexion implements AlumnoDAO {
 		return bandera;
 	}
 	
-	
+	@Override
+	public int getLegajoLibre() {
+		
+		int legajo = 0;
+
+		try {
+			
+			this.conectar();
+			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			ResultSet rs = stm.executeQuery("SELECT MAX(legajo) FROM `lecsys2.00`.alumnos");
+
+			if(rs.next()) {
+				
+				legajo = rs.getInt(1);
+			}
+		}catch (Exception e) {
+			
+			CtrlLogErrores.guardarError(e.getMessage());
+			CtrlLogErrores.guardarError("AlumnoMySQL, getLegajoLibre()");
+		} finally {
+			
+			this.cerrar();
+		}
+		return (legajo + 1);
+	}
 	
 	
 	

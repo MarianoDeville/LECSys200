@@ -58,6 +58,7 @@ public class CtrlHorariosEmpleado implements ActionListener {
 	
 	public void iniciar() {
 
+		ventana.btnGuardar.setEnabled(false);
 		ventana.btnImprimir.setVisible(false);
 		ventana.lblHorario.setVisible(true);
 		ventana.lblHorario.setText("Horarios:");
@@ -102,17 +103,7 @@ public class CtrlHorariosEmpleado implements ActionListener {
 		
 		if(e.getSource() == ventana.btnCompletar) {
 			
-			dtosEmpleado.autocompletar(ventana.tabla2);
-			ventana.txtMedio2.setText(dtosEmpleado.getCantidadHoras(ventana.tabla2));
-			
-			if(ventana.txtMedio2.getText().equals("0:00")) {
-				
-				ventana.cmbBoxGranularidad.setEnabled(true);
-				ventana.cmbBoxGranularidad.setSelectedIndex(dtosEmpleado.getGranAlmacenada());
-			} else {
-				
-				ventana.cmbBoxGranularidad.setEnabled(false);
-			}
+			autocompletar();
 		}
 		
 		if(e.getSource() == ventana.btnVolver) {
@@ -126,6 +117,7 @@ public class CtrlHorariosEmpleado implements ActionListener {
 				
 				ventana.lblMsgError.setForeground(Color.BLUE);
 				ventana.lblMsgError.setText("La información se actualizó.");
+				ventana.btnGuardar.setEnabled(false);
 			} else {
 				
 				ventana.lblMsgError.setForeground(Color.RED);
@@ -145,6 +137,22 @@ public class CtrlHorariosEmpleado implements ActionListener {
 		actualizaInfoEmpleado();
 	}
 	
+	private void autocompletar() {
+		
+		dtosEmpleado.autocompletar(ventana.tabla2);
+		ventana.txtMedio2.setText(dtosEmpleado.getCantidadHoras(ventana.tabla2));
+		
+		if(ventana.txtMedio2.getText().equals("0:00")) {
+			
+			ventana.cmbBoxGranularidad.setEnabled(true);
+			ventana.cmbBoxGranularidad.setSelectedIndex(dtosEmpleado.getGranAlmacenada());
+		} else {
+			
+			ventana.cmbBoxGranularidad.setEnabled(false);
+		}
+		ventana.btnGuardar.setEnabled(true);
+	}
+	
 	private void actualizaInfoEmpleado() {
 
 		ventana.lblMsgError.setText("");
@@ -162,7 +170,6 @@ public class CtrlHorariosEmpleado implements ActionListener {
 		}
 		ventana.txtMedio1.setText(dtosEmpleado.getApellido() + ", " + dtosEmpleado.getNombre());
 		ventana.tabla2.setEnabled(estado);
-		ventana.btnGuardar.setEnabled(estado);
 		ventana.btnCompletar.setVisible(estado);
 		ventana.cmbBoxGranularidad.setVisible(estado);
 		ventana.tabla2.setModel(dtosEmpleado.getHorarios(ventana.cmbBoxGranularidad.getSelectedIndex()));

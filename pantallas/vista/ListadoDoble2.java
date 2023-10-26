@@ -235,7 +235,7 @@ public class ListadoDoble2 extends VentanaModelo {
 		scrollTabla2 = new JScrollPane();
 		contenedor.putConstraint(SpringLayout.NORTH, scrollTabla2, 15, SpringLayout.SOUTH, cmbBoxGranularidad);
 		contenedor.putConstraint(SpringLayout.WEST, scrollTabla2, 10, SpringLayout.EAST, lblHorario);
-		contenedor.putConstraint(SpringLayout.SOUTH, scrollTabla2, -70, SpringLayout.SOUTH, panelListado);
+		contenedor.putConstraint(SpringLayout.SOUTH, scrollTabla2, -63, SpringLayout.SOUTH, panelListado);
 		contenedor.putConstraint(SpringLayout.EAST, scrollTabla2, -10, SpringLayout.EAST, panelListado);
 		panelListado.add(scrollTabla2);
 		tabla2 = new JTable();

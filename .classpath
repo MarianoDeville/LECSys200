@@ -10,7 +10,7 @@
 	<classpathentry kind="src" path="configuracion"/>
 	<classpathentry kind="src" path="personas"/>
 	<classpathentry kind="src" path="empleados"/>
-	<classpathentry kind="src" path="Cursos"/>
+	<classpathentry kind="src" path="cursos"/>
 	<classpathentry kind="src" path="esquemaHorario"/>
 	<classpathentry kind="src" path="administracion"/>
 	<classpathentry kind="src" path="grupoFamiliar"/>

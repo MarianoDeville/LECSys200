@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.print.PrinterException;
+import javax.swing.JOptionPane;
 import modelo.DtosCobros;
 import vista.Cobro;
 import vista.Listado;
@@ -56,29 +57,17 @@ public class CtrlCobrarHabilitar implements ActionListener {
 		
 		if(e.getSource() == ventana.btn1A) {
 
-			dtosCobros.setSeleccionados(itemsSeleccionados());
-			cobrarInscripción = new Cobro("Cobrar inscripción y habilitar");
-			CtrlCobrarInscripcion ctrlCobrarInscripción = new CtrlCobrarInscripcion(cobrarInscripción);
-			cobrarInscripción.btnVolver.addActionListener(this);
-			cobrarInscripción.btnCobrar.addActionListener(this);
-			ctrlCobrarInscripción.iniciar();
+			cobrar();
 		}
 		
 		if(cobrarInscripción != null) {
 			
-			if(e.getSource() == cobrarInscripción.btnVolver) {
+			if(e.getSource() == cobrarInscripción.btnVolver || e.getSource() == cobrarInscripción.btnCobrar) {
 				
 				ventana.txt3.setText("");
 				ventana.chckbx1.setSelected(false);
 				ventana.chckbx2.setSelected(false);
-				actualizar();
-			}
-			
-			if(e.getSource() == cobrarInscripción.btnCobrar) {
-				
-				ventana.txt3.setText("");
-				ventana.chckbx1.setSelected(false);
-				ventana.chckbx2.setSelected(false);
+				cobrarInscripción = null;
 				actualizar();
 			}
 		}
@@ -106,6 +95,8 @@ public class CtrlCobrarHabilitar implements ActionListener {
 		
 		if(e.getSource() == ventana.btnVolver) {
 			
+			if(cobrarInscripción != null)
+				cobrarInscripción.dispose();
 			ventana.dispose();
 		}
 	}
@@ -119,6 +110,27 @@ public class CtrlCobrarHabilitar implements ActionListener {
 		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(55);	
 		ventana.tabla.getColumnModel().getColumn(4).setPreferredWidth(45);
 		ventana.tabla.getColumnModel().getColumn(4).setMaxWidth(55);	
+	}
+	
+	private void cobrar() {
+		
+		if(cobrarInscripción != null) {
+
+			JOptionPane.showMessageDialog(null, "Le ventana \"Cobrar\" ya se encuentra abierta.");
+			return;
+		}
+		
+		if(itemsSeleccionados().length == 0) {
+
+			JOptionPane.showMessageDialog(null, "No hay elementos seleccionados para cobrar.");
+			return;
+		}
+		dtosCobros.setSeleccionados(itemsSeleccionados());
+		cobrarInscripción = new Cobro("Cobrar inscripción y habilitar");
+		CtrlCobrarInscripcion ctrlCobrarInscripción = new CtrlCobrarInscripcion(cobrarInscripción);
+		cobrarInscripción.btnVolver.addActionListener(this);
+		cobrarInscripción.btnCobrar.addActionListener(this);
+		ctrlCobrarInscripción.iniciar();
 	}
 	
 	private boolean[] itemsSeleccionados() {

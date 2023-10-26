@@ -50,35 +50,19 @@ public class CtrlABMLUsuarios implements ActionListener {
 		actualizar();
 		ventana.setVisible(true);
 	}
-	
-	public void actualizar() {
-		
-		elemento = -1;
-		ventana.tabla.setModel(dtosUsuario.getTablaUsuarios());
-		ventana.tabla.getColumnModel().getColumn(0).setMinWidth(50);
-		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(160);
-		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(100);
-		ventana.tabla.getColumnModel().getColumn(1).setMinWidth(100);
-		ventana.tabla.getColumnModel().getColumn(1).setMaxWidth(360);
-		ventana.tabla.getColumnModel().getColumn(1).setPreferredWidth(260);
-		ventana.tabla.setDefaultEditor(Object.class, null);
-		ventana.tabla.clearSelection();
-	}
-	
+
 	public void actionPerformed(ActionEvent e) {
 		
 		if(e.getSource() == ventana.btnNuevo) {
 			
-			ventanaNuevoUsuario = new NuevoUsuario("Crear usuario del sistema.");
-			CtrlNuevoUsuario ctrlNuevoUsuario = new CtrlNuevoUsuario(ventanaNuevoUsuario);
-			ctrlNuevoUsuario.iniciar();
-			ventanaNuevoUsuario.btnVolver.addActionListener(this);
+			nuevo();
 		}
 		
 		if(ventanaNuevoUsuario !=null) {
 		
 			if(e.getSource() == ventanaNuevoUsuario.btnVolver) {
 				
+				ventanaNuevoUsuario = null;
 				actualizar();
 			}
 		}
@@ -92,6 +76,7 @@ public class CtrlABMLUsuarios implements ActionListener {
 			
 			if(e.getSource() == ventanaEditarUsuario.btnVolver) {
 				
+				ventanaEditarUsuario = null;
 				actualizar();
 			}
 		}
@@ -109,12 +94,50 @@ public class CtrlABMLUsuarios implements ActionListener {
 		}
 		
 		if(e.getSource() == ventana.btnVolver) {
-			
+
+			if(ventanaEditarUsuario != null)
+				ventanaEditarUsuario.dispose();
+			if(ventanaNuevoUsuario != null)
+				ventanaNuevoUsuario.dispose();
 			ventana.dispose();
 		}
 	}
 	
+	private void actualizar() {
+		
+		elemento = -1;
+		ventana.tabla.setModel(dtosUsuario.getTablaUsuarios());
+		ventana.tabla.getColumnModel().getColumn(0).setMinWidth(50);
+		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(160);
+		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(100);
+		ventana.tabla.getColumnModel().getColumn(1).setMinWidth(100);
+		ventana.tabla.getColumnModel().getColumn(1).setMaxWidth(360);
+		ventana.tabla.getColumnModel().getColumn(1).setPreferredWidth(260);
+		ventana.tabla.setDefaultEditor(Object.class, null);
+		ventana.tabla.clearSelection();
+	}
+	
+	private void nuevo() {
+	
+		if(ventanaNuevoUsuario != null) {
+
+			JOptionPane.showMessageDialog(null, "Le ventana \"Nuevo\" ya se encuentra abierta.");
+			return;
+		}
+		
+		ventanaNuevoUsuario = new NuevoUsuario("Crear usuario del sistema.");
+		CtrlNuevoUsuario ctrlNuevoUsuario = new CtrlNuevoUsuario(ventanaNuevoUsuario);
+		ctrlNuevoUsuario.iniciar();
+		ventanaNuevoUsuario.btnVolver.addActionListener(this);
+	}
+	
 	private void editar() {
+		
+		if(ventanaEditarUsuario != null) {
+
+			JOptionPane.showMessageDialog(null, "Le ventana \"Editar\" ya se encuentra abierta.");
+			return;
+		}
 		
 		if(elemento != -1) {
 

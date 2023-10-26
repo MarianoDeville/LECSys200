@@ -18,14 +18,19 @@ public class CtrlNuevoAlumno implements ActionListener {
 		this.dtosAlumno = new DtosAlumno();
 		this.ventana.comboBox1.addActionListener(this);
 		this.ventana.btnGuardar.addActionListener(this);
+		this.ventana.btnImprimir.addActionListener(this);
 		this.ventana.btnVolver.addActionListener(this);
 	}
 
 	public void iniciar() {
 
+		ventana.btnImprimir.setText("Nuevo");
+		ventana.btnImprimir.setEnabled(false);
+		ventana.btnImprimir.setVisible(true);
 		ventana.lblcomboBox1.setText("Curso:");
 		ventana.comboBox1.setModel(new DefaultComboBoxModel<String>(dtosAlumno.getListaCursos()));
 		ventana.scrollTabla.setVisible(true);
+		ventana.txtLegajo.setText(dtosAlumno.getNuevoLegajo());
 		actualizar();
 		ventana.setVisible(true);
 	}
@@ -56,6 +61,11 @@ public class CtrlNuevoAlumno implements ActionListener {
 			actualizar();
 		}
 
+		if(e.getSource() == ventana.btnImprimir) {
+			
+			nuevo();
+		}
+		
 		if(e.getSource() == ventana.btnGuardar) {
 			
 			guardar();
@@ -90,11 +100,49 @@ public class CtrlNuevoAlumno implements ActionListener {
 				limpiarCampos();
 				ventana.lblMsgError.setForeground(Color.BLUE);
 				ventana.lblMsgError.setText("Los datos se guardaron correctamente.");
+				bloquear(false);
 			} else {
 				
 				ventana.lblMsgError.setForeground(Color.RED);
 				ventana.lblMsgError.setText("Error al intentar guardar la información.");
 			}
 		}
+	}
+	
+	private void nuevo() {
+		
+		ventana.txtLegajo.setText(dtosAlumno.getNuevoLegajo());
+		ventana.txtNombre.setText("");
+		ventana.txtApellido.setText("");
+		ventana.txtDNI.setText("");
+		ventana.txtAño.setText(""); 
+		ventana.txtMes.setText(""); 
+		ventana.txtDia.setText("");
+		ventana.txtDireccion.setText("");
+		ventana.txtEmail.setText("");
+		ventana.txtTelefono.setText("");
+		ventana.txt1.setText("");
+		ventana.txt2.setText("");
+		ventana.lblMsgError.setText("");
+		bloquear(true);
+	}
+	
+	private void bloquear(boolean accion) {
+		
+		ventana.btnGuardar.setEnabled(accion);
+		ventana.comboBox1.setEnabled(accion);
+		ventana.comboBox2.setEnabled(accion);
+		ventana.txtNombre.setEnabled(accion);
+		ventana.txtApellido.setEnabled(accion);
+		ventana.txtDNI.setEnabled(accion);
+		ventana.txtAño.setEnabled(accion); 
+		ventana.txtMes.setEnabled(accion); 
+		ventana.txtDia.setEnabled(accion);
+		ventana.txtDireccion.setEnabled(accion);
+		ventana.txtEmail.setEnabled(accion);
+		ventana.txtTelefono.setEnabled(accion);
+		ventana.txt1.setEnabled(accion);
+		ventana.txt2.setEnabled(accion);
+		ventana.btnImprimir.setEnabled(!accion);
 	}
 }

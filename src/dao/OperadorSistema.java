@@ -63,7 +63,8 @@ public class OperadorSistema extends Conexion {
 			case "UsuariosMySQL.updateTiempoPass":
 			case "UsuariosMySQL.isNombreUsado":
 			case "PersonaMySQL.isDNIDuplicado":
-			case "EmpleadoMySQL.getLegajoLibre":	
+			case "EmpleadoMySQL.getLegajoLibre":
+			case "AlumnoMySQL.getLegajoLibre":
 				bandera = true;
 				break;
 									// Permisos para Administración.	///////////////////////////////////////////////

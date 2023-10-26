@@ -9,6 +9,7 @@ import dao.EmpleadoMySQL;
 
 public class DtosEmpleado {
 
+	private EmpleadoDAO empleadoDAO;
 	private static Empleado empleado = new Empleado();
 	private Empleado listaEmpleados[];
 	private String añoNacimiento;
@@ -40,9 +41,9 @@ public class DtosEmpleado {
 	
 	public DefaultTableModel getTablaEmpleados(String tipo, boolean estado, String filtro) {
 		
-		EmpleadoDAO empleados = new EmpleadoMySQL();
+		empleadoDAO = new EmpleadoMySQL();
 		String titulo[] = {"Leg.", "Nombre", "Apellido", "DNI", "Dirección", "Teléfono", "E-mail", "Sector", "Cargo", "Tipo"};
-		listaEmpleados = empleados.getListado(tipo, estado, filtro);
+		listaEmpleados = empleadoDAO.getListado(tipo, estado, filtro);
 		String cuerpo[][]=null;
 		
 		if(listaEmpleados != null) {
@@ -122,7 +123,7 @@ public class DtosEmpleado {
 	public boolean setNuevoEmpleado() {
 		
 		boolean bandera = false;
-		EmpleadoDAO empleadoDAO = new EmpleadoMySQL();
+		empleadoDAO = new EmpleadoMySQL();
 		bandera = empleadoDAO.setNuevo(empleado);
 		clearVariables();
 		return bandera;
@@ -136,7 +137,7 @@ public class DtosEmpleado {
 	public boolean setActualizarEmpleado() {
 		
 		boolean bandera = false;
-		EmpleadoDAO empleadoDAO = new EmpleadoMySQL();
+		empleadoDAO = new EmpleadoMySQL();
 		bandera = empleadoDAO.update(empleado);
 		clearVariables();
 		return bandera;
@@ -228,9 +229,9 @@ public class DtosEmpleado {
 	
 	public DefaultTableModel getListadoEmpleados(String tipo, String filtro) {
 		
-		EmpleadoDAO empleadosDAO = new EmpleadoMySQL();
+		empleadoDAO = new EmpleadoMySQL();
 		String titulo[] = {"Leg.", "Apellido, nombre", "Sector", "Cargo"};
-		listaEmpleados = empleadosDAO.getListado(tipo, true, filtro);
+		listaEmpleados = empleadoDAO.getListado(tipo, true, filtro);
 		String cuerpo[][] = null;
 		
 		if(listaEmpleados != null) {
@@ -361,8 +362,8 @@ public class DtosEmpleado {
 	
 	public String getNuevoLegajo() {
 		
-		EmpleadoDAO empleados = new EmpleadoMySQL();
-		return empleados.getLegajoLibre() + "";
+		empleadoDAO = new EmpleadoMySQL();
+		return empleadoDAO.getLegajoLibre() + "";
 	}
 
 	public String getLegajo() {

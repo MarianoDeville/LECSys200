@@ -116,6 +116,48 @@ public class AsistenciaMySQL extends Conexion implements AsistenciaDAO {
 		return alumnos;
 	}
 	
+	@Override
+	public ResumenAsistencia getInfoAsistencia(int legajo) {
+		
+		ResumenAsistencia resumen = new ResumenAsistencia();
+		String cmdStm = "SELECT sum(case when estado = 0 then 1 else 0 end), "
+						+ "sum(case when estado = 1 then 1 else 0 end), "
+						+ "sum(case when estado = 2 then 1 else 0 end) "
+						+ "FROM lecsys1.faltas WHERE (idAlumnos = ? AND YEAR(fecha) = YEAR(NOW()))";
+		
+		
+		try {
+			
+			this.conectar();
+			PreparedStatement stm = this.conexion.prepareStatement(cmdStm, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			stm.setInt(1, legajo);
+			ResultSet rs = stm.executeQuery();
+			
+			if (rs.next()) {
+				
+				resumen.setFaltas(rs.getInt(1));	
+				resumen.setPresente(rs.getInt(2));
+				resumen.setTarde(rs.getInt(3));
+			}
+		}catch (Exception e) {
+			
+			CtrlLogErrores.guardarError(e.getMessage());
+			CtrlLogErrores.guardarError("AsistenciaMySQL, getInfoAsistencia()");
+			CtrlLogErrores.guardarError(cmdStm);
+		} finally {
+			
+			this.cerrar();
+		}
+		return resumen;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -150,38 +192,5 @@ public class AsistenciaMySQL extends Conexion implements AsistenciaDAO {
 		return bandera;
 	}
 
-	@Override
-	public ResumenAsistencia getInfoAsistencia(String idAlumno) {
-		
-		ResumenAsistencia resumen = new ResumenAsistencia();
-		String comando = "SELECT COUNT(*) FROM faltas WHERE (idAlumnos = " + idAlumno + " AND YEAR(fecha) = YEAR(NOW())";
-		try {
-			
-			this.conectar();
-			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stm.executeQuery(comando + " AND estado = 0)");
-			
-			if (rs.next()) 
-				resumen.setFaltas(rs.getInt(1));	
 
-			rs = stm.executeQuery(comando + " AND estado = 1)");
-			
-			if (rs.next()) 
-				resumen.setPresente(rs.getInt(1));
-			
-			rs = stm.executeQuery(comando + " AND estado = 2)");
-			
-			if (rs.next()) 
-				resumen.setTarde(rs.getInt(1));
-			
-		}catch (Exception e) {
-			
-			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("AsistenciaMySQL, getInfoAsistencia()");
-		} finally {
-			
-			this.cerrar();
-		}
-		return resumen;
-	}
 }

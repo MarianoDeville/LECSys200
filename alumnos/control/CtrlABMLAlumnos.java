@@ -146,7 +146,7 @@ public class CtrlABMLAlumnos implements ActionListener {
 		
 		if(ventanaNuevoAlumno != null) {
 
-			JOptionPane.showMessageDialog(null, "Le ventana \"Nuevo\" ya se encuentra abierta.");
+			JOptionPane.showMessageDialog(null, "La ventana \"Nuevo\" ya se encuentra abierta.");
 			return;
 		}
 		
@@ -160,7 +160,7 @@ public class CtrlABMLAlumnos implements ActionListener {
 		
 		if(ventanaEditarAlumno != null) {
 
-			JOptionPane.showMessageDialog(null, "Le ventana \"Editar\" ya se encuentra abierta.");
+			JOptionPane.showMessageDialog(null, "La ventana \"Editar\" ya se encuentra abierta.");
 			return;
 		}
 		

@@ -121,7 +121,7 @@ public class CtrlABMLUsuarios implements ActionListener {
 	
 		if(ventanaNuevoUsuario != null) {
 
-			JOptionPane.showMessageDialog(null, "Le ventana \"Nuevo\" ya se encuentra abierta.");
+			JOptionPane.showMessageDialog(null, "La ventana \"Nuevo\" ya se encuentra abierta.");
 			return;
 		}
 		
@@ -135,7 +135,7 @@ public class CtrlABMLUsuarios implements ActionListener {
 		
 		if(ventanaEditarUsuario != null) {
 
-			JOptionPane.showMessageDialog(null, "Le ventana \"Editar\" ya se encuentra abierta.");
+			JOptionPane.showMessageDialog(null, "La ventana \"Editar\" ya se encuentra abierta.");
 			return;
 		}
 		

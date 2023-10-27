@@ -373,14 +373,14 @@ public class DtosEmpleado {
 	
 	public String getSalario() {
 		
-		return empleado.getSalario() + "";
+		return String.format("%.2f", empleado.getSalario());
 	}
 	
 	public void setSalario(String salario) {
 		
 		try {
 		
-			DtosEmpleado.empleado.setSalario(Float.parseFloat(salario));
+			DtosEmpleado.empleado.setSalario(Float.parseFloat(salario.replace(",", ".")));
 		} catch (Exception e) {
 
 			DtosEmpleado.empleado.setSalario(0);

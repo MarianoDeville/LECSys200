@@ -3,7 +3,7 @@ package control;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
-
+import javax.swing.JOptionPane;
 import modelo.DtosConfiguracion;
 import vista.ABML;
 import vista.CambioContraseña;
@@ -14,6 +14,10 @@ import vista.NuevoUsuario;
 public class CtrlConfiguracion implements ActionListener {
 
 	private InterfaceBotones ventana;
+	private Listado ventanaActividad;
+	private ABML ventanaUsuarios;
+	private CambioContraseña ventanaCambioPass;
+	private NuevoUsuario ventanaEmail;
 
 	public CtrlConfiguracion(InterfaceBotones vista) {
 		
@@ -47,35 +51,86 @@ public class CtrlConfiguracion implements ActionListener {
 		
 		if(e.getSource() == ventana.btn1A) {
 			
-			Listado ventanaActividad = new Listado("Listado de actividad");
-			CtrlActividad ctrlActividad = new CtrlActividad(ventanaActividad);
-			ctrlActividad.iniciar();
+			actividad();
 		}
 		
 		if(e.getSource() == ventana.btn1B) {
 			
-			ABML ventanaUsuarios = new ABML("Alta Baja Modificación de usuarios");
-			CtrlABMLUsuarios ctrlABMLUsuarios = new CtrlABMLUsuarios(ventanaUsuarios);
-			ctrlABMLUsuarios.iniciar();
+			usuariosABML();
 		}
 		
 		if(e.getSource() == ventana.btn1C) {
 			
-			CambioContraseña ventanaCambioPass = new CambioContraseña();
-			CtrlCambioPassword ctrlCambioPass = new CtrlCambioPassword(ventanaCambioPass);
-			ctrlCambioPass.iniciar();
+			cambioPass();
 		}
 		
 		if(e.getSource() == ventana.btn2A) {
 			
-			NuevoUsuario ventanaEmail = new NuevoUsuario("Edición email del sistema");
-			CtrlEditarEmail ctrolEditarEmail = new CtrlEditarEmail(ventanaEmail);
-			ctrolEditarEmail.iniciar();
+			email();
 		}
 
 		if(e.getSource() == ventana.btnVolver) {
 			
+			if(ventanaActividad != null && ventanaActividad.isVisible())
+				ventanaActividad.dispose();
+			
+			if(ventanaUsuarios != null && ventanaUsuarios.isVisible())
+				ventanaUsuarios.dispose();
+			
+			if(ventanaCambioPass != null && ventanaCambioPass.isVisible())
+				ventanaCambioPass.dispose();
+			
+			if(ventanaEmail != null && ventanaEmail.isVisible())
+				ventanaEmail.dispose();
 			ventana.dispose();
 		}
+	}
+	
+	private void actividad() {
+		
+		if(ventanaActividad != null && ventanaActividad.isVisible()) {
+			
+			JOptionPane.showMessageDialog(null, "La ventana \"Actividad\" ya se encuentra abierta.");
+			return;
+		}
+		ventanaActividad = new Listado("Listado de actividad");
+		CtrlActividad ctrlActividad = new CtrlActividad(ventanaActividad);
+		ctrlActividad.iniciar();
+	}
+	
+	private void usuariosABML() {
+		
+		if(ventanaUsuarios != null && ventanaUsuarios.isVisible()) {
+			
+			JOptionPane.showMessageDialog(null, "La ventana \"ABML usuarios\" ya se encuentra abierta.");
+			return;
+		}
+		ventanaUsuarios = new ABML("Alta Baja Modificación de usuarios");
+		CtrlABMLUsuarios ctrlABMLUsuarios = new CtrlABMLUsuarios(ventanaUsuarios);
+		ctrlABMLUsuarios.iniciar();
+	}
+	
+	private void cambioPass() {
+		
+		if(ventanaCambioPass != null && ventanaCambioPass.isVisible()) {
+			
+			JOptionPane.showMessageDialog(null, "La ventana \"ambiar contraseña\" ya se encuentra abierta.");
+			return;
+		}
+		ventanaCambioPass = new CambioContraseña();
+		CtrlCambioPassword ctrlCambioPass = new CtrlCambioPassword(ventanaCambioPass);
+		ctrlCambioPass.iniciar();
+	}
+	
+	private void email() {
+		
+		if(ventanaEmail != null && ventanaEmail.isVisible()) {
+			
+			JOptionPane.showMessageDialog(null, "La ventana \"Email\" ya se encuentra abierta.");
+			return;
+		}
+		ventanaEmail = new NuevoUsuario("Edición email del sistema");
+		CtrlEditarEmail ctrolEditarEmail = new CtrlEditarEmail(ventanaEmail);
+		ctrolEditarEmail.iniciar();
 	}
 }

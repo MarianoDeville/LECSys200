@@ -3,6 +3,7 @@ package control;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import dao.OperadorSistema;
 import modelo.DtosConfiguracion;
 import vista.ABML;
@@ -12,6 +13,14 @@ import vista.Listado;
 public class CtrlAlumnos implements ActionListener {
 
 	private InterfaceBotones ventana;
+	private ABML ventanaABML;
+	private Listado ventanaListado;
+	private Listado ventanaExamenes;
+	private ABML ventanaGrupoFamiliar;
+	private Listado ventanaAsistencia;
+	private Listado ventanaRegistroAsistencia;
+	private Listado ventanaCobrarHabilitar;
+	private Listado ventanaCobrarCuota;
 		
 	public CtrlAlumnos(InterfaceBotones vista) {
 		
@@ -65,62 +74,125 @@ public class CtrlAlumnos implements ActionListener {
 		
 		if(e.getSource() == ventana.btn1A) {
 			
-			ABML ventanaABML = new ABML("Alta, Baja, Modificación y Listado");
+			if(ventanaABML != null && ventanaABML.isVisible()) {
+				
+				JOptionPane.showMessageDialog(null, "La ventana \"ABML\" ya se encuentra abierta.");
+				return;
+			}
+			ventanaABML = new ABML("Alta, Baja, Modificación y Listado");
 			CtrlABMLAlumnos ctrlABMLPersonal = new CtrlABMLAlumnos(ventanaABML);
 			ctrlABMLPersonal.iniciar();
 		}
 		
 		if(e.getSource() == ventana.btn1B) {
 			
-			Listado ventanaListado = new Listado("Listado");
+			if(ventanaListado != null && ventanaListado.isVisible()) {
+				
+				JOptionPane.showMessageDialog(null, "La ventana \"Listado\" ya se encuentra abierta.");
+				return;
+			}
+			ventanaListado = new Listado("Listado");
 			CtrlListado ctrlListado = new CtrlListado(ventanaListado);
 			ctrlListado.iniciar();
 		}
 		
 		if(e.getSource() == ventana.btn1C) {
 			
-			Listado ventanaExamenes = new Listado("Examenes");
+			if(ventanaExamenes != null && ventanaExamenes.isVisible()) {
+				
+				JOptionPane.showMessageDialog(null, "La ventana \"Exámenes\" ya se encuentra abierta.");
+				return;
+			}
+			ventanaExamenes = new Listado("Examenes");
 			CtrlExamenes ctrlExamenes = new CtrlExamenes(ventanaExamenes);
 			ctrlExamenes.iniciar();
 		}
 		
 		if(e.getSource() == ventana.btn1D) {
 			
-			ABML ventanaGrupoFamiliar = new ABML("Gestión de grupos familiares");
+			if(ventanaGrupoFamiliar != null && ventanaGrupoFamiliar.isVisible()) {
+				
+				JOptionPane.showMessageDialog(null, "La ventana \"Grupo familiar\" ya se encuentra abierta.");
+				return;
+			}
+			ventanaGrupoFamiliar = new ABML("Gestión de grupos familiares");
 			CtrlGrupoFamiliar ctrlGrupoFamiliar = new CtrlGrupoFamiliar(ventanaGrupoFamiliar);
 			ctrlGrupoFamiliar.iniciar();
 		}
 		
 		if(e.getSource() == ventana.btn2A) {
 			
-			Listado ventanaAsistencia = new Listado("Tomar asistencia");
+			if(ventanaAsistencia != null && ventanaAsistencia.isVisible()) {
+				
+				JOptionPane.showMessageDialog(null, "La ventana \"Tomar asistencia\" ya se encuentra abierta.");
+				return;
+			}
+			ventanaAsistencia = new Listado("Tomar asistencia");
 			CtrlTomarAsistencia ctrlAsistenciaAlumnos = new CtrlTomarAsistencia(ventanaAsistencia);
 			ctrlAsistenciaAlumnos.iniciar();
 		}
 		
 		if(e.getSource() == ventana.btn2B) {
 			
-			Listado ventanaRegistroAsistencia = new Listado("Registro asistencia");
+			if(ventanaRegistroAsistencia != null && ventanaRegistroAsistencia.isVisible()) {
+				
+				JOptionPane.showMessageDialog(null, "La ventana \"Registro asistencia\" ya se encuentra abierta.");
+				return;
+			}			
+			ventanaRegistroAsistencia = new Listado("Registro asistencia");
 			CtrlRegistroAsistencia ctrlRegistroAsistencias = new CtrlRegistroAsistencia(ventanaRegistroAsistencia);
 			ctrlRegistroAsistencias.iniciar();
 		}
 
 		if(e.getSource() == ventana.btn2C) {
 			
-			Listado ventanaCobrarHabilitar = new Listado("Cobro y habilitación");
+			if(ventanaCobrarHabilitar != null && ventanaCobrarHabilitar.isVisible()) {
+				
+				JOptionPane.showMessageDialog(null, "La ventana \"Cobro y habilitación\" ya se encuentra abierta.");
+				return;
+			}
+			ventanaCobrarHabilitar = new Listado("Cobro y habilitación");
 			CtrlCobrarHabilitar ctrolCobrarHabilitar = new CtrlCobrarHabilitar(ventanaCobrarHabilitar);
 			ctrolCobrarHabilitar.iniciar();
 		}
 		
 		if(e.getSource() == ventana.btn2D) {
 			
-			Listado ventanaCobrarCuota = new Listado("Cobro de cuota");
+			if(ventanaCobrarHabilitar != null && ventanaCobrarHabilitar.isVisible()) {
+				
+				JOptionPane.showMessageDialog(null, "La ventana \"Habilitar y cobrar\" ya se encuentra abierta.");
+				return;
+			}
+			ventanaCobrarCuota = new Listado("Cobrar cuota");
 			CtrlCobrarCuota ctrlCobrarCuota = new CtrlCobrarCuota(ventanaCobrarCuota);
 			ctrlCobrarCuota.iniciar();
 		}
-		
+
 		if(e.getSource() == ventana.btnVolver) {
 			
+			if(ventanaABML != null && ventanaABML.isVisible())
+				ventanaABML.dispose();
+			
+			if(ventanaListado != null && ventanaListado.isVisible())
+				ventanaListado.dispose();
+			
+			if(ventanaExamenes != null && ventanaExamenes.isVisible())
+				ventanaExamenes.dispose();
+			
+			if(ventanaGrupoFamiliar != null && ventanaGrupoFamiliar.isVisible())
+				ventanaGrupoFamiliar.dispose();
+			
+			if(ventanaAsistencia != null && ventanaAsistencia.isVisible())
+				ventanaAsistencia.dispose();
+			
+			if(ventanaRegistroAsistencia != null && ventanaRegistroAsistencia.isVisible())
+				ventanaRegistroAsistencia.dispose();
+			
+			if(ventanaCobrarHabilitar != null && ventanaCobrarHabilitar.isVisible())
+				ventanaCobrarHabilitar.dispose();
+			
+			if(ventanaCobrarCuota != null && ventanaCobrarCuota.isVisible())
+				ventanaCobrarCuota.dispose();
 			ventana.dispose();
 		}
 	}

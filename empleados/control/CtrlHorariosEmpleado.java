@@ -133,6 +133,7 @@ public class CtrlHorariosEmpleado implements ActionListener {
 		ventana.tabla1.getColumnModel().getColumn(0).setPreferredWidth(40);
 		ventana.tabla1.getColumnModel().getColumn(0).setMaxWidth(50);
 		ventana.tabla1.setDefaultEditor(Object.class, null);
+		ventana.btnCompletar.setEnabled(false);
 		dtosEmpleado.clearVariables();
 		actualizaInfoEmpleado();
 	}
@@ -200,6 +201,7 @@ public class CtrlHorariosEmpleado implements ActionListener {
 		boolean comienzoEliminar;
 		int cont = 0;
 		int contE = 0;
+		ventana.btnCompletar.setEnabled(true);
 
 		for(int i = 0; i < ventana.tabla2.getColumnCount();i++) {
 			

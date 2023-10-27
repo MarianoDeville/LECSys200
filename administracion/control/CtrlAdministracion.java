@@ -13,6 +13,10 @@ import vista.InterfaceBotones;
 public class CtrlAdministracion implements ActionListener {
 
 	private InterfaceBotones ventana;
+	private InterfaceBotones ventanaCobros;
+	private InterfaceBotones ventanaPagos;
+	private InterfaceBotones ventanaCompras;
+	private ABML ventanaEstadisticas;
 	
 	public CtrlAdministracion(InterfaceBotones vista) {
 		
@@ -54,28 +58,48 @@ public class CtrlAdministracion implements ActionListener {
 
 		if(e.getSource() == ventana.btn1A) {
 			
-			InterfaceBotones ventanaCobros = new InterfaceBotones("Gestión de cobros");
+			if(ventanaCobros != null && ventanaCobros.isVisible()) {
+				
+				JOptionPane.showMessageDialog(null, "La ventana \"Cobros\" ya se encuentra abierta.");
+				return;
+			}
+			ventanaCobros = new InterfaceBotones("Gestión de cobros");
 			CtrlCobros ctrlCobros = new CtrlCobros(ventanaCobros);
 			ctrlCobros.iniciar();
 		}
 		
 		if(e.getSource() == ventana.btn1B) {
 			
-			InterfaceBotones ventanaPagos = new InterfaceBotones("Gestión de pagos");
+			if(ventanaPagos != null && ventanaPagos.isVisible()) {
+				
+				JOptionPane.showMessageDialog(null, "La ventana \"Pagos\" ya se encuentra abierta.");
+				return;
+			}
+			ventanaPagos = new InterfaceBotones("Gestión de pagos");
 //			CtrlPagos ctrlPagos = new CtrlPagos(ventanaPagos);
 //			ctrlPagos.iniciar();
 		}
 
 		if(e.getSource() == ventana.btn1C) {
 			
-			InterfaceBotones ventanaCompras = new InterfaceBotones("Gestión de compras");
+			if(ventanaCompras != null && ventanaCompras.isVisible()) {
+				
+				JOptionPane.showMessageDialog(null, "La ventana \"Compras\" ya se encuentra abierta.");
+				return;
+			}
+			ventanaCompras = new InterfaceBotones("Gestión de compras");
 //			CtrlCompras ctrlCompras = new CtrlCompras(ventanaCompras);
 //			ctrlCompras.iniciar();
 		}
 		
 		if(e.getSource() == ventana.btn2A) {
 			
-			ABML ventanaEstadisticas = new ABML("Estadísticas");
+			if(ventanaEstadisticas != null && ventanaEstadisticas.isVisible()) {
+				
+				JOptionPane.showMessageDialog(null, "La ventana \"Estadísticas\" ya se encuentra abierta.");
+				return;
+			}
+			ventanaEstadisticas = new ABML("Estadísticas");
 //			CtrlEstadisticas ctrlEstadisticas = new CtrlEstadisticas(ventanaEstadisticas);
 //			ctrlEstadisticas.iniciar();
 		}

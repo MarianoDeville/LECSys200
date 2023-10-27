@@ -18,6 +18,13 @@ public class CtrlPrincipal implements ActionListener {
 	private Principal ventanaPrincipal;
 	private DtosActividad actividad;
 	private OperadorSistema acceso;
+	private InterfaceBotones ventanaAdministracion;
+	private InterfaceBotones ventanaAlumnos;
+	private InterfaceBotones ventanaPersonal;
+	private InterfaceBotones ventanaCursos;
+	private ABML ventanaABMLProveedores;
+	private InterfaceBotones ventanaConfiguracion;
+	private InterfaceBotones ventanaInsumos;
 
 	public CtrlPrincipal(Principal vista) {
 		
@@ -53,43 +60,73 @@ int algo;
 	public void actionPerformed(ActionEvent e) {
 
 		if(e.getSource() == ventanaPrincipal.btnAdmin) {
-
-			InterfaceBotones ventanaAdministracion = new InterfaceBotones("Gestión administrativa");
+			
+			if(ventanaAdministracion != null && ventanaAdministracion.isVisible()) {
+				
+				JOptionPane.showMessageDialog(null, "El módulo \"Administración\" ya se encuentra abierto.");
+				return;
+			}
+			ventanaAdministracion = new InterfaceBotones("Gestión administrativa");
 			CtrlAdministracion ctrlAdmin = new CtrlAdministracion(ventanaAdministracion);
 			ctrlAdmin.iniciar();
 		}
 		
 		if(e.getSource() == ventanaPrincipal.btnAlumnos) {
+			
+			if(ventanaAlumnos != null && ventanaAlumnos.isVisible()) {
 				
-			InterfaceBotones ventanaAlumnos = new InterfaceBotones("Gestión de los alumnos");
+				JOptionPane.showMessageDialog(null, "El módulo \"Alumnos\" ya se encuentra abierto.");
+				return;
+			}				
+			ventanaAlumnos = new InterfaceBotones("Gestión de los alumnos");
 			CtrlAlumnos ctrlAlumn = new CtrlAlumnos(ventanaAlumnos);
 			ctrlAlumn.iniciar();
 		}
 		
 		if(e.getSource() == ventanaPrincipal.btnPersonal) {
-
-			InterfaceBotones ventanaPersonal = new InterfaceBotones("Gestión del personal");
+			
+			if(ventanaPersonal != null && ventanaPersonal.isVisible()) {
+				
+				JOptionPane.showMessageDialog(null, "El módulo \"Personal\" ya se encuentra abierto.");
+				return;
+			}
+			ventanaPersonal = new InterfaceBotones("Gestión del personal");
 			CtrlEmpleados ctrlAdmin = new CtrlEmpleados(ventanaPersonal);
 			ctrlAdmin.iniciar();
 		}
 		
 		if(e.getSource() == ventanaPrincipal.btnCursos) {
-
-			InterfaceBotones ventanaCursos = new InterfaceBotones("Gestión de los cursos");
+			
+			if(ventanaCursos != null && ventanaCursos.isVisible()) {
+				
+				JOptionPane.showMessageDialog(null, "El módulo \"Cursos\" ya se encuentra abierto.");
+				return;
+			}
+			ventanaCursos = new InterfaceBotones("Gestión de los cursos");
 			CtrlCursos ctrlCursos = new CtrlCursos(ventanaCursos);
 			ctrlCursos.iniciar();
 		}
 		
 		if(e.getSource() == ventanaPrincipal.btnProveedores) {
 			
-			ABML ventanaABMLProveedores = new ABML("ABML proveedores");
+			if(ventanaABMLProveedores != null && ventanaABMLProveedores.isVisible()) {
+				
+				JOptionPane.showMessageDialog(null, "El módulo \"Proveedores\" ya se encuentra abierto.");
+				return;
+			}
+			ventanaABMLProveedores = new ABML("ABML proveedores");
 //			CtrlABMLProveedores ctrlABMLProveedores = new CtrlABMLProveedores(ventanaABMLProveedores);
 //			ctrlABMLProveedores.iniciar();
 		}
 		
 		if(e.getSource() == ventanaPrincipal.btnConfig) {	
-
-			InterfaceBotones ventanaConfiguracion = new InterfaceBotones("Configuración del sistema");
+			
+			if(ventanaConfiguracion != null && ventanaConfiguracion.isVisible()) {
+				
+				JOptionPane.showMessageDialog(null, "El módulo \"Configuración\" ya se encuentra abierto.");
+				return;
+			}
+			ventanaConfiguracion = new InterfaceBotones("Configuración del sistema");
 			CtrlConfiguracion ctrlConfig = new CtrlConfiguracion(ventanaConfiguracion);
 			ctrlConfig.iniciar();
 		}
@@ -106,7 +143,12 @@ int algo;
 		
 		if(e.getSource() == ventanaPrincipal.btnInsumos) {
 			
-			InterfaceBotones ventanaInsumos = new InterfaceBotones("Insumos");
+			if(ventanaInsumos != null && ventanaInsumos.isVisible()) {
+				
+				JOptionPane.showMessageDialog(null, "El módulo \"Insumos\" ya se encuentra abierto.");
+				return;
+			}			
+			ventanaInsumos = new InterfaceBotones("Insumos");
 //			CtrlInsumos ctrlInsumos = new CtrlInsumos(ventanaInsumos);
 //			ctrlInsumos.iniciar();
 		}

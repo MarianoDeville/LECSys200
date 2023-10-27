@@ -3,6 +3,8 @@ package control;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+
 import dao.OperadorSistema;
 import modelo.DtosConfiguracion;
 import vista.ABML;
@@ -12,6 +14,8 @@ import vista.Listado;
 public class CtrlCursos implements ActionListener {
 	
 	private InterfaceBotones ventana;
+	private ABML ventanaABML;
+	private Listado ventanaDiagramacion;
 
 	public CtrlCursos(InterfaceBotones vista) {
 		
@@ -40,22 +44,47 @@ public class CtrlCursos implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 
 		if(e.getSource() == ventana.btn1A) {
-			
-			ABML ventanaABMLCursos = new ABML("Gestionar los cursos");
-			CtrlABMLCursos ctrlABMLCursos = new CtrlABMLCursos(ventanaABMLCursos);
-			ctrlABMLCursos.iniciar();
+
+			abml();
 		}
 		
 		if(e.getSource() == ventana.btn1B) {
 			
-			Listado ventanaDiagramacionCursos = new Listado("Diagramación de cursos");
-			CtrlDiagramaCursos ctrlDiagramaCursos = new CtrlDiagramaCursos(ventanaDiagramacionCursos);
-			ctrlDiagramaCursos.iniciar();
+			diagramacion();
 		}
 		
 		if(e.getSource() == ventana.btnVolver) {
 			
+			if(ventanaABML != null && ventanaABML.isVisible())
+				ventanaABML.dispose();
+			
+			if(ventanaDiagramacion != null && ventanaDiagramacion.isVisible())
+				ventanaDiagramacion.dispose();
 			ventana.dispose();
 		}
+	}
+	
+	private void abml() {
+		
+		if(ventanaABML != null && ventanaABML.isVisible()) {
+			
+			JOptionPane.showMessageDialog(null, "La ventana \"ABML\" ya se encuentra abierta.");
+			return;
+		}
+		ventanaABML = new ABML("Gestionar los cursos");
+		CtrlABMLCursos ctrlABMLCursos = new CtrlABMLCursos(ventanaABML);
+		ctrlABMLCursos.iniciar();
+	}
+	
+	private void diagramacion() {
+		
+		if(ventanaDiagramacion != null && ventanaDiagramacion.isVisible()) {
+			
+			JOptionPane.showMessageDialog(null, "La ventana \"Diagramación\" ya se encuentra abierta.");
+			return;
+		}
+		ventanaDiagramacion = new Listado("Diagramación de cursos");
+		CtrlDiagramaCursos ctrlDiagramaCursos = new CtrlDiagramaCursos(ventanaDiagramacion);
+		ctrlDiagramaCursos.iniciar();
 	}
 }

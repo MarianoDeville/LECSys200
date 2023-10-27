@@ -111,7 +111,7 @@ public class CtrlGrupoFamiliar implements ActionListener {
 		
 		if(ventanaEditarGrupo != null) {
 
-			JOptionPane.showMessageDialog(null, "Le ventana \"Editar\" ya se encuentra abierta.");
+			JOptionPane.showMessageDialog(null, "La ventana \"Editar\" ya se encuentra abierta.");
 			return;
 		}
 		

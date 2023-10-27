@@ -3,6 +3,7 @@ package control;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import dao.OperadorSistema;
 import modelo.DtosConfiguracion;
 import vista.ABML;
@@ -12,6 +13,8 @@ import vista.ListadoDoble2;
 public class CtrlEmpleados implements ActionListener {
 
 	private InterfaceBotones ventana;
+	private ABML ventanaABML;
+	private ListadoDoble2 ventanaHorarios;
 	
 	public CtrlEmpleados(InterfaceBotones vista) {
 		
@@ -45,11 +48,9 @@ public class CtrlEmpleados implements ActionListener {
 		
 		if(e.getSource() == ventana.btn1A) {
 			
-			ABML ventanaABML = new ABML("ABML del personal");
-			CtrlABMLEmpleado ctrlABMLEmpleados = new CtrlABMLEmpleado(ventanaABML);
-			ctrlABMLEmpleados.iniciar();
+			abml();
 		}
-		
+
 		if(e.getSource() == ventana.btn1B) {
 			
 
@@ -57,14 +58,41 @@ public class CtrlEmpleados implements ActionListener {
 		
 		if(e.getSource() == ventana.btn2A) {
 			
-			ListadoDoble2 ventanaHorariosPersonal = new ListadoDoble2("Horarios Personal");
-			CtrlHorariosEmpleado ctrlHorariosEmpleados = new CtrlHorariosEmpleado(ventanaHorariosPersonal);
-			ctrlHorariosEmpleados.iniciar();
+			horarios();
 		}
 		
 		if(e.getSource() == ventana.btnVolver) {
 			
+			if(ventanaABML != null && ventanaABML.isVisible())
+				ventanaABML.dispose();
+			
+			if(ventanaHorarios != null && ventanaHorarios.isVisible())
+				ventanaHorarios.dispose();
 			ventana.dispose();
 		}
+	}
+	
+	private void abml() {
+		
+		if(ventanaABML != null && ventanaABML.isVisible()) {
+			
+			JOptionPane.showMessageDialog(null, "La ventana \"ABML\" ya se encuentra abierta.");
+			return;
+		}
+		ventanaABML = new ABML("ABML del personal");
+		CtrlABMLEmpleado ctrlABMLEmpleados = new CtrlABMLEmpleado(ventanaABML);
+		ctrlABMLEmpleados.iniciar();
+	}
+	
+	private void horarios() {
+		
+		if(ventanaHorarios != null && ventanaHorarios.isVisible()) {
+			
+			JOptionPane.showMessageDialog(null, "La ventana \"Horarios\" ya se encuentra abierta.");
+			return;
+		}
+		ventanaHorarios = new ListadoDoble2("Horarios Personal");
+		CtrlHorariosEmpleado ctrlHorariosEmpleados = new CtrlHorariosEmpleado(ventanaHorarios);
+		ctrlHorariosEmpleados.iniciar();
 	}
 }

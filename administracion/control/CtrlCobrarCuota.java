@@ -147,7 +147,7 @@ public class CtrlCobrarCuota implements ActionListener {
 			return;
 		}
 		dtosCobros.setInfoCobro(elemento);
-		ventanaCobrar = new Cobro("Cobro de cuota");
+		ventanaCobrar = new Cobro("Cobro de cuota", ventana.getX(), ventana.getY());
 		CtrlRealizarCobro ctrolCobrar = new CtrlRealizarCobro(ventanaCobrar);
 		ctrolCobrar.iniciar();
 		ventanaCobrar.btnVolver.addActionListener(this);

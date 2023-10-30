@@ -99,7 +99,7 @@ public class CtrlGestionCotizaciones implements ActionListener {
 	
 	private void cargarCotizaciones() {
 		
-		ventanaCotizacioes = new Listado("Revisión de cotizaciones");
+		ventanaCotizacioes = new Listado("Revisión de cotizaciones", ventana.getX(), ventana.getY());
 		CtrlCotizaciones ctrlCotizaciones = new CtrlCotizaciones(ventanaCotizacioes);
 		ctrlCotizaciones.iniciar();
 		ventanaCotizacioes.btnVolver.addActionListener(this);

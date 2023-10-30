@@ -58,14 +58,14 @@ public class Nuevo extends VentanaModelo {
 	public JButton btnGuardar;
 	public JButton btnVolver;
 	
-	public Nuevo(String nombreVentana) {
+	public Nuevo(String nombreVentana, int x, int y) {
 		
 		super(nombreVentana);
 		panel = new JPanel();
 		setContentPane(panel);
 		SpringLayout contenedor = new SpringLayout();
 		setMinimumSize(new Dimension(450, 500));
-		setBounds(10, 10, 460, 530);
+		setBounds(x + 5, y + 5, 460, 530);
 		panel.setLayout(contenedor);
 		
 		lblLegajo = new JLabel("Legajo:");

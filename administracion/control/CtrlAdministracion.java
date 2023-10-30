@@ -60,10 +60,10 @@ public class CtrlAdministracion implements ActionListener {
 			
 			if(ventanaCobros != null && ventanaCobros.isVisible()) {
 				
-				JOptionPane.showMessageDialog(null, "La ventana \"Cobros\" ya se encuentra abierta.");
+				ventanaCobros.setVisible(true);
 				return;
 			}
-			ventanaCobros = new InterfaceBotones("Gestión de cobros");
+			ventanaCobros = new InterfaceBotones("Gestión de cobros", ventana.getX(), ventana.getY());
 			CtrlCobros ctrlCobros = new CtrlCobros(ventanaCobros);
 			ctrlCobros.iniciar();
 		}
@@ -72,10 +72,10 @@ public class CtrlAdministracion implements ActionListener {
 			
 			if(ventanaPagos != null && ventanaPagos.isVisible()) {
 				
-				JOptionPane.showMessageDialog(null, "La ventana \"Pagos\" ya se encuentra abierta.");
+				ventanaPagos.setVisible(true);
 				return;
 			}
-			ventanaPagos = new InterfaceBotones("Gestión de pagos");
+			ventanaPagos = new InterfaceBotones("Gestión de pagos", ventana.getX(), ventana.getY());
 //			CtrlPagos ctrlPagos = new CtrlPagos(ventanaPagos);
 //			ctrlPagos.iniciar();
 		}
@@ -84,10 +84,10 @@ public class CtrlAdministracion implements ActionListener {
 			
 			if(ventanaCompras != null && ventanaCompras.isVisible()) {
 				
-				JOptionPane.showMessageDialog(null, "La ventana \"Compras\" ya se encuentra abierta.");
+				ventanaCompras.setVisible(true);
 				return;
 			}
-			ventanaCompras = new InterfaceBotones("Gestión de compras");
+			ventanaCompras = new InterfaceBotones("Gestión de compras", ventana.getX(), ventana.getY());
 //			CtrlCompras ctrlCompras = new CtrlCompras(ventanaCompras);
 //			ctrlCompras.iniciar();
 		}
@@ -96,10 +96,10 @@ public class CtrlAdministracion implements ActionListener {
 			
 			if(ventanaEstadisticas != null && ventanaEstadisticas.isVisible()) {
 				
-				JOptionPane.showMessageDialog(null, "La ventana \"Estadísticas\" ya se encuentra abierta.");
+				ventanaEstadisticas.setVisible(true);
 				return;
 			}
-			ventanaEstadisticas = new ABML("Estadísticas");
+			ventanaEstadisticas = new ABML("Estadísticas", ventana.getX(), ventana.getY());
 //			CtrlEstadisticas ctrlEstadisticas = new CtrlEstadisticas(ventanaEstadisticas);
 //			ctrlEstadisticas.iniciar();
 		}

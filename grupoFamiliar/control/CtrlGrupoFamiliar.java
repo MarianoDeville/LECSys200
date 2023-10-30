@@ -112,6 +112,7 @@ public class CtrlGrupoFamiliar implements ActionListener {
 		if(ventanaEditarGrupo != null) {
 
 			JOptionPane.showMessageDialog(null, "La ventana \"Editar\" ya se encuentra abierta.");
+			ventanaEditarGrupo.setVisible(true);
 			return;
 		}
 		
@@ -122,7 +123,7 @@ public class CtrlGrupoFamiliar implements ActionListener {
 		}
 		dtosFamilia.setFamiliaSeleccionada(elemento);
 		elemento = -1;
-		ventanaEditarGrupo = new ListadoDoble("Edicion de la información del grupo.");
+		ventanaEditarGrupo = new ListadoDoble("Edicion de la información del grupo.", ventana.getX(), ventana.getY());
 		CtrlEditarGrupoFamiliar ctrlEditarGrupo = new CtrlEditarGrupoFamiliar(ventanaEditarGrupo);
 		ctrlEditarGrupo.iniciar();
 		ventanaEditarGrupo.btnVolver.addActionListener(this);

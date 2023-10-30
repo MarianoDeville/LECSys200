@@ -28,11 +28,12 @@ public class InterfaceBotones extends VentanaModelo {
 	public JButton btn2D;
 	public JButton btnVolver;
 
-	public InterfaceBotones(String nombreVentana) {
+	public InterfaceBotones(String nombreVentana, int x, int y) {
 		
 		super(nombreVentana);
 		panelGeneral = new JPanel();
 		setContentPane(panelGeneral);
+		setLocation(x + 5, y + 5);
 		SpringLayout contenedor = new SpringLayout();
 		panelGeneral.setLayout(contenedor);
 				

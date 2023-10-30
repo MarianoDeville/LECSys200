@@ -15,7 +15,6 @@ public class CtrlCobrarHabilitar implements ActionListener {
 	private Listado ventana;
 	private Cobro cobrarInscripción;
 	private DtosCobros dtosCobros;
-	private boolean bandera;
 	
 	public CtrlCobrarHabilitar(Listado vista) {
 		
@@ -104,7 +103,6 @@ public class CtrlCobrarHabilitar implements ActionListener {
 	
 	private void actualizar() {
 		
-		bandera = false;
 		ventana.tabla.setModel(dtosCobros.getTablaAlumnos(ventana.chckbx1.isSelected(), 
 															 ventana.chckbx2.isSelected(), 
 															 ventana.txt3.getText()));
@@ -119,32 +117,19 @@ public class CtrlCobrarHabilitar implements ActionListener {
 		if(cobrarInscripción != null) {
 
 			JOptionPane.showMessageDialog(null, "Le ventana \"Cobrar\" ya se encuentra abierta.");
+			cobrarInscripción.setVisible(true);
 			return;
 		}
-		dtosCobros.setSeleccionados(itemsSeleccionados());
 		
-		if(!bandera) {
+		if(!dtosCobros.setSeleccionados(ventana.tabla)) {
 
 			JOptionPane.showMessageDialog(null, "No hay elementos seleccionados para cobrar.");
 			return;
 		}
-		cobrarInscripción = new Cobro("Cobrar inscripción y habilitar");
+
+		cobrarInscripción = new Cobro("Cobrar inscripción y habilitar", ventana.getX(), ventana.getY());
 		CtrlCobrarInscripcion ctrlCobrarInscripción = new CtrlCobrarInscripcion(cobrarInscripción);
 		cobrarInscripción.btnVolver.addActionListener(this);
 		ctrlCobrarInscripción.iniciar();
-	}
-	
-	private boolean[] itemsSeleccionados() {
-		
-		boolean seleccionados[] = new boolean[ventana.tabla.getRowCount()];
-		
-		for(int i = 0; i < seleccionados.length; i++) {
-
-			seleccionados[i] = (boolean)ventana.tabla.getValueAt(i, 4);
-			
-			if((boolean)ventana.tabla.getValueAt(i, 4))
-				bandera = true;
-		}
-		return seleccionados;
 	}
 }

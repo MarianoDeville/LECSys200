@@ -45,21 +45,21 @@ public class CtrlPagos implements ActionListener {
 
 		if(e.getSource() == ventana.btn1A) {
 
-			ABML ventanaEmpleados = new ABML("Pago a empleados");
+			ABML ventanaEmpleados = new ABML("Pago a empleados", ventana.getX(), ventana.getY());
 			CtrlPagoEmpleados ctrlEmpleados = new CtrlPagoEmpleados(ventanaEmpleados);
 			ctrlEmpleados.iniciar();			
 		}
 		
 		if(e.getSource() == ventana.btn1B) {
 			
-			ABML ventanaProveedores = new ABML("Pago a proveedores");
+			ABML ventanaProveedores = new ABML("Pago a proveedores", ventana.getX(), ventana.getY());
 			CtrlProveedores ctrlProveedores = new CtrlProveedores(ventanaProveedores);
 			ctrlProveedores.iniciar();
 		}
 		
 		if(e.getSource() == ventana.btn1C) {
 			
-			Listado ventanaHistorial = new Listado("Historial de pagos");
+			Listado ventanaHistorial = new Listado("Historial de pagos", ventana.getX(), ventana.getY());
 			CtrlListadoPagos ctrlListadoPagos = new CtrlListadoPagos(ventanaHistorial);
 			ctrlListadoPagos.iniciar();
 		}

@@ -45,11 +45,11 @@ public class NuevoCurso extends VentanaModelo{
 	public JButton btnBorrar;
 	public JButton btnVolver;
 		
-	public NuevoCurso(String nombreVentana) {
+	public NuevoCurso(String nombreVentana, int x, int y) {
 		
 		super(nombreVentana);
 		setResizable(true);
-		setBounds(10, 20, 800, 330);
+		setBounds(x + 5, y + 5, 800, 330);
 		panel = new JPanel();
 		panel.setBorder(null);
 		setContentPane(panel);

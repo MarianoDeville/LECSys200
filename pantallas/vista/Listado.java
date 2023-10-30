@@ -42,11 +42,12 @@ public class Listado extends VentanaModelo {
 	public JComboBox<String> comboBox1;
 	public JComboBox<String> comboBox2;
 	
-	public Listado(String nombreVentana) {
+	public Listado(String nombreVentana, int x, int y) {
 		
 		super(nombreVentana);
 		listado = new JPanel();
 		setContentPane(listado);
+		setLocation(x + 5, y + 5);
 		SpringLayout contenedor = new SpringLayout();
 		listado.setLayout(contenedor);
 		

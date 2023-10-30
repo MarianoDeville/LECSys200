@@ -24,11 +24,12 @@ public class ABML extends VentanaModelo {
 	public JButton btnImprimir;
 	public JButton btnVolver;
 
-	public ABML(String nombreVentana) {
+	public ABML(String nombreVentana, int x, int y) {
 		
 		super(nombreVentana);
 		panelABML = new JPanel();
 		setContentPane(panelABML);
+		setLocation(x + 5, y + 5);
 		SpringLayout contenedor = new SpringLayout();
 		panelABML.setLayout(contenedor);
 		

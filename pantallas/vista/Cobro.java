@@ -46,11 +46,12 @@ public class Cobro extends VentanaModelo {
 	public JButton btnCentral;
 	public JButton btnVolver;
 
-	public Cobro(String nombreVentana) {
+	public Cobro(String nombreVentana, int x, int y) {
 		
 		super(nombreVentana);
 		panel = new JPanel();
 		setContentPane(panel);
+		setLocation(x + 5, y + 5);
 		SpringLayout contenedor = new SpringLayout();
 		panel.setLayout(contenedor);
 		

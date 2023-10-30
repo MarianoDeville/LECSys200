@@ -141,7 +141,7 @@ public class CtrlABMLEmpleado implements ActionListener {
 			return;
 		}
 		
-		ventanaNuevoEmpleado = new Nuevo("Cargar nuevo empleado");
+		ventanaNuevoEmpleado = new Nuevo("Cargar nuevo empleado", ventana.getX(), ventana.getY());
 		CtrlNuevoEmpleado ctrlNuevoEmpleado = new CtrlNuevoEmpleado(ventanaNuevoEmpleado);
 		ctrlNuevoEmpleado.iniciar();
 		ventanaNuevoEmpleado.btnVolver.addActionListener(this);
@@ -163,7 +163,7 @@ public class CtrlABMLEmpleado implements ActionListener {
 			return;
 		}
 		dtosEmpleados.setEmpleado(elemento);
-		ventanaEditarEmpleado = new Nuevo("Editar datos empleado");
+		ventanaEditarEmpleado = new Nuevo("Editar datos empleado", ventana.getX(), ventana.getY());
 		CtrlEditarEmpleado ctrlEditarEmpleado = new CtrlEditarEmpleado(ventanaEditarEmpleado);
 		ctrlEditarEmpleado.iniciar();
 		ventanaEditarEmpleado.btnVolver.addActionListener(this);

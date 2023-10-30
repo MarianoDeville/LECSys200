@@ -3,7 +3,6 @@ package control;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
-
 import modelo.DtosConfiguracion;
 import vista.ABML;
 import vista.InterfaceBotones;
@@ -12,6 +11,10 @@ import vista.Listado;
 public class CtrlCobros implements ActionListener {
 	
 	private InterfaceBotones ventana;
+	private Listado ventanaCobrarCuota;
+	private Listado ventanaListadoCobros;
+	private Listado ventanaCobrarHabilitar;
+	private ABML ventanaGrupoFamiliar;
 	
 	public CtrlCobros(InterfaceBotones vista) {
 		
@@ -43,29 +46,49 @@ public class CtrlCobros implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 
 		if(e.getSource() == ventana.btn1A) {
-			
-			Listado ventanaCobrarCuota = new Listado("Cobro de cuota");
+				
+			if(ventanaCobrarCuota != null && ventanaCobrarCuota.isVisible()) {
+				
+				ventanaCobrarCuota.setVisible(true);
+				return;
+			}
+			ventanaCobrarCuota = new Listado("Cobro de cuota", ventana.getX(), ventana.getY());
 			CtrlCobrarCuota ctrlCobrarCuota = new CtrlCobrarCuota(ventanaCobrarCuota);
 			ctrlCobrarCuota.iniciar();
 		}
 		
 		if(e.getSource() == ventana.btn1B) {
 			
-			Listado ventanaListadoCobros = new Listado("Listado de cobros");
+			if(ventanaListadoCobros != null && ventanaListadoCobros.isVisible()) {
+				
+				ventanaListadoCobros.setVisible(true);
+				return;
+			}	
+			ventanaListadoCobros = new Listado("Listado de cobros", ventana.getX(), ventana.getY());
 			CtrlListadoCobros ctrolListadoCobros = new CtrlListadoCobros(ventanaListadoCobros);
 			ctrolListadoCobros.iniciar();
 		}
 		
 		if(e.getSource() == ventana.btn2A) {
-			
-			Listado ventanaCobrarHabilitar = new Listado("Cobro y habilitación");
+				
+			if(ventanaCobrarHabilitar != null && ventanaCobrarHabilitar.isVisible()) {
+				
+				ventanaCobrarHabilitar.setVisible(true);
+				return;
+			}	
+			ventanaCobrarHabilitar = new Listado("Cobro y habilitación", ventana.getX(), ventana.getY());
 			CtrlCobrarHabilitar ctrolCobrarHabilitar = new CtrlCobrarHabilitar(ventanaCobrarHabilitar);
 			ctrolCobrarHabilitar.iniciar();
 		}
 		
 		if(e.getSource() == ventana.btn2B) {
 			
-			ABML ventanaGrupoFamiliar = new ABML("Gestión de grupos familiares");
+			if(ventanaGrupoFamiliar != null && ventanaGrupoFamiliar.isVisible()) {
+				
+				ventanaGrupoFamiliar.setVisible(true);
+				return;
+			}	
+			ventanaGrupoFamiliar = new ABML("Gestión de grupos familiares", ventana.getX(), ventana.getY());
 			CtrlGrupoFamiliar ctrlGrupoFamiliar = new CtrlGrupoFamiliar(ventanaGrupoFamiliar);
 			ctrlGrupoFamiliar.iniciar();
 		}

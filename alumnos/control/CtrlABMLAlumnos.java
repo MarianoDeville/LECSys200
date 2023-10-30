@@ -150,7 +150,7 @@ public class CtrlABMLAlumnos implements ActionListener {
 			return;
 		}
 		
-		ventanaNuevoAlumno = new Nuevo("Nuevo alumno.");
+		ventanaNuevoAlumno = new Nuevo("Nuevo alumno.", ventana.getX(), ventana.getY());
 		CtrlNuevoAlumno ctrlNuevoAlumno = new CtrlNuevoAlumno(ventanaNuevoAlumno);
 		ctrlNuevoAlumno.iniciar();
 		ventanaNuevoAlumno.btnVolver.addActionListener(this);
@@ -171,7 +171,7 @@ public class CtrlABMLAlumnos implements ActionListener {
 		}
 		dtosAlumnos.setAlumnoSeleccionado(elemento);
 		elemento = -1;
-		ventanaEditarAlumno = new Nuevo("Edición de alumno.");
+		ventanaEditarAlumno = new Nuevo("Edición de alumno.", ventana.getX(), ventana.getY());
 		CtrlEditarAlumno ctrolEditarAlumno = new CtrlEditarAlumno(ventanaEditarAlumno);
 		ctrolEditarAlumno.iniciar();
 		ventanaEditarAlumno.btnVolver.addActionListener(this);

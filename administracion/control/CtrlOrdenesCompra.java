@@ -115,7 +115,7 @@ public class CtrlOrdenesCompra implements ActionListener {
 			return;
 		}
 		dtosCompras.setInfoSelOC(seleccion);
-		Cobro ventanaDetalleCompra = new Cobro("Información de la orden de compra.");
+		Cobro ventanaDetalleCompra = new Cobro("Información de la orden de compra.", ventana.getX(), ventana.getY());
 		CtrlDetalleOrdenCompra ctrlDetalleOrdenCompra = new CtrlDetalleOrdenCompra(ventanaDetalleCompra);
 		ctrlDetalleOrdenCompra.iniciar();
 	}

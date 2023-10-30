@@ -122,7 +122,7 @@ public class CtrlProveedores implements ActionListener{
 		
 		if(checkSeleccion()) {
 			
-			Listado ventanaDetallePagos = new Listado("Detalle pagos proveedor");
+			Listado ventanaDetallePagos = new Listado("Detalle pagos proveedor", ventana.getX(), ventana.getY());
 			CtrlListadoPagosProveedor ctrlDetallePagos = new CtrlListadoPagosProveedor(ventanaDetallePagos);
 			ctrlDetallePagos.iniciar();
 		}
@@ -132,7 +132,7 @@ public class CtrlProveedores implements ActionListener{
 		
 		if(checkSeleccion()) {
 			
-			ventanaListadoDeuda = new Listado("Listado adeudado al proveedor");
+			ventanaListadoDeuda = new Listado("Listado adeudado al proveedor", ventana.getX(), ventana.getY());
 			CtrlListadoDeudaProveedor ctrlListadoDeuda = new CtrlListadoDeudaProveedor(ventanaListadoDeuda);
 			ctrlListadoDeuda.iniciar();
 			ventanaListadoDeuda.btnVolver.addActionListener(this);

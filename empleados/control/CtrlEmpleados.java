@@ -3,7 +3,6 @@ package control;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 import dao.OperadorSistema;
 import modelo.DtosConfiguracion;
 import vista.ABML;
@@ -76,10 +75,10 @@ public class CtrlEmpleados implements ActionListener {
 		
 		if(ventanaABML != null && ventanaABML.isVisible()) {
 			
-			JOptionPane.showMessageDialog(null, "La ventana \"ABML\" ya se encuentra abierta.");
+			ventanaABML.setVisible(true);
 			return;
 		}
-		ventanaABML = new ABML("ABML del personal");
+		ventanaABML = new ABML("ABML del personal", ventana.getX(), ventana.getY());
 		CtrlABMLEmpleado ctrlABMLEmpleados = new CtrlABMLEmpleado(ventanaABML);
 		ctrlABMLEmpleados.iniciar();
 	}
@@ -88,10 +87,10 @@ public class CtrlEmpleados implements ActionListener {
 		
 		if(ventanaHorarios != null && ventanaHorarios.isVisible()) {
 			
-			JOptionPane.showMessageDialog(null, "La ventana \"Horarios\" ya se encuentra abierta.");
+			ventanaHorarios.setVisible(true);
 			return;
 		}
-		ventanaHorarios = new ListadoDoble2("Horarios Personal");
+		ventanaHorarios = new ListadoDoble2("Horarios Personal", ventana.getX(), ventana.getY());
 		CtrlHorariosEmpleado ctrlHorariosEmpleados = new CtrlHorariosEmpleado(ventanaHorarios);
 		ctrlHorariosEmpleados.iniciar();
 	}

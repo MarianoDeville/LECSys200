@@ -45,21 +45,21 @@ public class CtrlCompras implements ActionListener {
 		
 		if(e.getSource() == ventana.btn1A) {
 			
-			ABML ventanaGestionCotizaciones = new ABML("Gestión cotizaciones");
+			ABML ventanaGestionCotizaciones = new ABML("Gestión cotizaciones", ventana.getX(), ventana.getY());
 			CtrlGestionCotizaciones ctrlGestiónCotizaciones = new CtrlGestionCotizaciones(ventanaGestionCotizaciones);
 			ctrlGestiónCotizaciones.iniciar();
 		}
 		
 		if(e.getSource() == ventana.btn1B) {
 			
-			Listado ventanaOrdenesCompra = new Listado("Listado de ordenes de compra");
+			Listado ventanaOrdenesCompra = new Listado("Listado de ordenes de compra", ventana.getX(), ventana.getY());
 			CtrlOrdenesCompra ctrlOrdenesCompra = new CtrlOrdenesCompra(ventanaOrdenesCompra);
 			ctrlOrdenesCompra.iniciar();
 		}
 		
 		if(e.getSource() == ventana.btn2A) {
 			
-			Listado ventanaListadoCompras = new Listado("Listado de compras");
+			Listado ventanaListadoCompras = new Listado("Listado de compras", ventana.getX(), ventana.getY());
 			CtrlListadoCompras ctrlListadoCompras = new CtrlListadoCompras(ventanaListadoCompras);
 			ctrlListadoCompras.iniciar();			
 		}

@@ -36,14 +36,14 @@ public class NuevoUsuario extends VentanaModelo{
 	public JButton btnBorrar;
 	public JButton btnVolver;
 
-	public NuevoUsuario(String nombreVentana) {
+	public NuevoUsuario(String nombreVentana, int x, int y) {
 		
 		super(nombreVentana);
 		panel = new JPanel();
 		setContentPane(panel);
 		SpringLayout contenedor = new SpringLayout();
 		setMinimumSize(new Dimension(460, 300));
-		setBounds(10, 10, 460, 460);
+		setBounds(x + 5, y + 5, 460, 460);
 		panel.setLayout(contenedor);
 		
 		lblNombre = new JLabel("Usuario:");

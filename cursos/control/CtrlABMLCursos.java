@@ -117,7 +117,7 @@ public class CtrlABMLCursos implements ActionListener {
 			return;
 		}
 		
-		ventanaCrearCurso = new NuevoCurso("Crear un nuevo curso");
+		ventanaCrearCurso = new NuevoCurso("Crear un nuevo curso", ventana.getX(), ventana.getY());
 		CtrlNuevoCurso ctrlNuevoCurso = new CtrlNuevoCurso(ventanaCrearCurso);
 		ctrlNuevoCurso.iniciar();
 		ventanaCrearCurso.btnVolver.addActionListener(this);
@@ -138,7 +138,7 @@ public class CtrlABMLCursos implements ActionListener {
 		}
 		dtosCurso.setCursoElegido(elemento);
 		elemento = -1;
-		ventanaEditarCurso = new NuevoCurso("Edición de curso");
+		ventanaEditarCurso = new NuevoCurso("Edición de curso", ventana.getX(), ventana.getY());
 		CtrlEditarCurso ctrlEditarCurso = new CtrlEditarCurso(ventanaEditarCurso);
 		ctrlEditarCurso.iniciar();
 		ventanaEditarCurso.btnVolver.addActionListener(this);

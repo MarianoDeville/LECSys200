@@ -3,7 +3,6 @@ package control;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 import dao.OperadorSistema;
 import modelo.DtosConfiguracion;
 import vista.ABML;
@@ -76,10 +75,10 @@ public class CtrlAlumnos implements ActionListener {
 			
 			if(ventanaABML != null && ventanaABML.isVisible()) {
 				
-				JOptionPane.showMessageDialog(null, "La ventana \"ABML\" ya se encuentra abierta.");
+				ventanaABML.setVisible(true);
 				return;
 			}
-			ventanaABML = new ABML("Alta, Baja, Modificación y Listado");
+			ventanaABML = new ABML("Alta, Baja, Modificación y Listado", ventana.getX(), ventana.getY());
 			CtrlABMLAlumnos ctrlABMLPersonal = new CtrlABMLAlumnos(ventanaABML);
 			ctrlABMLPersonal.iniciar();
 		}
@@ -88,10 +87,10 @@ public class CtrlAlumnos implements ActionListener {
 			
 			if(ventanaListado != null && ventanaListado.isVisible()) {
 				
-				JOptionPane.showMessageDialog(null, "La ventana \"Listado\" ya se encuentra abierta.");
+				ventanaListado.setVisible(true);
 				return;
 			}
-			ventanaListado = new Listado("Listado");
+			ventanaListado = new Listado("Listado", ventana.getX(), ventana.getY());
 			CtrlListado ctrlListado = new CtrlListado(ventanaListado);
 			ctrlListado.iniciar();
 		}
@@ -100,10 +99,10 @@ public class CtrlAlumnos implements ActionListener {
 			
 			if(ventanaExamenes != null && ventanaExamenes.isVisible()) {
 				
-				JOptionPane.showMessageDialog(null, "La ventana \"Exámenes\" ya se encuentra abierta.");
+				ventanaExamenes.setVisible(true);
 				return;
 			}
-			ventanaExamenes = new Listado("Examenes");
+			ventanaExamenes = new Listado("Examenes", ventana.getX(), ventana.getY());
 			CtrlExamenes ctrlExamenes = new CtrlExamenes(ventanaExamenes);
 			ctrlExamenes.iniciar();
 		}
@@ -112,10 +111,10 @@ public class CtrlAlumnos implements ActionListener {
 			
 			if(ventanaGrupoFamiliar != null && ventanaGrupoFamiliar.isVisible()) {
 				
-				JOptionPane.showMessageDialog(null, "La ventana \"Grupo familiar\" ya se encuentra abierta.");
+				ventanaGrupoFamiliar.setVisible(true);
 				return;
 			}
-			ventanaGrupoFamiliar = new ABML("Gestión de grupos familiares");
+			ventanaGrupoFamiliar = new ABML("Gestión de grupos familiares", ventana.getX(), ventana.getY());
 			CtrlGrupoFamiliar ctrlGrupoFamiliar = new CtrlGrupoFamiliar(ventanaGrupoFamiliar);
 			ctrlGrupoFamiliar.iniciar();
 		}
@@ -124,10 +123,10 @@ public class CtrlAlumnos implements ActionListener {
 			
 			if(ventanaAsistencia != null && ventanaAsistencia.isVisible()) {
 				
-				JOptionPane.showMessageDialog(null, "La ventana \"Tomar asistencia\" ya se encuentra abierta.");
+				ventanaAsistencia.setVisible(true);
 				return;
 			}
-			ventanaAsistencia = new Listado("Tomar asistencia");
+			ventanaAsistencia = new Listado("Tomar asistencia", ventana.getX(), ventana.getY());
 			CtrlTomarAsistencia ctrlAsistenciaAlumnos = new CtrlTomarAsistencia(ventanaAsistencia);
 			ctrlAsistenciaAlumnos.iniciar();
 		}
@@ -136,10 +135,10 @@ public class CtrlAlumnos implements ActionListener {
 			
 			if(ventanaRegistroAsistencia != null && ventanaRegistroAsistencia.isVisible()) {
 				
-				JOptionPane.showMessageDialog(null, "La ventana \"Registro asistencia\" ya se encuentra abierta.");
+				ventanaRegistroAsistencia.setVisible(true);
 				return;
 			}			
-			ventanaRegistroAsistencia = new Listado("Registro asistencia");
+			ventanaRegistroAsistencia = new Listado("Registro asistencia", ventana.getX(), ventana.getY());
 			CtrlRegistroAsistencia ctrlRegistroAsistencias = new CtrlRegistroAsistencia(ventanaRegistroAsistencia);
 			ctrlRegistroAsistencias.iniciar();
 		}
@@ -148,10 +147,10 @@ public class CtrlAlumnos implements ActionListener {
 			
 			if(ventanaCobrarHabilitar != null && ventanaCobrarHabilitar.isVisible()) {
 				
-				JOptionPane.showMessageDialog(null, "La ventana \"Cobro y habilitación\" ya se encuentra abierta.");
+				ventanaCobrarHabilitar.setVisible(true);
 				return;
 			}
-			ventanaCobrarHabilitar = new Listado("Cobro y habilitación");
+			ventanaCobrarHabilitar = new Listado("Cobro y habilitación", ventana.getX(), ventana.getY());
 			CtrlCobrarHabilitar ctrolCobrarHabilitar = new CtrlCobrarHabilitar(ventanaCobrarHabilitar);
 			ctrolCobrarHabilitar.iniciar();
 		}
@@ -160,10 +159,10 @@ public class CtrlAlumnos implements ActionListener {
 			
 			if(ventanaCobrarHabilitar != null && ventanaCobrarHabilitar.isVisible()) {
 				
-				JOptionPane.showMessageDialog(null, "La ventana \"Habilitar y cobrar\" ya se encuentra abierta.");
+				ventanaCobrarHabilitar.setVisible(true);
 				return;
 			}
-			ventanaCobrarCuota = new Listado("Cobrar cuota");
+			ventanaCobrarCuota = new Listado("Cobrar cuota", ventana.getX(), ventana.getY());
 			CtrlCobrarCuota ctrlCobrarCuota = new CtrlCobrarCuota(ventanaCobrarCuota);
 			ctrlCobrarCuota.iniciar();
 		}

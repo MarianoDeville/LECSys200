@@ -71,7 +71,7 @@ public class CtrlCursos implements ActionListener {
 			JOptionPane.showMessageDialog(null, "La ventana \"ABML\" ya se encuentra abierta.");
 			return;
 		}
-		ventanaABML = new ABML("Gestionar los cursos");
+		ventanaABML = new ABML("Gestionar los cursos", ventana.getX(), ventana.getY());
 		CtrlABMLCursos ctrlABMLCursos = new CtrlABMLCursos(ventanaABML);
 		ctrlABMLCursos.iniciar();
 	}
@@ -83,7 +83,7 @@ public class CtrlCursos implements ActionListener {
 			JOptionPane.showMessageDialog(null, "La ventana \"Diagramación\" ya se encuentra abierta.");
 			return;
 		}
-		ventanaDiagramacion = new Listado("Diagramación de cursos");
+		ventanaDiagramacion = new Listado("Diagramación de cursos", ventana.getX(), ventana.getY());
 		CtrlDiagramaCursos ctrlDiagramaCursos = new CtrlDiagramaCursos(ventanaDiagramacion);
 		ctrlDiagramaCursos.iniciar();
 	}

@@ -52,11 +52,12 @@ public class ListadoDoble2 extends VentanaModelo {
 	public JButton btnCompletar;
 	public JTextArea txtArea; 
 
-	public ListadoDoble2(String nombreVentana) {
+	public ListadoDoble2(String nombreVentana, int x, int y) {
 		
 		super(nombreVentana);
 		panelListado = new JPanel();
 		setContentPane(panelListado);
+		setLocation(x + 5, y + 5);
 		SpringLayout contenedor = new SpringLayout();
 		setMinimumSize(new Dimension(900, 620));
 		panelListado.setLayout(contenedor);

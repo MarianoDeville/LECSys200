@@ -125,7 +125,7 @@ public class CtrlABMLUsuarios implements ActionListener {
 			return;
 		}
 		
-		ventanaNuevoUsuario = new NuevoUsuario("Crear usuario del sistema.");
+		ventanaNuevoUsuario = new NuevoUsuario("Crear usuario del sistema.", ventana.getX(), ventana.getY());
 		CtrlNuevoUsuario ctrlNuevoUsuario = new CtrlNuevoUsuario(ventanaNuevoUsuario);
 		ctrlNuevoUsuario.iniciar();
 		ventanaNuevoUsuario.btnVolver.addActionListener(this);
@@ -143,7 +143,7 @@ public class CtrlABMLUsuarios implements ActionListener {
 
 			dtosUsuario.setUsuario(elemento);
 			elemento = -1;
-			ventanaEditarUsuario = new NuevoUsuario("Editar usuario.");
+			ventanaEditarUsuario = new NuevoUsuario("Editar usuario.", ventana.getX(), ventana.getY());
 			CtrlEditarUsuario ctrlEditarUsuario = new CtrlEditarUsuario(ventanaEditarUsuario);
 			ctrlEditarUsuario.iniciar();
 			ventanaEditarUsuario.btnVolver.addActionListener(this);

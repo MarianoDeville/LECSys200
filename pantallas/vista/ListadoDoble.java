@@ -40,11 +40,12 @@ public class ListadoDoble extends VentanaModelo {
 	public JButton btnGuardar;
 	public JButton btnVolver;
 
-	public ListadoDoble(String nombreVentana) {
+	public ListadoDoble(String nombreVentana, int x, int y) {
 		
 		super(nombreVentana);
 		panelListado = new JPanel();
 		setContentPane(panelListado);
+		setLocation(x + 5, y + 5);
 		SpringLayout contenedor = new SpringLayout();
 		panelListado.setLayout(contenedor);
 		

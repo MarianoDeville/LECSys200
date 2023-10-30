@@ -75,36 +75,38 @@ public class DtosCobros {
 		return tablaAlumnos;
 	}
 
-	public void setSeleccionados(boolean seleccionados[]) {
+	public boolean setSeleccionados(JTable listado) {
 		
 		if(reinscripción) {
 
 			for(int i = 0 ; i < familias.length ; i++) {
 				
-				if(seleccionados[i]) {
+				if((boolean)listado.getValueAt(i, 4)) {
 				
 					familia = familias[i];
-					break;
+					return true;
 				}
 			}
 		} else {
 
 			int cantSel = 0;
 		
-			for(int i = 0 ; i < seleccionados.length ; i++) {
+			for(int i = 0 ; i < listado.getRowCount(); i++) {
 				
-				if(seleccionados[i])
+				if((boolean)listado.getValueAt(i, 4))
 					cantSel++;
 			}
 
+			if(cantSel == 0)
+				return false;
 			Alumno alumnosElegidos[] = new Alumno[cantSel];
 			familia = new GrupoFamiliar();
 			familia.setIntegrantes(alumnosElegidos);
 			int e = 0;
 	
-			for(int i = 0 ; i < alumnos.length ; i++) {
+			for(int i = 0; i < alumnos.length; i++) {
 					
-				if(seleccionados[i]) {
+				if((boolean)listado.getValueAt(i, 4)) {
 				
 					alumnosElegidos[e] = alumnos[i];
 					e++;
@@ -113,7 +115,9 @@ public class DtosCobros {
 			familia.setEmail(cantSel==1? alumnosElegidos[0].getEmail(): "");
 			familia.setNombre(cantSel==1? alumnosElegidos[0].getApellido() + " " + alumnosElegidos[0].getNombre(): "");
 			familia.setDescuento(0);
+			return true;
 		}
+		return false;
 	}
 	
 	public TableModel getTablaSeleccionados() {

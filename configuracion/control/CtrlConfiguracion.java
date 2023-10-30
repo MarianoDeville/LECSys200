@@ -93,7 +93,7 @@ public class CtrlConfiguracion implements ActionListener {
 			JOptionPane.showMessageDialog(null, "La ventana \"Actividad\" ya se encuentra abierta.");
 			return;
 		}
-		ventanaActividad = new Listado("Listado de actividad");
+		ventanaActividad = new Listado("Listado de actividad", ventana.getX(), ventana.getY());
 		CtrlActividad ctrlActividad = new CtrlActividad(ventanaActividad);
 		ctrlActividad.iniciar();
 	}
@@ -105,7 +105,7 @@ public class CtrlConfiguracion implements ActionListener {
 			JOptionPane.showMessageDialog(null, "La ventana \"ABML usuarios\" ya se encuentra abierta.");
 			return;
 		}
-		ventanaUsuarios = new ABML("Alta Baja Modificación de usuarios");
+		ventanaUsuarios = new ABML("Alta Baja Modificación de usuarios", ventana.getX(), ventana.getY());
 		CtrlABMLUsuarios ctrlABMLUsuarios = new CtrlABMLUsuarios(ventanaUsuarios);
 		ctrlABMLUsuarios.iniciar();
 	}
@@ -129,7 +129,7 @@ public class CtrlConfiguracion implements ActionListener {
 			JOptionPane.showMessageDialog(null, "La ventana \"Email\" ya se encuentra abierta.");
 			return;
 		}
-		ventanaEmail = new NuevoUsuario("Edición email del sistema");
+		ventanaEmail = new NuevoUsuario("Edición email del sistema", ventana.getX(), ventana.getY());
 		CtrlEditarEmail ctrolEditarEmail = new CtrlEditarEmail(ventanaEmail);
 		ctrolEditarEmail.iniciar();
 	}

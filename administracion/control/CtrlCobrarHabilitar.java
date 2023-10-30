@@ -15,6 +15,7 @@ public class CtrlCobrarHabilitar implements ActionListener {
 	private Listado ventana;
 	private Cobro cobrarInscripción;
 	private DtosCobros dtosCobros;
+	private boolean bandera;
 	
 	public CtrlCobrarHabilitar(Listado vista) {
 		
@@ -62,8 +63,8 @@ public class CtrlCobrarHabilitar implements ActionListener {
 		
 		if(cobrarInscripción != null) {
 			
-			if(e.getSource() == cobrarInscripción.btnVolver || e.getSource() == cobrarInscripción.btnCobrar) {
-				
+			if(e.getSource() == cobrarInscripción.btnVolver) {
+		
 				ventana.txt3.setText("");
 				ventana.chckbx1.setSelected(false);
 				ventana.chckbx2.setSelected(false);
@@ -103,6 +104,7 @@ public class CtrlCobrarHabilitar implements ActionListener {
 	
 	private void actualizar() {
 		
+		bandera = false;
 		ventana.tabla.setModel(dtosCobros.getTablaAlumnos(ventana.chckbx1.isSelected(), 
 															 ventana.chckbx2.isSelected(), 
 															 ventana.txt3.getText()));
@@ -119,17 +121,16 @@ public class CtrlCobrarHabilitar implements ActionListener {
 			JOptionPane.showMessageDialog(null, "Le ventana \"Cobrar\" ya se encuentra abierta.");
 			return;
 		}
+		dtosCobros.setSeleccionados(itemsSeleccionados());
 		
-		if(itemsSeleccionados().length == 0) {
+		if(!bandera) {
 
 			JOptionPane.showMessageDialog(null, "No hay elementos seleccionados para cobrar.");
 			return;
 		}
-		dtosCobros.setSeleccionados(itemsSeleccionados());
 		cobrarInscripción = new Cobro("Cobrar inscripción y habilitar");
 		CtrlCobrarInscripcion ctrlCobrarInscripción = new CtrlCobrarInscripcion(cobrarInscripción);
 		cobrarInscripción.btnVolver.addActionListener(this);
-		cobrarInscripción.btnCobrar.addActionListener(this);
 		ctrlCobrarInscripción.iniciar();
 	}
 	
@@ -140,8 +141,10 @@ public class CtrlCobrarHabilitar implements ActionListener {
 		for(int i = 0; i < seleccionados.length; i++) {
 
 			seleccionados[i] = (boolean)ventana.tabla.getValueAt(i, 4);
+			
+			if((boolean)ventana.tabla.getValueAt(i, 4))
+				bandera = true;
 		}
-		
 		return seleccionados;
 	}
 }

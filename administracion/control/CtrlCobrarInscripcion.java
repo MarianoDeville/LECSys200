@@ -7,6 +7,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.JLabel;
+import javax.swing.table.DefaultTableCellRenderer;
 import modelo.DtosCobros;
 import vista.Cobro;
 import vista.ReciboCobro;
@@ -92,16 +94,12 @@ public class CtrlCobrarInscripcion implements ActionListener {
 		ventana.lbl3.setText("Descuento pago efectivo:");
 		ventana.lbl4.setText("Total a pagar:");
 		ventana.chckbxTabla2.setVisible(!dtosCobros.getReinscripcion());
-
-		if(dtosCobros.getEmail().length() > 2) {
-			
-			ventana.chckbxEnviarEmail.setSelected(true);
-			ventana.lblEmail.setVisible(true);
-			ventana.txtEmail.setVisible(true);
-		}
+		DefaultTableCellRenderer derecha = new DefaultTableCellRenderer();
+		derecha.setHorizontalAlignment(JLabel.RIGHT);
 		ventana.tabla1.setModel(dtosCobros.getTablaSeleccionados());
 		ventana.tabla1.getColumnModel().getColumn(0).setPreferredWidth(45);
 		ventana.tabla1.getColumnModel().getColumn(0).setMaxWidth(55);	
+		ventana.tabla1.getColumnModel().getColumn(5).setCellRenderer(derecha);
 		ventana.tabla1.setDefaultEditor(Object.class, null);
 		actualizarDatos();
 		actualizarTabla();
@@ -113,11 +111,6 @@ public class CtrlCobrarInscripcion implements ActionListener {
 		
 		if(e.getSource() == ventana.chckbxTabla2 && ventana.isVisible()) {
 			
-			if(!ventana.chckbxTabla2.isSelected()) {
-				
-				ventana.txt1.setText(dtosCobros.getDescuentoGrupo() + "");
-				haySeleccion = false;
-			}
 			actualizarTabla();
 			actualizarDatos();
 		}
@@ -143,8 +136,7 @@ public class CtrlCobrarInscripcion implements ActionListener {
 	private void actualizarDatos() {
 
 		limpiarOtros();
-		ventana.txtNombre.setText(dtosCobros.getNombre());
-		
+
 		if(!haySeleccion) {
 			
 			ventana.lbl1.setVisible(false);
@@ -170,13 +162,25 @@ public class CtrlCobrarInscripcion implements ActionListener {
 			ventana.txt1.setVisible(true);
 		}
 		
-		if(haySeleccion) {
-
+		if(haySeleccion)
 			dtosCobros.setFamiliaSeleccionada(elemento);
-			ventana.txtNombre.setText(dtosCobros.getNombre());
-			ventana.txt1.setText(dtosCobros.getDescuentoGrupo());
-			ventana.txtEmail.setText(dtosCobros.getEmail());
+		else
+			dtosCobros.recuperarInfo();
+
+		if(dtosCobros.getEmail().length() > 2) {
+			
+			ventana.chckbxEnviarEmail.setSelected(true);
+			ventana.lblEmail.setVisible(true);
+			ventana.txtEmail.setVisible(true);
+		} else {
+			
+			ventana.chckbxEnviarEmail.setSelected(false);
+			ventana.lblEmail.setVisible(false);
+			ventana.txtEmail.setVisible(false);
 		}
+		ventana.txtNombre.setText(dtosCobros.getNombre());
+		ventana.txt1.setText(dtosCobros.getDescuentoGrupo());
+		ventana.txtEmail.setText(dtosCobros.getEmail());
 	}
 	
 	private void actualizoSuma() {
@@ -207,6 +211,10 @@ public class CtrlCobrarInscripcion implements ActionListener {
 			ventana.tabla2.setModel(dtosCobros.getTablaFamilias(true, ventana.txtTabla2.getText()));
 			ventana.tabla2.getColumnModel().getColumn(2).setPreferredWidth(40);
 			ventana.tabla2.getColumnModel().getColumn(2).setMaxWidth(50);
+		} else {
+
+			dtosCobros.recuperarInfo();
+			haySeleccion = false;
 		}
 	}
 	
@@ -225,7 +233,7 @@ public class CtrlCobrarInscripcion implements ActionListener {
 		dtosCobros.setNombre(ventana.txtNombre.getText());
 		dtosCobros.setEnviarEmail(ventana.chckbxEnviarEmail.isSelected());
 		dtosCobros.setFactura(ventana.txtFactura.getText());
-		
+
 		if(ventana.chckbxEnviarEmail.isSelected())
 			dtosCobros.setEmail(ventana.txtEmail.getText());
 		else 
@@ -246,6 +254,7 @@ public class CtrlCobrarInscripcion implements ActionListener {
 					if((boolean) ventana.tabla2.getValueAt(i, 2)) {
 					
 						dtosCobros.setFamiliaExistente(i);
+						dtosCobros.setDescuentoGrupo(ventana.txt1.getText());
 						break;
 					}
 					i++;
@@ -272,8 +281,11 @@ public class CtrlCobrarInscripcion implements ActionListener {
 					CtrlReciboCobrarInscripcion ctrolReciboInscripcion = new CtrlReciboCobrarInscripcion(ventanaReciboPago);
 					ctrolReciboInscripcion.iniciar();
 				}
-				ventana.lblMsgError.setForeground(Color.BLUE);
-				ventana.lblMsgError.setText("Operación almacenada en la base de datos.");
+				if(ventana.lblMsgError.getText().length() == 0) {
+					
+					ventana.lblMsgError.setForeground(Color.BLUE);
+					ventana.lblMsgError.setText("Operación almacenada en la base de datos.");
+				}
 				ventana.btnCobrar.setEnabled(false);
 				dtosCobros.deleteInfo();
 			}else {

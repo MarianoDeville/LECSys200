@@ -20,6 +20,7 @@ public class DtosCobros {
 	private CobrosDAO cobrosDAO;
 	private Cobros cobros[];
 	private GrupoFamiliar familias[];
+	private GrupoFamiliar backup;
 	private Alumno alumnos[];
 	private static GrupoFamiliar familia;
 	private static Cobros cobro = new Cobros();
@@ -119,20 +120,29 @@ public class DtosCobros {
 		
 		String titulo[] = {"Leg.", "Apellido", "Nombre", "Drirección", "Curso", "Valor cuota"};
 		Object respuesta[][] = new Object[familia.getIntegrantes().length][6];
-		
+		backup  = new GrupoFamiliar();
+		backup.setNombre(familia.getNombre());
+		backup.setEmail(familia.getEmail());
+
 		for(int i =0; i < familia.getIntegrantes().length; i++) {
 			
 			respuesta[i][0] = familia.getIntegrantes()[i].getLegajo();
 			respuesta[i][1] = familia.getIntegrantes()[i].getApellido();
 			respuesta[i][2] = familia.getIntegrantes()[i].getNombre();
 			respuesta[i][3] = familia.getIntegrantes()[i].getDireccion();
-			respuesta[i][4] = familia.getIntegrantes()[i].getCurso().getAño() + " " +
-								familia.getIntegrantes()[i].getCurso().getNivel() + " " +
-								familia.getIntegrantes()[i].getCurso().getNombreProfesor();
-			respuesta[i][5] = familia.getIntegrantes()[i].getCurso().getPrecio();
+			respuesta[i][4] = familia.getIntegrantes()[i].getCurso().getNivel() + " " +
+								familia.getIntegrantes()[i].getCurso().getAño();
+			respuesta[i][5] = String.format("%.2f", familia.getIntegrantes()[i].getCurso().getPrecio());
 		}
 		DefaultTableModel tablaAlumnos = new DefaultTableModel(respuesta,titulo);
 		return tablaAlumnos;
+	}
+	
+	public void recuperarInfo() {
+		
+		familia.setNombre(backup.getNombre());
+		familia.setEmail(backup.getEmail());
+		familia.setDescuento(0);
 	}
 	
 	public DefaultTableModel getTablaFamilias(boolean est, String busqueda) {
@@ -585,16 +595,14 @@ public class DtosCobros {
 		
 		String mensage = null;
 		familia.setDescuento(0);
-		
-		if(descuento.length() > 0) {
-			
-			try {
-				
-				familia.setDescuento(Integer.parseInt(descuento));
-			} catch (Exception e) {
 
-				mensage = "El valor del descuento por grupo familiar debe ser numérico.";
-			}
+		try {
+			
+			if(descuento.length() > 0)
+				familia.setDescuento(Integer.parseInt(descuento));
+		} catch (Exception e) {
+
+			mensage = "El valor del descuento por grupo familiar debe ser numérico.";
 		}
 		return mensage;
 	}

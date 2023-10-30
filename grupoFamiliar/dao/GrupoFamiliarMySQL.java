@@ -220,7 +220,7 @@ public class GrupoFamiliarMySQL extends Conexion implements GrupoFamiliarDAO{
 			PreparedStatement stm = this.conexion.prepareStatement(pprStm);
 			stm.setString(1, familia.getNombre());
 			stm.setInt(2, familia.getEstado());
-			stm.setFloat(3, familia.getDescuento());
+			stm.setInt(3, familia.getDescuento());
 			stm.setString(4, familia.getEmail());
 			stm.setInt(5, familia.getId());
 			stm.executeUpdate();

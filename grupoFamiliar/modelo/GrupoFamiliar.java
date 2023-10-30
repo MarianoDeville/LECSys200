@@ -15,7 +15,7 @@ public class GrupoFamiliar {
 	public GrupoFamiliar() {
 		
 	}
-	
+
 	public GrupoFamiliar(int id, String nombre, int cantIntegrantes, int deuda, int estado, int descuento, String email) {
 		
 		this.id = id;

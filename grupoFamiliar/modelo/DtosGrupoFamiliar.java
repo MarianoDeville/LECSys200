@@ -29,11 +29,11 @@ public class DtosGrupoFamiliar {
 			cuerpo[i][0] = familias[i].getNombre();
 			cuerpo[i][1] = "";
 
-			for(int e = 0; e < familias.length ; e++) {
+			for(int e = 0; e < familias[i].getIntegrantes().length ; e++) {
 			
-				cuerpo[i][1] += familias[e].getIntegrantes()[i].getNombre() + " " + familias[e].getIntegrantes()[i].getApellido();
+				cuerpo[i][1] += familias[i].getIntegrantes()[e].getNombre() + " " + familias[i].getIntegrantes()[e].getApellido();
 				
-				if(e < familias.length - 1)
+				if(e < familias[i].getIntegrantes().length - 1)
 					cuerpo[i][1] += ", ";
 			}
 		}
@@ -46,6 +46,18 @@ public class DtosGrupoFamiliar {
 		familia = familias[pos];
 	}
 
+	
+	
+	
+	
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	
+	
+	
+	
+	
 	public DefaultTableModel getTablaFamilia() {
 
 		String titulo[] = {"Leg.", "Apellido, nombre", "Curso", ""};
@@ -67,7 +79,7 @@ public class DtosGrupoFamiliar {
 		
 		if(integrantesAgregados.length > 0) {
 		
-			temp = new String[listaIntegrantes.length + integrantesAgregados.length][listaIntegrantes[0].length];
+			temp = new String[listaIntegrantes.length + integrantesAgregados.length] [listaIntegrantes[0].length];
 			System.arraycopy(listaIntegrantes, 0, temp, 0, listaIntegrantes.length);
 			System.arraycopy(integrantesAgregados, 0, temp, listaIntegrantes.length, integrantesAgregados.length);
 		} else {
@@ -75,6 +87,9 @@ public class DtosGrupoFamiliar {
 			temp = listaIntegrantes;
 		}
 
+		
+		
+		
 		if(listaAcciones == null) {
 			
 			listaAcciones = new String[temp.length];
@@ -84,35 +99,52 @@ public class DtosGrupoFamiliar {
 				listaAcciones[i] = "";
 			}
 		}
+/*		
+		
 		String cuerpo[][] = new String[temp.length][5];
-	
+		
+		
+System.out.println("Acá llego");
+System.out.println(temp.length + " " + temp[0].length);
+
+
 		for(int i = 0; i < cuerpo.length ; i++) {
 	
 			cuerpo[i][0] = temp[i][0];
 			cuerpo[i][1] = temp[i][2] + ", " + temp[i][1];
-			cuerpo[i][2] = temp[i][7];
+			cuerpo[i][2] = temp[i][3];
 			cuerpo[i][3] = listaAcciones[i];
-		}
-		DefaultTableModel tablaModelo = new DefaultTableModel(cuerpo, titulo);
+		}*/
+		DefaultTableModel tablaModelo = new DefaultTableModel(listaIntegrantes, titulo);
 		return tablaModelo;
 	}
+	
+	
+	
+	
+	
+	
 	
 	public DefaultTableModel getTablaAlumnos(String valor, boolean estado) {
 		
 		AlumnoDAO alumnosDAO = new AlumnoMySQL();
 		listaAlumnos = alumnosDAO.getListado(estado, familia.getId(), valor);
 		String titulo[] = {"Leg.", "Apellido, nombre", "Dirección", "Curso"};
-		String alumnos[][] = new String[listaAlumnos.length][4];
+		String alumnos[][] = null;
 		
-		for(int i = 0; i < alumnos.length; i++) {
+		if(listaAlumnos != null) {		
+
+			alumnos = new String[listaAlumnos.length][4];
 			
-			alumnos[i][0] = familia.getIntegrantes()[i].getLegajo() + "";
-			alumnos[i][1] = familia.getIntegrantes()[i].getApellido() + " " +
-							familia.getIntegrantes()[i].getNombre();
-			alumnos[i][2] = familia.getIntegrantes()[i].getDireccion(); 
-			alumnos[i][3] = familia.getIntegrantes()[i].getCurso().getAño() + " " +
-							familia.getIntegrantes()[i].getCurso().getNivel() + " " + 
-							familia.getIntegrantes()[i].getCurso().getNombreProfesor();
+			for(int i = 0; i < alumnos.length; i++) {
+				
+				alumnos[i][0] = listaAlumnos[i].getLegajo() + "";
+				alumnos[i][1] = listaAlumnos[i].getApellido() + " " +
+								listaAlumnos[i].getNombre();
+				alumnos[i][2] = listaAlumnos[i].getDireccion(); 
+				alumnos[i][3] = listaAlumnos[i].getCurso().getNivel() + " " +
+								listaAlumnos[i].getCurso().getAño();
+			}
 		}
 		DefaultTableModel tablaModelo = new DefaultTableModel(alumnos, titulo);
 		return tablaModelo;

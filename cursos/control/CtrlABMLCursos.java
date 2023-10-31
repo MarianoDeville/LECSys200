@@ -114,6 +114,7 @@ public class CtrlABMLCursos implements ActionListener {
 		if(ventanaCrearCurso != null) {
 			
 			JOptionPane.showMessageDialog(null, "Le ventana \"Editar\" ya se encuentra abierta.");
+			ventanaCrearCurso.setVisible(true);
 			return;
 		}
 		
@@ -128,6 +129,7 @@ public class CtrlABMLCursos implements ActionListener {
 		if(ventanaEditarCurso != null) {
 			
 			JOptionPane.showMessageDialog(null, "Le ventana \"Editar\" ya se encuentra abierta.");
+			ventanaEditarCurso.setVisible(true);
 			return;
 		}
 		

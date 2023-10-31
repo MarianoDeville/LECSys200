@@ -444,13 +444,28 @@ public class DtosAlumno {
 
 		for(int i = 0; i < tabla.getRowCount(); i++) {
 			
-			if(!tabla.getValueAt(i, 3).equals("-"))
-				examen.setNota((int) tabla.getValueAt(i, 3));
-			else 
-				examen.setNota(-1);
-			
 			alumnos[i].setExamenes(new Examenes[1]);
-			alumnos[i].getExamenes()[0] = examen;
+			alumnos[i].getExamenes()[0] = new Examenes();
+			alumnos[i].getExamenes()[0].setFecha(examen.getFecha());
+			alumnos[i].getExamenes()[0].setTipo(examen.getTipo());
+			alumnos[i].getExamenes()[0].setLegajoProfesor(examen.getLegajoProfesor());
+			alumnos[i].getExamenes()[0].setIdCurso(examen.getIdCurso());
+			
+			if(!tabla.getValueAt(i, 3).equals("-")) {
+				
+				try {
+				
+					int valor = Integer.parseInt((String) tabla.getValueAt(i, 3));
+					alumnos[i].getExamenes()[0].setNota(valor);
+				} catch (Exception e) {
+					
+					msg = "Las notas deben ser numéricas o guión.";
+					return false;
+				}
+			} else {
+				
+				alumnos[i].getExamenes()[0].setNota(-1);
+			}
 		}
 		examenesDAO = new ExamenesMySQL();		
 		bandera = examenesDAO.setExamen(alumnos);
@@ -516,41 +531,6 @@ public class DtosAlumno {
 			}	
 		}
 	}
-	
-	
-	
-	
-
-	
-	
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-	
-
 	
 	public String getMsg() {
 		
@@ -710,7 +690,7 @@ public class DtosAlumno {
 	public void setDatosExamen(int pos) {
 		
 		examen = new Examenes();
-		examen.setIdCruso(cursos[pos].getId());
+		examen.setIdCurso(cursos[pos].getId());
 		examen.setLegajoProfesor(cursos[pos].getLegajoProfesor());
 	}
 	
@@ -721,9 +701,9 @@ public class DtosAlumno {
 	
 	public boolean setFecha(String fecha) {
 		
-		fecha = fecha.replaceAll("/","-");
+		fecha = fecha.replaceAll("-","/");
 		
-		if(fecha.length() != 10 || !fecha.contains("-")) {
+		if(fecha.length() != 10 || !fecha.contains("/")) {
 			
 			msg = "El formato de la fecha es incorrecto. Ej. 25-10-2020";
 			return false;

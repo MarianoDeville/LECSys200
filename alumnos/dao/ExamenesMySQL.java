@@ -16,7 +16,7 @@ public class ExamenesMySQL extends Conexion implements ExamenesDAO{
 		long tiempo = System.currentTimeMillis();
 		DtosActividad dtosActividad = new DtosActividad();
 		String pprStm = "INSERT INTO `lecsys2.00`.examenes (idAlumno, fecha, tipo, nota, idProfesor, idCurso) "
-						+ "VALUES (?, ?, ?, ?, ?, ?)";
+						+ "VALUES (?, STR_TO_DATE(?, '%d/%m/%Y'), ?, ?, ?, ?)";
 		
 		try {
 			

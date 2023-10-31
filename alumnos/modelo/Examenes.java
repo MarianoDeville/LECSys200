@@ -7,7 +7,7 @@ public class Examenes {
 	private String tipo;
 	private int nota;
 	private int legajoProfesor;
-	private int idCruso;
+	private int idCurso;
 	
 	public Examenes() {
 		
@@ -63,13 +63,13 @@ public class Examenes {
 		this.legajoProfesor = legajoProfesor;
 	}
 
-	public int getIdCruso() {
+	public int getIdCurso() {
 		
-		return idCruso;
+		return idCurso;
 	}
 
-	public void setIdCruso(int idCruso) {
+	public void setIdCurso(int idCruso) {
 		
-		this.idCruso = idCruso;
+		this.idCurso = idCruso;
 	}
 }

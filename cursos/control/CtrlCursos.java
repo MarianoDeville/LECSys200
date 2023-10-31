@@ -3,8 +3,6 @@ package control;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-
 import dao.OperadorSistema;
 import modelo.DtosConfiguracion;
 import vista.ABML;
@@ -68,7 +66,7 @@ public class CtrlCursos implements ActionListener {
 		
 		if(ventanaABML != null && ventanaABML.isVisible()) {
 			
-			JOptionPane.showMessageDialog(null, "La ventana \"ABML\" ya se encuentra abierta.");
+			ventanaABML.setVisible(true);
 			return;
 		}
 		ventanaABML = new ABML("Gestionar los cursos", ventana.getX(), ventana.getY());
@@ -80,7 +78,7 @@ public class CtrlCursos implements ActionListener {
 		
 		if(ventanaDiagramacion != null && ventanaDiagramacion.isVisible()) {
 			
-			JOptionPane.showMessageDialog(null, "La ventana \"Diagramación\" ya se encuentra abierta.");
+			ventanaDiagramacion.setVisible(true);
 			return;
 		}
 		ventanaDiagramacion = new Listado("Diagramación de cursos", ventana.getX(), ventana.getY());

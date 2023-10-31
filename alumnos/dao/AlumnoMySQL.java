@@ -208,40 +208,25 @@ public class AlumnoMySQL extends Conexion implements AlumnoDAO {
 		}
 		return (legajo + 1);
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	@Override
-	public Alumno [] getListado( boolean estado, int grupo, String busqueda) {
 
-		Alumno alumnos[]=null;
-		
+	@Override
+	public Alumno [] getListado(boolean estado, int grupo, String busqueda) {
+
+		Alumno alumnos[] = null;
+		String pprStm = "SELECT legajo, nombre, apellido, dirección, nivel, año, idGrupoFamiliar "
+						+ "FROM `lecsys2.00`.alumnos "
+						+ "JOIN `lecsys2.00`.persona ON alumnos.dni = persona.dni "
+						+ "JOIN `lecsys2.00`.curso ON curso.idCurso = alumnos.idCurso "
+						+ "WHERE (alumnos.estado = ? AND idGrupoFamiliar != ? AND (apellido LIKE ? OR nombre LIKE ?)) "
+						+ "ORDER BY legajo";
 		try {
 			
 			this.conectar();
-			PreparedStatement stm = this.conexion.prepareStatement("SELECT legajo, nombre, apellido, dirección, nivel, año, idGrupoFamiliar "
-					+ "FROM `lecsys2.00`.alumnos "
-					+ "JOIN `lecsys2.00`.persona on alumnos.idPersona = persona.idPersona "
-					+ "JOIN `lecsys2.00`.curso ON curso.idCurso = alumnos.idCurso "
-					+ "WHERE (alumnos.estado = ? AND idGrupoFamiliar != ? AND (apellido LIKE '?%' OR nombre LIKE '?%')) "
-					+ "ORDER BY idAlumno",ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			PreparedStatement stm = this.conexion.prepareStatement(pprStm, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			stm.setInt(1, (estado? 1:0));
 			stm.setInt(2, grupo);
-			stm.setString(3, busqueda);
-			stm.setString(4, busqueda);
+			stm.setString(3, busqueda + "%");
+			stm.setString(4, busqueda + "%");
 			ResultSet rs = stm.executeQuery();
 			rs.last();	
 			alumnos = new Alumno[rs.getRow()];
@@ -250,10 +235,12 @@ public class AlumnoMySQL extends Conexion implements AlumnoDAO {
 
 			while (rs.next()) {
 					
+				alumnos[i] = new Alumno();
 				alumnos[i].setLegajo(rs.getInt(1));
 				alumnos[i].setNombre(rs.getString(2));
 				alumnos[i].setApellido(rs.getString(3));
 				alumnos[i].setDireccion(rs.getString(4));
+				alumnos[i].setCurso(new CursoXtnd());
 				alumnos[i].getCurso().setNivel(rs.getString(5));
 				alumnos[i].getCurso().setAño(rs.getString(6));	
 				alumnos[i].setGrupoFamiliar(rs.getInt(7));
@@ -262,7 +249,8 @@ public class AlumnoMySQL extends Conexion implements AlumnoDAO {
 		}catch (Exception e) {
 			
 			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("AlumnoMySQL, getListadoAlumnos()");
+			CtrlLogErrores.guardarError("AlumnoMySQL, getListado()");
+			CtrlLogErrores.guardarError(pprStm);
 		} finally {
 			
 			this.cerrar();
@@ -270,6 +258,19 @@ public class AlumnoMySQL extends Conexion implements AlumnoDAO {
 		return alumnos;
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	@Override
 	public boolean updateFamilia(int idFamilia, Alumno alumnos[], int estado) {
 

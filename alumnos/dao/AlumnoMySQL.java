@@ -134,7 +134,6 @@ public class AlumnoMySQL extends Conexion implements AlumnoDAO {
 			
 			this.cerrar();
 		}
-
 		tiempo = System.currentTimeMillis() - tiempo;
 		dtosActividad.registrarActividad("Registro nuevo alumno.", "Alumnos", tiempo);
 		return bandera;
@@ -261,51 +260,6 @@ public class AlumnoMySQL extends Conexion implements AlumnoDAO {
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	@Override
-	public boolean updateFamilia(int idFamilia, Alumno alumnos[], int estado) {
-
-		boolean bandera = true;
-		long tiempo = System.currentTimeMillis();
-		DtosActividad dtosActividad = new DtosActividad();
-		
-		try {
-
-			this.conectar();
-			PreparedStatement stm = this.conexion.prepareStatement("UPDATE `lecsys2.00`.alumnos "
-																 + "SET estado = ?, idGrupoFamiliar = ? "
-																 + "WHERE legajo = ?");
-			stm.setInt(1, estado);
-			stm.setString(2, idFamilia == 0? null: idFamilia + "");
-			
-			for(int i = 0; i < alumnos.length; i++) {
-				
-				stm.setInt(3, alumnos[i].getLegajo());
-				stm.executeUpdate();
-			}
-		} catch (Exception e) {
-	
-			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("AlumnoMySQL, setActualizarIdFamila()");
-			bandera = false;
-		} finally {
-			
-			this.cerrar();
-		}
-		tiempo = System.currentTimeMillis() - tiempo;
-		dtosActividad.registrarActividad("Actualización del grupo familiar de un grupo de alumnos.", "Administración", tiempo);
-		return bandera;
-	}
-
 	
 	
 	

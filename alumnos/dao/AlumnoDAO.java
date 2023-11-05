@@ -11,10 +11,6 @@ public interface AlumnoDAO {
 	public Alumno [] getListado( boolean estado, int grupo, String busqueda);	
 	
 	
-	
-	
 
-	public boolean updateFamilia(int idFamilia, Alumno alumnos[], int estado);
-	
 	public boolean resetEstado();
 }

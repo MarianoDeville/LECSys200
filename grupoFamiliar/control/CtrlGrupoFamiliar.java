@@ -51,7 +51,9 @@ public class CtrlGrupoFamiliar implements ActionListener {
 	
 		elemento = -1;
 		ventana.panelABML.remove(ventana.btnNuevo);
-		ventana.chckbx1.setVisible(false);
+		ventana.chckbx1.setText("Deudores");
+		ventana.chckbx1.setVisible(true);
+		ventana.chckbx1.setSelected(true);
 		ventana.txt1.setVisible(true);
 		actualizar();
 		ventana.setVisible(true);
@@ -100,7 +102,7 @@ public class CtrlGrupoFamiliar implements ActionListener {
 	private void actualizar() {
 
 		elemento = -1;
-		ventana.tabla.setModel(dtosFamilia.getTablaFamilias(ventana.chckbx1.isSelected(), ventana.txt1.getText()));
+		ventana.tabla.setModel(dtosFamilia.getTablaFamilias(!ventana.chckbx1.isSelected(), ventana.txt1.getText()));
 		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(200);
 		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(250);
 		ventana.tabla.setDefaultEditor(Object.class, null);

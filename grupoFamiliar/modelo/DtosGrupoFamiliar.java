@@ -13,14 +13,14 @@ public class DtosGrupoFamiliar {
 	private GrupoFamiliar familias[];
 	private String msgError;
 	private Alumno listaAlumnos[];
-	private Alumno integrantesAgregados[];
-	private Alumno integrantesEliminados[];
-	private String listaAcciones[];
+	private Alumno intAgregados[] = new Alumno[0];
+	private Alumno intEliminados[] = new Alumno[0];
+	private String listaAcciones[] = new String[0];
 	
-	public DefaultTableModel getTablaFamilias(boolean est, String busqueda) {
+	public DefaultTableModel getTablaFamilias(boolean deuda, String busqueda) {
 		
 		grupoFamiliarDAO = new GrupoFamiliarMySQL();
-		familias = grupoFamiliarDAO.getListado("", "", est, busqueda);
+		familias = grupoFamiliarDAO.getListado("ESTADO", "1", deuda, busqueda);
 		String titulo[] = new String[] {"Nombre", "Integrantes"};
 		String cuerpo[][] = new String[familias.length][3];
 
@@ -46,84 +46,48 @@ public class DtosGrupoFamiliar {
 		familia = familias[pos];
 	}
 
-	
-	
-	
-	
-	
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	
-	
-	
-	
-	
 	public DefaultTableModel getTablaFamilia() {
 
+		int tamaño = familia.getIntegrantes().length + intAgregados.length;
+
+		if(listaAcciones.length != tamaño) {
+		
+			String temp[] = listaAcciones;
+			listaAcciones = new String[tamaño];
+			System.arraycopy(temp, 0, listaAcciones, 0, temp.length);
+		}
 		String titulo[] = {"Leg.", "Apellido, nombre", "Curso", ""};
-		String listaIntegrantes[][] = new String[familia.getIntegrantes().length][4];
+		Object cuerpo[][] = new Object[tamaño][4];	
 		
-		for(int i = 0; i < listaIntegrantes.length; i++) {
-			
-			listaIntegrantes[i][0] = familia.getIntegrantes()[i].getLegajo() + "";
-			listaIntegrantes[i][1] = familia.getIntegrantes()[i].getApellido() + " " +
-									familia.getIntegrantes()[i].getNombre();
-			listaIntegrantes[i][2] = familia.getIntegrantes()[i].getCurso().getAño() + " " +
-									familia.getIntegrantes()[i].getCurso().getNivel() + " " + 
-									familia.getIntegrantes()[i].getCurso().getNombreProfesor();
-		}
-		String temp[][];
+		for(int i = 0; i < familia.getIntegrantes().length; i++) {
 
-		if(integrantesAgregados == null)
-			integrantesAgregados = new Alumno[0];
-		
-		if(integrantesAgregados.length > 0) {
-		
-			temp = new String[listaIntegrantes.length + integrantesAgregados.length] [listaIntegrantes[0].length];
-			System.arraycopy(listaIntegrantes, 0, temp, 0, listaIntegrantes.length);
-			System.arraycopy(integrantesAgregados, 0, temp, listaIntegrantes.length, integrantesAgregados.length);
-		} else {
-			
-			temp = listaIntegrantes;
-		}
-
-		
-		
-		
-		if(listaAcciones == null) {
-			
-			listaAcciones = new String[temp.length];
-			
-			for(int i = 0; i < listaAcciones.length; i++) {
-				
-				listaAcciones[i] = "";
-			}
-		}
-/*		
-		
-		String cuerpo[][] = new String[temp.length][5];
-		
-		
-System.out.println("Acá llego");
-System.out.println(temp.length + " " + temp[0].length);
-
-
-		for(int i = 0; i < cuerpo.length ; i++) {
-	
-			cuerpo[i][0] = temp[i][0];
-			cuerpo[i][1] = temp[i][2] + ", " + temp[i][1];
-			cuerpo[i][2] = temp[i][3];
+			listaAcciones[i] = listaAcciones[i] == null? "": listaAcciones[i];
+			cuerpo[i][0] = familia.getIntegrantes()[i].getLegajo();
+			cuerpo[i][1] = familia.getIntegrantes()[i].getApellido() + " " +
+							familia.getIntegrantes()[i].getNombre();
+			cuerpo[i][2] = familia.getIntegrantes()[i].getCurso().getAño() + " " +
+							familia.getIntegrantes()[i].getCurso().getNivel();
 			cuerpo[i][3] = listaAcciones[i];
-		}*/
-		DefaultTableModel tablaModelo = new DefaultTableModel(listaIntegrantes, titulo);
+		}
+		
+		if(intAgregados.length > 0) {
+			
+			int e = 0;
+			
+			for(int i = familia.getIntegrantes().length; i < cuerpo.length; i++) {
+				
+				cuerpo[i][0] = intAgregados[e].getLegajo();
+				cuerpo[i][1] = intAgregados[e].getApellido() + " " +
+								intAgregados[e].getNombre();
+				cuerpo[i][2] = intAgregados[e].getCurso().getAño() + " " +
+								intAgregados[e].getCurso().getNivel();
+				cuerpo[i][3] = "A";
+				e++;
+			}
+		}	
+		DefaultTableModel tablaModelo = new DefaultTableModel(cuerpo, titulo);
 		return tablaModelo;
 	}
-	
-	
-	
-	
-	
-	
 	
 	public DefaultTableModel getTablaAlumnos(String valor, boolean estado) {
 		
@@ -159,83 +123,60 @@ System.out.println(temp.length + " " + temp[0].length);
 		}
 		return false;
 	}
-	
+
 	public void setAgregarElementos(int pos) {
 
-		if(integrantesAgregados == null) {
+		if(intAgregados.length == 0) {
 			
-			integrantesAgregados = new Alumno[] {listaAlumnos[pos]};
+			intAgregados = new Alumno[] {listaAlumnos[pos]};
 		} else {
-			
-			String temp2[] = listaAcciones;
-			listaAcciones = new String[temp2.length + 1];
-			System.arraycopy(temp2, 0, listaAcciones, 0, temp2.length);
-			listaAcciones[temp2.length] = "A";
-			System.arraycopy(temp2, 0, listaAcciones, 0, temp2.length);
-			Alumno temp[] = new Alumno[integrantesAgregados.length + 1];
-			System.arraycopy(integrantesAgregados, 0, temp, 0, integrantesAgregados.length);
-			temp[integrantesAgregados.length - 1] = listaAlumnos[pos];
-			integrantesAgregados = temp;
+
+			Alumno temp[] = intAgregados;
+			intAgregados = new Alumno[temp.length + 1];
+			System.arraycopy(temp, 0, intAgregados, 0, temp.length);
+			intAgregados[intAgregados.length - 1] = listaAlumnos[pos];
 		}
-		listaAcciones[listaAcciones.length - 1] = "A";
 	}
 
 	public void setEliminarElementos(int pos) {
 
-		if(integrantesEliminados == null) {
+		if(intEliminados.length == 0) {
 
-			integrantesEliminados = new Alumno[] {familia.getIntegrantes()[pos]};
-		} else if(integrantesEliminados.length > 0) {
+			intEliminados = new Alumno[] {familia.getIntegrantes()[pos]};
+		} else if(intEliminados.length > 0) {
 		
-			Alumno temp[] = new Alumno[integrantesEliminados.length + 1];
-			System.arraycopy(integrantesEliminados, 0, temp, 0, integrantesEliminados.length);
-			temp[integrantesEliminados.length - 1] = familia.getIntegrantes()[pos];
-			integrantesEliminados = temp;
+			Alumno temp[] = new Alumno[intEliminados.length + 1];
+			System.arraycopy(intEliminados, 0, temp, 0, intEliminados.length);
+			temp[intEliminados.length - 1] = familia.getIntegrantes()[pos];
+			intEliminados = temp;
 		}			
 		listaAcciones[pos] = "E";
 	}
 	
 	public boolean guardarCambios() {
-
-		boolean bandera = true;
-		grupoFamiliarDAO = new GrupoFamiliarMySQL();
-		AlumnoDAO alumnosDAO = new AlumnoMySQL();
-
-		if(integrantesAgregados != null) {
-			
-			bandera = alumnosDAO.updateFamilia(familia.getId(), integrantesAgregados, 1);
-			
-			if(bandera) {
-				
-				familia.setCantIntegrantes(familia.getIntegrantes().length + integrantesAgregados.length);
-				bandera = grupoFamiliarDAO.update(familia);
-			} else {
-				
-				msgError = "Error al guardar los elementos agregados.";
-				return false;
-			}
-			familia = grupoFamiliarDAO.getGrupoFamiliar(familia.getId());			
-		}
 		
-		if(integrantesEliminados != null && bandera) {
+		grupoFamiliarDAO = new GrupoFamiliarMySQL();
+		Alumno temp[] = new Alumno[familia.getIntegrantes().length + intAgregados.length - intEliminados.length];
+		int e = 0;
 
-			bandera = alumnosDAO.updateFamilia(0, integrantesEliminados, 0);
-			
-			if(bandera) {
-			
-				familia.setCantIntegrantes(familia.getIntegrantes().length - integrantesEliminados.length);
+		for(int i = 0; i < familia.getIntegrantes().length; i++) {
+	
+			if(!listaAcciones[i].equals("E")) {
 				
-				if(familia.getCantIntegrantes() < 1)
-					familia.setEstado(0);
-				bandera = grupoFamiliarDAO.update(familia);
-			} else {
-				
-				msgError = "Error al guardar los elementos eliminados.";
-				return false;
-			}	
+				temp[e] = familia.getIntegrantes()[i];
+				e++;
+			}
 		}
-		integrantesAgregados = null;	
-		integrantesEliminados = null;
+		System.arraycopy(intAgregados, 0, temp, e, intAgregados.length);
+		familia.setIntegrantes(temp);
+	
+		if(!grupoFamiliarDAO.update(familia)) {
+			
+			msgError = "Error al guardar las modificaciones.";
+			return false;
+		}
+		intAgregados = null;	
+		intEliminados = null;
 		familia = null;
 		return true;
 	}

@@ -1,5 +1,6 @@
 package modelo;
 
+import javax.swing.JOptionPane;
 import control.EmailSenderService;
 import dao.BackupDB;
 import dao.EstadisticasDAO;
@@ -16,7 +17,7 @@ public class DtosPrincipal {
 	public void inicializar() {
 
 		if(estadisticasDAO.isNuevoMes()) {
-
+JOptionPane.showMessageDialog(null, "generando el resumen mensual");
 			GrupoFamiliarDAO grupoFamiliarDAO = new GrupoFamiliarMySQL();
 			UsuariosDAO usuariosDAO = new UsuariosMySQL();
 			grupoFamiliarDAO.updateDeuda(0, 1);

@@ -122,15 +122,16 @@ public class OperadorSistema extends Conexion {
 				bandera = checkLectura(1) | checkLectura(2);
 				break;
 				
-			case "AlumnoMySQL.setGrupoFamiliar":
+			case "GrupoFamiliarMySQL.create":
 			case "AlumnoMySQL.setNuevo":
 				bandera = permisos[1][1] | permisos[2][1];
 				break;
 				
-			case "AlumnoMySQL.setEliminarIntegrante":
+	//
+				case "AlumnoMySQL.setEliminarIntegrante":
 			case "AlumnoMySQL.update":
 			case "AlumnoMySQL.setActualizarGrupo":
-			case "AlumnoMySQL.setActualizarIdFamila":
+			case "AlumnoMySQL.updateFamilia":
 				bandera = permisos[1][2] | permisos[2][2];
 				break;
 				
@@ -145,7 +146,7 @@ public class OperadorSistema extends Conexion {
 				bandera = checkLectura(1) | checkLectura(2);
 				break;
 				
-			case "GrupoFamiliarMySQL.setGrupoFamiliar":
+			case "GrupoFamiliarMySQL.":
 				bandera = permisos[1][1] | permisos[2][1];
 				break;
 				

@@ -126,9 +126,7 @@ public class OperadorSistema extends Conexion {
 			case "AlumnoMySQL.setNuevo":
 				bandera = permisos[1][1] | permisos[2][1];
 				break;
-				
-	//
-				case "AlumnoMySQL.setEliminarIntegrante":
+
 			case "AlumnoMySQL.update":
 			case "AlumnoMySQL.setActualizarGrupo":
 			case "AlumnoMySQL.updateFamilia":

@@ -21,7 +21,7 @@ public class AsistenciaMySQL extends Conexion implements AsistenciaDAO {
 		try {
 			
 			this.conectar();
-			PreparedStatement stm = this.conexion.prepareStatement("INSERT INTO `lecsys2.00`.faltas (idAlumnos, fecha, estado, idCurso) VALUES (?, DATE(NOW)), ?, ?)");
+			PreparedStatement stm = this.conexion.prepareStatement("INSERT INTO `lecsys2.00`.faltas (idAlumnos, fecha, estado, idCurso) VALUES (?, DATE(NOW()), ?, ?)");
 			
 			for(int i = 0; i < alumnos.length; i++) {
 				
@@ -48,10 +48,10 @@ public class AsistenciaMySQL extends Conexion implements AsistenciaDAO {
 	public Alumno [] getListado(int idCurso, boolean reducido, int mes) {
 
 		Alumno alumnos[] = null;
-		String cmdStm = "SELECT legajo, nombre, apellido "
+		String cmdStm = "SELECT legajo, nombre, apellido, estado "
 						+ "FROM `lecsys2.00`.alumnos "
 						+ "JOIN `lecsys2.00`.persona ON alumnos.dni = persona.dni "
-						+ "WHERE idCurso = ?";
+						+ "WHERE idCurso = ? AND estado = 1";
 
 		try {
 
@@ -70,6 +70,7 @@ public class AsistenciaMySQL extends Conexion implements AsistenciaDAO {
 				alumnos[i].setLegajo(rs.getInt(1));
 				alumnos[i].setNombre(rs.getString(2));
 				alumnos[i].setApellido(rs.getString(3));
+				alumnos[i].setEstado(rs.getInt(4));
 				alumnos[i].setIdCurso(idCurso);
 				i++;
 			}
@@ -78,16 +79,17 @@ public class AsistenciaMySQL extends Conexion implements AsistenciaDAO {
 					+ "WHERE "; 
 	
 			if(mes == 0)
-				cmdStm += "idAlumno = ? ";
+				cmdStm += "idAlumnos = ? ";
 			else
-				cmdStm += "(idAlumno = ? AND MONTH(fecha)= " + mes + ") ";
+				cmdStm += "(idAlumnos = ? AND MONTH(fecha)= " + mes + ") ";
 		
 			if(reducido)
 				cmdStm += "GROUP BY fecha ";
 			cmdStm += "ORDER BY fecha DESC ";
+			stm = this.conexion.prepareStatement(cmdStm,ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			
 			for(i = 0; i < alumnos.length; i++) {
-				
+
 				stm.setInt(1, alumnos[i].getLegajo());
 				rs = stm.executeQuery();
 				rs.last();	
@@ -96,7 +98,7 @@ public class AsistenciaMySQL extends Conexion implements AsistenciaDAO {
 				int e = 0;
 
 				while (rs.next()) {
-						
+
 					alumnos[i].getAsistencias()[e] = new Asistencia();
 					alumnos[i].getAsistencias()[e].setId(rs.getInt(1));
 					alumnos[i].getAsistencias()[e].setFecha(rs.getString(2));
@@ -191,6 +193,4 @@ public class AsistenciaMySQL extends Conexion implements AsistenciaDAO {
 		}
 		return bandera;
 	}
-
-
 }

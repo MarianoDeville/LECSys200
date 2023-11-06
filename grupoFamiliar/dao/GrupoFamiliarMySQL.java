@@ -217,6 +217,8 @@ public class GrupoFamiliarMySQL extends Conexion implements GrupoFamiliarDAO{
 
 		try {
 
+			if(familia.getIntegrantes().length == 0)
+				familia.setEstado(0);
 			this.conectar();
 			PreparedStatement stm = this.conexion.prepareStatement(pprStm);
 			stm.setString(1, familia.getNombre());

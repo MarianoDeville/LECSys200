@@ -155,6 +155,7 @@ public class CtrlEditarGrupoFamiliar implements ActionListener {
 				ventana.lblMsgError.setForeground(Color.BLUE);
 				ventana.lblMsgError.setText("Se han guardado los cambios en la base de datos.");
 				ventana.btnGuardar.setEnabled(false);
+				ventana.btnQuitar.setEnabled(false);
 				ventana.btnEliminar.setEnabled(false);
 				ventana.btnAgregar.setEnabled(false);
 				ventana.txt1Tabla1.setEditable(false);

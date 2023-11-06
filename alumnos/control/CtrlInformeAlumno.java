@@ -35,6 +35,7 @@ public class CtrlInformeAlumno implements ActionListener {
 		ventana.txtCurso.setText(dtosAlumno.getNombreCurso());
 		ventana.txtProfesor.setEditable(false);
 		ventana.txtProfesor.setText(dtosAlumno.getNombreProfesor());
+		
 		dtosAlumno.cargarResumenAsistencia();
 		ventana.txtPresentismo.setEditable(false);
 		ventana.txtPresentismo.setText(dtosAlumno.getPresente());
@@ -42,6 +43,7 @@ public class CtrlInformeAlumno implements ActionListener {
 		ventana.txtFaltas.setText(dtosAlumno.getAusente());
 		ventana.txtTarde.setEditable(false);
 		ventana.txtTarde.setText(dtosAlumno.getTarde());
+		
 		dtosAlumno.cargarNotas();
 		ventana.txtEscrito1.setEditable(false);
 		ventana.txtEscrito1.setText(dtosAlumno.getEscrito1());

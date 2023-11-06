@@ -319,15 +319,13 @@ public class DtosAlumno {
 			alumnos[i].setApellido((String)tablaAsistencia.getValueAt(i, 2));
 			alumnos[i].setIdCurso(alumno.getIdCurso());
 			alumnos[i].setAsistencias(new Asistencia[1]);
+			alumnos[i].getAsistencias()[0] = new Asistencia();
 			
 			if((boolean)tablaAsistencia.getValueAt(i, 4))
 				estado = 2;
 			else if((boolean)tablaAsistencia.getValueAt(i, 3))
 				estado = 1;
-			
-			Asistencia asist[] = new Asistencia[1];
-			asist[0].setEstado(estado);
-			alumnos[i].setAsistencias(asist);
+			alumnos[i].getAsistencias()[0].setEstado(estado);
 		}
 
 		if(asistenciaDAO.setAsistencia(alumnos)) {
@@ -351,15 +349,10 @@ public class DtosAlumno {
 			alumnos = asistenciaDAO.getListado(cursos[pos].getId(), true, mes);
 		
 		if(alumnos != null && alumnos.length > 0) {
-			
+	
+			String temp[] = titulo;
 			titulo = new String[alumnos[0].getAsistencias().length + 3];
-			String temp[] = titulo;			
 			System.arraycopy(temp, 0, titulo, 0, 3);
-
-			for(int i = 3 ; i < titulo.length ; i++) {
-			
-				titulo[i] = alumnos[0].getAsistencias()[i - 3].getFecha();
-			}
 			cuerpo = new String[alumnos.length][titulo.length];
 
 			try {
@@ -369,18 +362,20 @@ public class DtosAlumno {
 					cuerpo[i][0] = alumnos[i].getLegajo() + "";
 					cuerpo[i][1] = alumnos[i].getNombre();
 					cuerpo[i][2] = alumnos[i].getApellido();
-					
-					for(int e = 3; e < titulo.length; e++) {
+
+					for(int e = 0; e < alumnos[i].getAsistencias().length; e++) {
 						
-						if(alumnos[i].getEstado() == 0) {
+						titulo[e + 3] = alumnos[i].getAsistencias()[e].getFecha();
+						
+						if(alumnos[i].getAsistencias()[e].getEstado() == 0) {
 							
-							cuerpo[i][e] = "Falta";
-						} else if(alumnos[i].getEstado() == 1) {
+							cuerpo[i][e + 3] = "Falta";
+						} else if(alumnos[i].getAsistencias()[e].getEstado() == 1) {
 							
-							cuerpo[i][e] = "Presente";
-						}else if(alumnos[i].getEstado() == 2) {
+							cuerpo[i][e + 3] = "Presente";
+						} else if(alumnos[i].getAsistencias()[e].getEstado() == 2) {
 							
-							cuerpo[i][e] = "Tarde";
+							cuerpo[i][e + 3] = "Tarde";
 						}	
 					}
 				}
@@ -388,7 +383,7 @@ public class DtosAlumno {
 				
 				cuerpo = null;
 				msg = "Existe un día que se ha tomado duplicada la asistencia.";
-				CtrlLogErrores.guardarError(e.getMessage() + msg);
+				CtrlLogErrores.guardarError(e.getMessage() + " - " + msg);
 				CtrlLogErrores.guardarError("DtosAlumno, getTablaRegistroAsistencia()");
 			}
 		}

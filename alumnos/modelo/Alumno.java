@@ -11,6 +11,7 @@ public class Alumno extends Persona {
 	private CursoXtnd curso;
 	private Asistencia asistencias[];
 	private Examenes examenes[];
+	private ResumenAsistencia resAsistencia;
 
 	public Alumno() {
         
@@ -104,5 +105,15 @@ public class Alumno extends Persona {
 	public void setExamenes(Examenes examenes[]) {
 		
 		this.examenes = examenes;
+	}
+
+	public ResumenAsistencia getResAsistencia() {
+		
+		return resAsistencia;
+	}
+
+	public void setResAsistencia(ResumenAsistencia resAsistencia) {
+		
+		this.resAsistencia = resAsistencia;
 	}
 }

@@ -19,16 +19,15 @@ import dao.PersonaDAO;
 import dao.PersonaMySQL;
 
 public class DtosAlumno {
-	
+
 	private AlumnoDAO alumnosDAO;
 	private AsistenciaDAO asistenciaDAO;
 	private ExamenesDAO examenesDAO;
-	private static Alumno alumno = new Alumno();	
+	private static Alumno alumno = new Alumno();
 	private Alumno alumnos[];
 	private CursoXtnd cursos[];
 	private Empleado docentes[];
 	private Examenes examen;
-	private ResumenAsistencia resAsis;
 	private ResumenExamenes resExm;
 	private String añoNacimiento;
 	private String mesNacimiento;
@@ -66,8 +65,11 @@ public class DtosAlumno {
 	}
 	
 	public void setAlumnoSeleccionado(int pos) {
-		
+
+		CursosDAO cursoDAO = new CursosMySQL();
 		alumno = alumnos[pos];
+		cursos = cursoDAO.getListado(alumno.getIdCurso() + "");
+		alumno.setCurso(cursos[0]);
 	}
 	
 	public String [] getListaCursos() {
@@ -475,7 +477,7 @@ public class DtosAlumno {
 	public void cargarResumenAsistencia() {
 		
 		asistenciaDAO = new AsistenciaMySQL();
-		resAsis = asistenciaDAO.getInfoAsistencia(alumno.getLegajo());
+		alumno.setResAsistencia(asistenciaDAO.getInfoAsistencia(alumno.getLegajo()));
 	}
 
 	public void cargarNotas() {
@@ -719,17 +721,17 @@ public class DtosAlumno {
 
 	public String getPresente() {
 		
-		return resAsis.getPresente() + "";
+		return alumno.getResAsistencia().getPresente() + "";
 	}
 	
 	public String getAusente() {
 		
-		return resAsis.getFaltas() + "";
+		return alumno.getResAsistencia().getFaltas() + "";
 	}	
 	
 	public String getTarde() {
 		
-		return resAsis.getTarde() + "";
+		return alumno.getResAsistencia().getTarde() + "";
 	}
 	
 	public String getEscrito1() {
@@ -764,17 +766,17 @@ public class DtosAlumno {
 	
 	public String getFinalEscrito() {
 
-		return resExm.getEscrito1() + resExm.getEscrito2() / 2 + "";
+		return (resExm.getEscrito1() + resExm.getEscrito2()) / 2 + "";
 	}
 	
 	public String getFinalComportamiento() {
 	
-		return resExm.getComportamiento1() + resExm.getComportamiento2() / 2 + "";
+		return (resExm.getComportamiento1() + resExm.getComportamiento2()) / 2 + "";
 	}
 	
 	public String getFinalOral() {
 	
-		return resExm.getOral1() + resExm.getOral2() / 2 + "";
+		return (resExm.getOral1() + resExm.getOral2()) / 2 + "";
 	}
 
 	private String calcularTiempo(int num) {

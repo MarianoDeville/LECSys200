@@ -19,7 +19,7 @@ public class CursosMySQL extends Conexion implements CursosDAO{
 						+ "JOIN `lecsys2.00`.empleados ON curso.idProfesor = empleados.legajo "
 						+ "JOIN `lecsys2.00`.persona ON empleados.dni = persona.dni "
 						+ "JOIN `lecsys2.00`.valorCuota on curso.idCurso = valorCuota.idCurso "
-						+ "WHERE (curso.estado = 1" + (idCurso.equals("")?")":"AND curso.idCurso = "+ idCurso + ")")
+						+ "WHERE (curso.estado = 1" + (idCurso.equals("")?")":" AND curso.idCurso = "+ idCurso + ")")
 						+ "GROUP BY curso.idCurso";
 
 		try {

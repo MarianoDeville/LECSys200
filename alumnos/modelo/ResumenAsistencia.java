@@ -2,20 +2,9 @@ package modelo;
 
 public class ResumenAsistencia {
 
-	private int legajo;
 	private int faltas;
 	private int presente;
 	private int tarde;
-	
-	public int getLegajo() {
-		
-		return legajo;
-	}
-	
-	public void setLegajo(int legajo) {
-		
-		this.legajo = legajo;
-	}
 	
 	public int getFaltas() {
 		

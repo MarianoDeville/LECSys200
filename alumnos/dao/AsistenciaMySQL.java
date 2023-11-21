@@ -17,11 +17,11 @@ public class AsistenciaMySQL extends Conexion implements AsistenciaDAO {
 		boolean bandera = true;
 		long tiempo = System.currentTimeMillis();
 		DtosActividad dtosActividad = new DtosActividad();
-
+		String cmdStm = "INSERT INTO `lecsys2.00`.faltas (idAlumnos, fecha, estado, idCurso) VALUES (?, DATE(NOW()), ?, ?)";
 		try {
 			
 			this.conectar();
-			PreparedStatement stm = this.conexion.prepareStatement("INSERT INTO `lecsys2.00`.faltas (idAlumnos, fecha, estado, idCurso) VALUES (?, DATE(NOW()), ?, ?)");
+			PreparedStatement stm = this.conexion.prepareStatement(cmdStm);
 			
 			for(int i = 0; i < alumnos.length; i++) {
 				
@@ -34,6 +34,7 @@ public class AsistenciaMySQL extends Conexion implements AsistenciaDAO {
 	
 			CtrlLogErrores.guardarError(e.getMessage());
 			CtrlLogErrores.guardarError("AsistenciaMySQL, setAsistencia()");
+			CtrlLogErrores.guardarError(cmdStm);
 			bandera = false;
 		} finally {
 			
@@ -122,11 +123,11 @@ public class AsistenciaMySQL extends Conexion implements AsistenciaDAO {
 	public ResumenAsistencia getInfoAsistencia(int legajo) {
 		
 		ResumenAsistencia resumen = new ResumenAsistencia();
+		
 		String cmdStm = "SELECT sum(case when estado = 0 then 1 else 0 end), "
 						+ "sum(case when estado = 1 then 1 else 0 end), "
 						+ "sum(case when estado = 2 then 1 else 0 end) "
-						+ "FROM lecsys1.faltas WHERE (idAlumnos = ? AND YEAR(fecha) = YEAR(NOW()))";
-		
+						+ "FROM `lecsys2.00`.faltas WHERE (idAlumnos = ? AND YEAR(fecha) = YEAR(NOW()))";
 		
 		try {
 			
@@ -136,7 +137,7 @@ public class AsistenciaMySQL extends Conexion implements AsistenciaDAO {
 			ResultSet rs = stm.executeQuery();
 			
 			if (rs.next()) {
-				
+
 				resumen.setFaltas(rs.getInt(1));	
 				resumen.setPresente(rs.getInt(2));
 				resumen.setTarde(rs.getInt(3));
@@ -152,32 +153,18 @@ public class AsistenciaMySQL extends Conexion implements AsistenciaDAO {
 		}
 		return resumen;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	@Override
 	public boolean isAsistenciaTomada(int idCurso, boolean reducido) {
 		
 		boolean bandera = false;
-		String comandoStatement = "SELECT idCurso FROM faltas WHERE (idCurso = " + idCurso + " AND DATE(fecha) = CURDATE())"; 
+		String cmdStm = "SELECT idCurso FROM `lecsys2.00`.faltas WHERE (idCurso = " + idCurso + " AND DATE(fecha) = CURDATE())"; 
 		
 		try {
 			
 			this.conectar();
 			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stm.executeQuery(comandoStatement);
+			ResultSet rs = stm.executeQuery(cmdStm);
 
 			if(rs.next())
 				bandera =true;
@@ -186,7 +173,7 @@ public class AsistenciaMySQL extends Conexion implements AsistenciaDAO {
 			
 			CtrlLogErrores.guardarError(e.getMessage());
 			CtrlLogErrores.guardarError("AsistenciaMySQL, isAsistenciaTomada()");
-			CtrlLogErrores.guardarError(comandoStatement);
+			CtrlLogErrores.guardarError(cmdStm);
 		} finally {
 			
 			this.cerrar();

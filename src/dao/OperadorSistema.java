@@ -254,9 +254,9 @@ public class OperadorSistema extends Conexion {
 				break;
 									// Permisos para Proveedores.	///////////////////////////////////////////////
 			case "CtrlABMLProveedores.iniciar":
-			case "ProveedoresDAO.isCUITExistente":
-			case "ProveedoresDAO.getListadoProveedores":
-			case "ProveedoresDAO.getListadoContactos":
+			case "ProveedoresMySQL.isCUITExistente":
+			case "ProveedoresMySQL.getListado":
+//			case "ProveedoresDAO.getListadoContactos":
 				bandera = checkLectura(7);
 				break;
 				
@@ -264,11 +264,11 @@ public class OperadorSistema extends Conexion {
 				bandera = checkLectura(5) | checkLectura(7);
 				break;	
 				
-			case "ProveedoresDAO.setProveedorNuevo":
+			case "ProveedoresMySQL.setNuevo":
 				bandera = permisos[7][1];
 				break;	
 				
-			case "ProveedoresDAO.setActualizarProveedor":
+			case "ProveedoresMySQL.update":
 				bandera = permisos[7][2];
 				break;	
 

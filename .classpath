@@ -17,6 +17,7 @@
 	<classpathentry kind="src" path="insumos"/>
 	<classpathentry kind="src" path="alumnos"/>
 	<classpathentry kind="src" path="cambiocontraseña"/>
+	<classpathentry kind="src" path="proveedores"/>
 	<classpathentry kind="lib" path="librerias/mysql-connector-java-8.0.21.jar"/>
 	<classpathentry kind="lib" path="librerias/javax.mail-1.6.2.jar"/>
 	<classpathentry kind="lib" path="librerias/activation.jar"/>

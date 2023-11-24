@@ -114,9 +114,8 @@ public class CtrlCobrarHabilitar implements ActionListener {
 	
 	private void cobrar() {
 		
-		if(cobrarInscripción != null) {
+		if(cobrarInscripción != null && cobrarInscripción.isVisible()) {
 
-			JOptionPane.showMessageDialog(null, "Le ventana \"Cobrar\" ya se encuentra abierta.");
 			cobrarInscripción.setVisible(true);
 			return;
 		}

@@ -135,12 +135,11 @@ public class CtrlABMLEmpleado implements ActionListener {
 	}
 	private void nuevo() {
 	
-		if(ventanaNuevoEmpleado != null) {
+		if(ventanaNuevoEmpleado != null && ventanaNuevoEmpleado.isVisible()) {
 
-			JOptionPane.showMessageDialog(null, "La ventana \"Nuevo\" ya se encuentra abierta.");
+			ventanaNuevoEmpleado.setVisible(true);
 			return;
 		}
-		
 		ventanaNuevoEmpleado = new Nuevo("Cargar nuevo empleado", ventana.getX(), ventana.getY());
 		CtrlNuevoEmpleado ctrlNuevoEmpleado = new CtrlNuevoEmpleado(ventanaNuevoEmpleado);
 		ctrlNuevoEmpleado.iniciar();
@@ -148,20 +147,17 @@ public class CtrlABMLEmpleado implements ActionListener {
 	}
 	
 	private void editar() {
-		
-		if(ventanaEditarEmpleado != null) {
 
-			JOptionPane.showMessageDialog(null, "La ventana \"Editar\" ya se encuentra abierta.");
-			return;
-		}
-		
 		ventana.tabla.clearSelection();
 		
 		if(elemento == -1) {
 			
 			JOptionPane.showMessageDialog(null, "Debe seleccionar un alumno para editar.");
 			return;
-		}
+		}		
+		
+		if(ventanaEditarEmpleado != null && ventanaEditarEmpleado.isVisible())
+			ventanaEditarEmpleado.dispose();;
 		dtosEmpleados.setEmpleado(elemento);
 		ventanaEditarEmpleado = new Nuevo("Editar datos empleado", ventana.getX(), ventana.getY());
 		CtrlEditarEmpleado ctrlEditarEmpleado = new CtrlEditarEmpleado(ventanaEditarEmpleado);

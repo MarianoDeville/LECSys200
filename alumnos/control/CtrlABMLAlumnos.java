@@ -144,9 +144,9 @@ public class CtrlABMLAlumnos implements ActionListener {
 	
 	private void nuevo() {
 		
-		if(ventanaNuevoAlumno != null) {
+		if(ventanaNuevoAlumno != null&& ventanaNuevoAlumno.isVisible()) {
 
-			JOptionPane.showMessageDialog(null, "La ventana \"Nuevo\" ya se encuentra abierta.");
+			ventanaNuevoAlumno.setVisible(true);
 			return;
 		}
 		
@@ -157,18 +157,15 @@ public class CtrlABMLAlumnos implements ActionListener {
 	}
 	
 	private void editar() {
-		
-		if(ventanaEditarAlumno != null) {
 
-			JOptionPane.showMessageDialog(null, "La ventana \"Editar\" ya se encuentra abierta.");
-			return;
-		}
-		
 		if(elemento == -1) {
 
 			JOptionPane.showMessageDialog(null, "Debe seleccionar un elemento para editar.");
 			return;
 		}
+		
+		if(ventanaEditarAlumno != null && ventanaEditarAlumno.isVisible())
+			ventanaEditarAlumno.dispose();
 		dtosAlumnos.setAlumnoSeleccionado(elemento);
 		elemento = -1;
 		ventanaEditarAlumno = new Nuevo("Edición de alumno.", ventana.getX(), ventana.getY());

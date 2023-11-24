@@ -113,11 +113,9 @@ public class CtrlABMLCursos implements ActionListener {
 		
 		if(ventanaCrearCurso != null) {
 			
-			JOptionPane.showMessageDialog(null, "Le ventana \"Editar\" ya se encuentra abierta.");
 			ventanaCrearCurso.setVisible(true);
 			return;
 		}
-		
 		ventanaCrearCurso = new NuevoCurso("Crear un nuevo curso", ventana.getX(), ventana.getY());
 		CtrlNuevoCurso ctrlNuevoCurso = new CtrlNuevoCurso(ventanaCrearCurso);
 		ctrlNuevoCurso.iniciar();
@@ -125,19 +123,15 @@ public class CtrlABMLCursos implements ActionListener {
 	}
 	
 	private void editar() {
-		
-		if(ventanaEditarCurso != null) {
-			
-			JOptionPane.showMessageDialog(null, "Le ventana \"Editar\" ya se encuentra abierta.");
-			ventanaEditarCurso.setVisible(true);
-			return;
-		}
-		
+	
 		if(elemento == -1) {
 		
 			JOptionPane.showMessageDialog(null, "Debe seleccionar un curso para editar.");
 			return;
 		}
+		
+		if(ventanaEditarCurso != null)
+			ventanaEditarCurso.dispose();
 		dtosCurso.setCursoElegido(elemento);
 		elemento = -1;
 		ventanaEditarCurso = new NuevoCurso("Edición de curso", ventana.getX(), ventana.getY());

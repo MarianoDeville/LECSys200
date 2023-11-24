@@ -3,7 +3,6 @@ package control;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 import modelo.DtosConfiguracion;
 import vista.ABML;
 import vista.CambioContraseña;
@@ -90,7 +89,7 @@ public class CtrlConfiguracion implements ActionListener {
 		
 		if(ventanaActividad != null && ventanaActividad.isVisible()) {
 			
-			JOptionPane.showMessageDialog(null, "La ventana \"Actividad\" ya se encuentra abierta.");
+			ventanaActividad.setVisible(true);
 			return;
 		}
 		ventanaActividad = new Listado("Listado de actividad", ventana.getX(), ventana.getY());
@@ -102,7 +101,7 @@ public class CtrlConfiguracion implements ActionListener {
 		
 		if(ventanaUsuarios != null && ventanaUsuarios.isVisible()) {
 			
-			JOptionPane.showMessageDialog(null, "La ventana \"ABML usuarios\" ya se encuentra abierta.");
+			ventanaUsuarios.setVisible(true);
 			return;
 		}
 		ventanaUsuarios = new ABML("Alta Baja Modificación de usuarios", ventana.getX(), ventana.getY());
@@ -114,7 +113,7 @@ public class CtrlConfiguracion implements ActionListener {
 		
 		if(ventanaCambioPass != null && ventanaCambioPass.isVisible()) {
 			
-			JOptionPane.showMessageDialog(null, "La ventana \"ambiar contraseña\" ya se encuentra abierta.");
+			ventanaCambioPass.setVisible(true);
 			return;
 		}
 		ventanaCambioPass = new CambioContraseña();
@@ -126,7 +125,7 @@ public class CtrlConfiguracion implements ActionListener {
 		
 		if(ventanaEmail != null && ventanaEmail.isVisible()) {
 			
-			JOptionPane.showMessageDialog(null, "La ventana \"Email\" ya se encuentra abierta.");
+			ventanaEmail.setVisible(true);
 			return;
 		}
 		ventanaEmail = new NuevoUsuario("Edición email del sistema", ventana.getX(), ventana.getY());

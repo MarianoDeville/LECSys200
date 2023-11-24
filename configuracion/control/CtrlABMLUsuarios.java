@@ -119,12 +119,11 @@ public class CtrlABMLUsuarios implements ActionListener {
 	
 	private void nuevo() {
 	
-		if(ventanaNuevoUsuario != null) {
+		if(ventanaNuevoUsuario != null && ventanaNuevoUsuario.isVisible()) {
 
-			JOptionPane.showMessageDialog(null, "La ventana \"Nuevo\" ya se encuentra abierta.");
+			ventanaNuevoUsuario.setVisible(true);
 			return;
 		}
-		
 		ventanaNuevoUsuario = new NuevoUsuario("Crear usuario del sistema.", ventana.getX(), ventana.getY());
 		CtrlNuevoUsuario ctrlNuevoUsuario = new CtrlNuevoUsuario(ventanaNuevoUsuario);
 		ctrlNuevoUsuario.iniciar();
@@ -132,15 +131,11 @@ public class CtrlABMLUsuarios implements ActionListener {
 	}
 	
 	private void editar() {
-		
-		if(ventanaEditarUsuario != null) {
 
-			JOptionPane.showMessageDialog(null, "La ventana \"Editar\" ya se encuentra abierta.");
-			return;
-		}
-		
 		if(elemento != -1) {
 
+			if(ventanaEditarUsuario != null && ventanaEditarUsuario.isVisible())
+				ventanaEditarUsuario.dispose();
 			dtosUsuario.setUsuario(elemento);
 			elemento = -1;
 			ventanaEditarUsuario = new NuevoUsuario("Editar usuario.", ventana.getX(), ventana.getY());

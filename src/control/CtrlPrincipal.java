@@ -114,8 +114,8 @@ int algo;
 				return;
 			}
 			ventanaABMLProveedores = new ABML("ABML proveedores", ventana.getX(), ventana.getY());
-//			CtrlABMLProveedores ctrlABMLProveedores = new CtrlABMLProveedores(ventanaABMLProveedores);
-//			ctrlABMLProveedores.iniciar();
+			CtrlABMLProveedores ctrlABMLProveedores = new CtrlABMLProveedores(ventanaABMLProveedores);
+			ctrlABMLProveedores.iniciar();
 		}
 		
 		if(e.getSource() == ventana.btnConfig) {	

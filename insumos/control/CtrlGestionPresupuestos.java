@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JOptionPane;
-
 import modelo.DtosInsumos;
 import vista.ABML;
 import vista.ListadoDoble2;
@@ -13,6 +12,8 @@ import vista.ListadoDoble2;
 public class CtrlGestionPresupuestos implements ActionListener {
 
 	private ABML ventana;
+	private ListadoDoble2 ventanaEnviarPedidoCotización;
+	private ListadoDoble2 ventanaCargarPresupuestos;
 	private DtosInsumos dtosInsumos;
 	private int elemento = -1;
 	
@@ -83,7 +84,7 @@ public class CtrlGestionPresupuestos implements ActionListener {
 			JOptionPane.showMessageDialog(null, "Debe seleccionar un elemento para editar.");
 			return;
 		}
-		dtosInsumos.setElementoSeleccionado(elemento);
+		dtosInsumos.setPedidoSeleccionado(elemento);
 		elemento = -1;
 		
 		if(acción.equals("Enviar")) {
@@ -96,14 +97,18 @@ public class CtrlGestionPresupuestos implements ActionListener {
 	
 	private void enviarPedidoPresupuesto() {
 		
-		ListadoDoble2 ventanaEnviarPedidoCotización = new ListadoDoble2("Solicitud de cotización");
+		if(ventanaEnviarPedidoCotización != null && ventanaEnviarPedidoCotización.isVisible())
+			ventanaEnviarPedidoCotización.dispose();
+		ventanaEnviarPedidoCotización = new ListadoDoble2("Solicitud de cotización", ventana.getX() - 5, ventana.getY() - 5);
 		CtrlEnviarPedido ctrlEnviarPedidoCotización = new CtrlEnviarPedido(ventanaEnviarPedidoCotización);
 		ctrlEnviarPedidoCotización.iniciar();
 	}
 	
 	private void cargarPresupuestoProveedor() {
 		
-		ListadoDoble2 ventanaCargarPresupuestos = new ListadoDoble2("Carga de presupuestos");
+		if(ventanaCargarPresupuestos != null && ventanaCargarPresupuestos.isVisible())
+			ventanaCargarPresupuestos.dispose();
+		ventanaCargarPresupuestos = new ListadoDoble2("Carga de presupuestos", ventana.getX() - 5, ventana.getY() - 5);
 		CtrlCargarPresupuestos ctrlCargarPresupuesto = new CtrlCargarPresupuestos(ventanaCargarPresupuestos);
 		ctrlCargarPresupuesto.iniciar();
 	}

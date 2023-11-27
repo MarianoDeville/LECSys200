@@ -92,7 +92,7 @@ public class CtrlGestionCotizaciones implements ActionListener {
 			JOptionPane.showMessageDialog(null, "Debe seleccionar un elemento para editar.");
 			return;
 		}
-		dtosInsumos.setElementoSeleccionado(elemento);
+		dtosInsumos.setInsumoSeleccionado(elemento);
 		elemento = -1;
 		cargarCotizaciones();
 	}

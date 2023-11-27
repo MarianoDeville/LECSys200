@@ -7,7 +7,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JOptionPane;
-
 import modelo.DtosInsumos;
 import vista.ABML;
 import vista.ListadoDoble;
@@ -19,7 +18,6 @@ public class CtrlABMLPedidos implements ActionListener {
 	private ListadoDoble ventanaNuevoPedido;
 	private ListadoDoble ventanaEditarPedido;
 	private int elemento;
-	private boolean bandera;
 	
 	public CtrlABMLPedidos(ABML vista) {
 		
@@ -41,11 +39,9 @@ public class CtrlABMLPedidos implements ActionListener {
 		        if (e.getClickCount() == 1) {
 
 					elemento = ventana.tabla.getSelectedRow();
-					bandera = true;
 		        } else if(e.getClickCount() == 2) {
 		        	
 		        	elemento = ventana.tabla.getSelectedRow();
-		        	bandera = true;
 		        	elementoSeleccionado();
 		        }
 		    }
@@ -63,10 +59,7 @@ public class CtrlABMLPedidos implements ActionListener {
 		
 		if(e.getSource() == ventana.btnNuevo) {
 			
-			ventanaNuevoPedido = new ListadoDoble("Nuevo pedido de mercadería");
-			CtrlSolicitarInsumos ctrlSolicitarInsumos = new CtrlSolicitarInsumos(ventanaNuevoPedido);
-			ctrlSolicitarInsumos.iniciar();
-			ventanaNuevoPedido.btnVolver.addActionListener(this);
+			nuevoPedido();
 		}
 		
 		if(ventanaNuevoPedido != null) {
@@ -98,6 +91,7 @@ public class CtrlABMLPedidos implements ActionListener {
 	
 	private void actualizar() {
 		
+		elemento = -1;
 		ventana.tabla.setModel(dtosInsumos.getTablaPedidos(ventana.txt1.getText(), 1));
 		ventana.tabla.getColumnModel().getColumn(0).setMinWidth(20);
 		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(35);
@@ -110,17 +104,35 @@ public class CtrlABMLPedidos implements ActionListener {
 		ventana.tabla.getColumnModel().getColumn(3).setPreferredWidth(150);
 		ventana.tabla.getColumnModel().getColumn(3).setMaxWidth(220);
 		ventana.tabla.setDefaultEditor(Object.class, null);
+		ventana.tabla.clearSelection();
+	}
+	
+	private void nuevoPedido() {
+		
+		if(ventanaNuevoPedido != null && ventanaNuevoPedido.isVisible()) {
+			
+			ventanaNuevoPedido.setVisible(true);
+			return;
+		}
+		ventanaNuevoPedido = new ListadoDoble("Nuevo pedido de mercadería", ventana.getX(), ventana.getY());
+		CtrlSolicitarInsumos ctrlSolicitarInsumos = new CtrlSolicitarInsumos(ventanaNuevoPedido);
+		ctrlSolicitarInsumos.iniciar();
+		ventanaNuevoPedido.btnVolver.addActionListener(this);
 	}
 	
 	private void elementoSeleccionado() {
 		
-		if(!bandera) {
+		if(elemento == -1) {
 
 			JOptionPane.showMessageDialog(null, "Debe seleccionar un elemento para editar.");
 			return;
 		}
-		dtosInsumos.setElementoSeleccionado(elemento);
-		ventanaEditarPedido = new ListadoDoble("Editar pedido de insumo");
+		
+		if(ventanaEditarPedido != null && ventanaEditarPedido.isVisible())
+			ventanaEditarPedido.dispose();
+		dtosInsumos.setPedidoSeleccionado(elemento);
+		elemento = -1;
+		ventanaEditarPedido = new ListadoDoble("Editar pedido de insumo", ventana.getX(), ventana.getY());
 		CtrlEditarPedido ctrlEditarPedido = new CtrlEditarPedido(ventanaEditarPedido);
 		ctrlEditarPedido.iniciar();
 		ventanaEditarPedido.btnVolver.addActionListener(this);

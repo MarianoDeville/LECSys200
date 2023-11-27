@@ -129,7 +129,19 @@ int algo;
 			CtrlConfiguracion ctrlConfig = new CtrlConfiguracion(ventanaConfiguracion);
 			ctrlConfig.iniciar();
 		}
-	
+
+		if(e.getSource() == ventana.btnInsumos) {
+			
+			if(ventanaInsumos != null && ventanaInsumos.isVisible()) {
+				
+				ventanaInsumos.setVisible(true);
+				return;
+			}			
+			ventanaInsumos = new InterfaceBotones("Insumos", ventana.getX(), ventana.getY());
+			CtrlInsumos ctrlInsumos = new CtrlInsumos(ventanaInsumos);
+			ctrlInsumos.iniciar();
+		}
+		
 		if(e.getSource() == ventana.btnRelogin) {
 			
 			IngresoUsuario ventanaLogin = new IngresoUsuario();
@@ -139,19 +151,7 @@ int algo;
 			actividad.registrarActividad("Cambio de usuario activo.", "Principal", 0);
 			cambiarPass();
 		}
-		
-		if(e.getSource() == ventana.btnInsumos) {
 			
-			if(ventanaInsumos != null && ventanaInsumos.isVisible()) {
-				
-				ventanaInsumos.setVisible(true);
-				return;
-			}			
-			ventanaInsumos = new InterfaceBotones("Insumos", ventana.getX(), ventana.getY());
-//			CtrlInsumos ctrlInsumos = new CtrlInsumos(ventanaInsumos);
-//			ctrlInsumos.iniciar();
-		}
-		
 		if(e.getSource() == ventana.btnSalir) {
 			
 			actividad.registrarActividad("Cierre del sistema", "Principal", 0);

@@ -8,7 +8,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.print.PrinterException;
 import javax.swing.JOptionPane;
-
 import modelo.DtosInsumos;
 import vista.ABML;
 import vista.Listado;
@@ -20,6 +19,7 @@ public class CtrlABMLInsumos implements ActionListener{
 	private DtosInsumos dtosInsumos;
 	private NuevoSimple ventanaNuevoInsumo;
 	private NuevoSimple ventanaEditarInsumo;
+	private Listado ventanaHistorico;
 	private int elemento;
 	
 	public CtrlABMLInsumos(ABML vista) {
@@ -122,7 +122,12 @@ public class CtrlABMLInsumos implements ActionListener{
 	
 	private void nuevo() {
 		
-		ventanaNuevoInsumo = new NuevoSimple("Cargar nuevo insumo");
+		if(ventanaNuevoInsumo != null && ventanaNuevoInsumo.isVisible()) {
+			
+			ventanaNuevoInsumo.setVisible(true);
+			return;
+		}
+		ventanaNuevoInsumo = new NuevoSimple("Cargar nuevo insumo", ventana.getX(), ventana.getY());
 		CtrlNuevoInsumo ctrlNuevoInsumo = new CtrlNuevoInsumo(ventanaNuevoInsumo);
 		ctrlNuevoInsumo.iniciar();
 		ventanaNuevoInsumo.btnVolver.addActionListener(this);
@@ -136,8 +141,11 @@ public class CtrlABMLInsumos implements ActionListener{
 			ventana.tabla.clearSelection();
 			return;
 		}
-		dtosInsumos.setElementoSeleccionado(elemento);
-		ventanaEditarInsumo = new NuevoSimple("Editar insumo");
+		
+		if(ventanaEditarInsumo != null && ventanaEditarInsumo.isVisible())
+			ventanaEditarInsumo.dispose();
+		dtosInsumos.setInsumoSeleccionado(elemento);
+		ventanaEditarInsumo = new NuevoSimple("Editar insumo", ventana.getX(), ventana.getY());
 		CtrlEditarInsumo ctrlEditarInsumo = new CtrlEditarInsumo(ventanaEditarInsumo);
 		ctrlEditarInsumo.iniciar();
 		ventanaEditarInsumo.btnVolver.addActionListener(this);
@@ -151,9 +159,12 @@ public class CtrlABMLInsumos implements ActionListener{
 			ventana.tabla.clearSelection();
 			return;
 		}
+		
+		if(ventanaHistorico != null && ventanaHistorico.isVisible())
+			ventanaHistorico.dispose();
 		ventana.tabla.clearSelection();
-		dtosInsumos.setElementoSeleccionado(elemento);
-		Listado ventanaHistorico = new Listado("Movimientos históricos");
+		dtosInsumos.setInsumoSeleccionado(elemento);
+		ventanaHistorico = new Listado("Movimientos históricos", ventana.getX(), ventana.getY());
 		CtrlHistorico ctrlHistorico = new CtrlHistorico(ventanaHistorico);
 		ctrlHistorico.iniciar();
 	}

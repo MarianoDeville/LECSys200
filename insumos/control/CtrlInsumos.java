@@ -11,6 +11,10 @@ import vista.InterfaceBotones;
 public class CtrlInsumos implements ActionListener {
 
 	private InterfaceBotones ventana;
+	private ABML ventanaABMLInsumos;
+	private ABML ventanaABMLPedidos;
+	private ABML ventanaPresupuestos;
+	private ABML ventanaStock;
 	
 	public CtrlInsumos(InterfaceBotones vista) {
 		
@@ -49,35 +53,75 @@ public class CtrlInsumos implements ActionListener {
 
 		if(e.getSource() == ventana.btn1A) {
 			
-			ABML ventanaABMLInsumos = new ABML("Insumos");
-			CtrlABMLInsumos ctrlABMLInsumos = new CtrlABMLInsumos(ventanaABMLInsumos);
-			ctrlABMLInsumos.iniciar();
+			abml();
 		}
 		
 		if(e.getSource() == ventana.btn1B) {
 			
-			ABML ventanaABMLPedidos = new ABML("Pedido de insumos");
-			CtrlABMLPedidos ctrlPedidos = new CtrlABMLPedidos(ventanaABMLPedidos);
-			ctrlPedidos.iniciar();
+			pedido();
 		}
 		
 		if(e.getSource() == ventana.btn1C) {
 			
-			ABML ventanaPresupuestos = new ABML("Presupuestos");
-			CtrlGestionPresupuestos ctrlPresupuestos = new CtrlGestionPresupuestos(ventanaPresupuestos);
-			ctrlPresupuestos.iniciar();
+			presupuesto();
 		}
 
 		if(e.getSource() == ventana.btn2A) {
 			
-			ABML ventanaStock = new ABML("Control de stock");
-			CtrlStock ctrlStock = new CtrlStock(ventanaStock);
-			ctrlStock.iniciar();
+			stock();
 		}
 
 		if(e.getSource() == ventana.btnVolver) {
 			
 			ventana.dispose();
 		}
+	}
+	
+	private void abml() {
+		
+		if(ventanaABMLInsumos != null && ventanaABMLInsumos.isVisible()) {
+			
+			ventanaABMLInsumos.setVisible(true);
+			return;
+		}
+		ventanaABMLInsumos = new ABML("Insumos", ventana.getX(), ventana.getY());
+		CtrlABMLInsumos ctrlABMLInsumos = new CtrlABMLInsumos(ventanaABMLInsumos);
+		ctrlABMLInsumos.iniciar();
+	}
+	
+	private void pedido() {
+		
+		if(ventanaABMLPedidos != null && ventanaABMLPedidos.isVisible()) {
+			
+			ventanaABMLPedidos.setVisible(true);
+			return;
+		}
+		ventanaABMLPedidos = new ABML("Pedido de insumos", ventana.getX(), ventana.getY());
+		CtrlABMLPedidos ctrlPedidos = new CtrlABMLPedidos(ventanaABMLPedidos);
+		ctrlPedidos.iniciar();
+	}
+	
+	private void presupuesto() {
+		
+		if(ventanaPresupuestos != null && ventanaPresupuestos.isVisible()) {
+			
+			ventanaPresupuestos.setVisible(true);
+			return;
+		}
+		ventanaPresupuestos = new ABML("Presupuestos", ventana.getX(), ventana.getY());
+		CtrlGestionPresupuestos ctrlPresupuestos = new CtrlGestionPresupuestos(ventanaPresupuestos);
+		ctrlPresupuestos.iniciar();
+	}
+	
+	private void stock() {
+		
+		if(ventanaStock != null && ventanaStock.isVisible()) {
+			
+			ventanaStock.setVisible(true);
+			return;
+		}
+		ventanaStock = new ABML("Control de stock", ventana.getX(), ventana.getY());
+		CtrlStock ctrlStock = new CtrlStock(ventanaStock);
+		ctrlStock.iniciar();
 	}
 }

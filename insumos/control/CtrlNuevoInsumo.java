@@ -3,7 +3,6 @@ package control;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import modelo.DtosInsumos;
 import vista.NuevoSimple;
 
@@ -53,7 +52,7 @@ public class CtrlNuevoInsumo implements ActionListener {
 		dtosInsumos.setDescripción(ventana.txtDescripción.getText());
 		dtosInsumos.setPresentación(ventana.txtFormato.getText());
 		
-		if(!dtosInsumos.isCheckInfo("ABML Insumo")) {
+		if(!dtosInsumos.isCheckInfo()) {
 			
 			ventana.lblMsgError.setForeground(Color.RED);
 			ventana.lblMsgError.setText(dtosInsumos.getMsgError());

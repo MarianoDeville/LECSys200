@@ -9,7 +9,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
-
 import modelo.DtosEmpleado;
 import modelo.DtosInsumos;
 import vista.ListadoDoble;
@@ -20,8 +19,6 @@ public class CtrlSolicitarInsumos implements ActionListener {
 	private DtosInsumos dtosInsumos;
 	private int elemento1;
 	private int elemento2;
-	private boolean bandera1;
-	private boolean bandera2;
 	
 	public CtrlSolicitarInsumos(ListadoDoble vista) {
 		
@@ -43,8 +40,6 @@ public class CtrlSolicitarInsumos implements ActionListener {
 		        if (e.getClickCount() == 1) {
 
 					elemento1 = ventana.tabla1.getSelectedRow();
-					bandera1 = true;
-					bandera2 = false;
 					ventana.lblMsgError.setForeground(Color.BLACK);
 					ventana.lblMsgError.setText(dtosInsumos.getInfoInsumo(elemento1));
 					ventana.tabla2.clearSelection();
@@ -56,8 +51,6 @@ public class CtrlSolicitarInsumos implements ActionListener {
 		        if (e.getClickCount() == 1) {
 
 					elemento2 = ventana.tabla2.getSelectedRow();
-					bandera2 = true;
-					bandera1 = false;
 					ventana.lblMsgError.setText("");
 					ventana.tabla1.clearSelection();
 		        }
@@ -117,13 +110,20 @@ public class CtrlSolicitarInsumos implements ActionListener {
 		
 		ventana.tabla1.clearSelection();
 		ventana.tabla2.clearSelection();
-		if(!bandera1) {
+		if(elemento1 == -1) {
 			
 			ventana.lblMsgError.setForeground(Color.RED);
 			ventana.lblMsgError.setText("Debe seleccionar un elemento para agregar.");
 			return;
 		}
-		dtosInsumos.actualizarLista('+', elemento1, JOptionPane.showInputDialog(null, "Cantidad a pedir?", (String)ventana.tabla1.getValueAt(elemento1, 2), 3));
+		String cantidad = JOptionPane.showInputDialog(null, "Cantidad a pedir?", (String)ventana.tabla1.getValueAt(elemento1, 2), 3);
+		
+		if(!dtosInsumos.actualizarLista('+', elemento1, cantidad)) {
+
+			ventana.lblMsgError.setForeground(Color.RED);
+			ventana.lblMsgError.setText(dtosInsumos.getMsgError());
+			return;
+		}
 		actualizarTabla2();
 	}
 	
@@ -131,7 +131,7 @@ public class CtrlSolicitarInsumos implements ActionListener {
 		
 		ventana.tabla1.clearSelection();
 		ventana.tabla2.clearSelection();
-		if(!bandera2) {
+		if(elemento2 == -1) {
 
 			ventana.lblMsgError.setForeground(Color.RED);
 			ventana.lblMsgError.setText("Debe seleccionar un elemento para eliminar.");
@@ -149,8 +149,8 @@ public class CtrlSolicitarInsumos implements ActionListener {
 		ventana.tabla1.clearSelection();
 		ventana.tabla2.clearSelection();
 		ventana.lblMsgError.setText("");
-		bandera1 = false;
-		bandera2 = false;
+		elemento1 = -1;
+		elemento2 = -1;
 	}
 	
 	private void actualizarTabla2() {
@@ -158,8 +158,8 @@ public class CtrlSolicitarInsumos implements ActionListener {
 		ventana.lblMsgError.setText("");
 		ventana.tabla2.setModel(dtosInsumos.getTablaSeleccionados());
 		ventana.tabla2.getColumnModel().getColumn(0).setMaxWidth(40);
-		bandera1 = false;
-		bandera2 = false;
+		elemento1 = -1;
+		elemento2 = -1;
 	}
 	
 	private void guardar() {
@@ -169,7 +169,7 @@ public class CtrlSolicitarInsumos implements ActionListener {
 		dtosInsumos.setSectorSolicitante((String)ventana.comboBox2.getSelectedItem());
 		dtosInsumos.setIdSolicitante(ventana.comboBox1.getSelectedIndex());
 		
-		if(!dtosInsumos.setGuardarPedido(ventana.tabla2)) {
+		if(!dtosInsumos.setGuardarPedido()) {
 			
 			ventana.lblMsgError.setForeground(Color.RED);
 			ventana.lblMsgError.setText(dtosInsumos.getMsgError());

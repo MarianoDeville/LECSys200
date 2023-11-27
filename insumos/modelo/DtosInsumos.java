@@ -1,105 +1,679 @@
-/*****************************************************************************************************************************************************************/
-//										LISTADO DE MÉTODOS
-/*---------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-//	public void getInfoPedido()
-//	public void setId(String id)
-//	public void setCuerpoEmail()
-//	public void setEmail(String email)
-//	public void setIdProveedor(int pos)
-//	public void setEstado(String estado)
-//	public void setAsunto(String asunto)
-//	public void setNombre(String nombre)
-//	public void setIdSolicitante(int pos)
-//	public void setIdProveedor(String id)
-//	public void getInfoPedidoPresupuesto()
-//	public void setMensaje(String mensaje)
-//	public void setIdOrdenCompra(int posición)
-//	public void setElementoSeleccionado(int pos)
-//	public void setDescripción(String descripción)
-//	public void setSectorSolicitante(String sector)
-//	public void setPresentación(String presentación)
-//	public void setIdPresupuesto(String idPresupuesto)
-//	public void actualizarLista(char operación, int pos, String cantidad)
-//	public boolean enviarEmail()
-//	public boolean setGuardarNuevo()
-//	public boolean setActualizarInfo()
-//	public boolean setEliminarPedido()
-//	public boolean setAprobarCotización()
-//	public boolean actualizarStockInsumo()
-//	public boolean isFechaOK(String valor)
-//	public boolean isCheckInfo(String operacion)
-//	public boolean setAgregarStock(JTable insumos)
-//	public boolean setGuardarSolicitudCotizacion()
-//	public boolean setStockAgregar(String aDescontar)
-//	public boolean setStockDescontar(String aDescontar)
-//	public boolean setGuardarPedido(JTable tablaPedido)
-//	public boolean setGuardarCotización(JTable valores)
-//	public boolean setActualizarPedido(JTable tablaPedido)
-//	public String getId()
-//	public String getStock()
-//	public String getNombre()
-//	public String getMsgError()
-//	public String getCuerpoEmail()
-//	public String getDescripción()
-//	public String getPresentación()
-//	public String getFechaSolicitud()
-//	public String getSectorSolicitante()
-//	public String getInfoInsumo(int pos)
-//	public String [] getListaEmpleados()
-//	public String getEmailSeleccionado(int pos)
-//	public DefaultTableModel getTablaOrdenes()
-//	public DefaultTableModel getTablaInsumos()
-//	public DefaultTableModel getHistoricoInsumo()
-//	public DefaultTableModel getTablaCotizaciones()
-//	public DefaultTableModel getTablaSeleccionados()
-//	public DefaultTableModel getProveedoresCotización()
-//	public DefaultTableModel getTablaInsumos(String filtro)
-//	public DefaultTableModel getStockInsumos(String filtro)
-//	public DefaultTableModel getListadoProveedores(String filtro)
-//	public DefaultTableModel getTablaPedidos(String filtro, boolean estado)
-//	private boolean isFloat(String valor)
-//	private boolean isNumerico(String valor)
-//	private void ResetearDatos()
-/*****************************************************************************************************************************************************************/
 package modelo;
 
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import controlador.EmailSenderService;
+import control.EmailSenderService;
 import dao.ComprasDAO;
+import dao.EmpleadoDAO;
 import dao.EmpleadoMySQL;
+import dao.InsumosDAO;
 import dao.InsumosMySQL;
 import dao.OperadorSistema;
 import dao.ProveedoresDAO;
+import dao.ProveedoresMySQL;
 
 public class DtosInsumos {
 
-	private InsumosMySQL insumosDAO;
-	static private String id;
-	static private String nombre;
-	static private String descripción;
-	static private String formato;
-	static private int stock;
-	private String estado;
-	private int idSolicitante;
-	private int cantElementos = 0;
-	private int nuevoStock;
-	private String idInsumos[];
-	private String tabla[][];
-	private String tablaSeleccionados[][];
-	private String respuesta[][];
-	private String sectorSolicitante;
-	private String fechaSolicitud;
+	private InsumosDAO insumosDAO;
+	
+	private static Insumo insumo;
+	private static PedidoInsumo pedidoInsumo;
+	
+	private Insumo insumos[];
+	private Insumo insumosSeleccionados[];
+	private PedidoInsumo pedidoInsumos[];
+	private Empleado listaEmpleados[];
+	private Presupuesto presupuesto;
+	private Object emailProveedores[][];
+	
+	private int cantElementos = 0;	
 	private String msgError;
 	private String destinatario;
 	private String asunto;
-	private String cuerpoEmail;
 	private String mensaje;
-	private String idCotización;
-	private String idProveedor = null;
-	private String idPresupuesto;
-	private String idOrdenCompra;
-	private String fechaValidez;
+	private String cuerpoEmail;
+
+	public DefaultTableModel getTablaInsumos(String filtro) {
+		
+		insumosDAO = new InsumosMySQL();
+		insumos = insumosDAO.listado(filtro);
+		String titulo[] = new String[] {"ID", "Nombre", "Descripción", "Presentacíon"};
+		Object tabla[][] = new Object[insumos.length][4];
+		
+		for(int i = 0; i < insumos.length; i++) {
+			
+			tabla[i][0] = insumos[i].getId();
+			tabla[i][1] = insumos[i].getNombre();
+			tabla[i][2] = insumos[i].getDescripcion();
+			tabla[i][3] = insumos[i].getPresentacion();
+		}
+		DefaultTableModel respuesta = new DefaultTableModel(tabla, titulo);
+		return respuesta;
+	}
+	
+	public void setInsumoSeleccionado(int pos) {
+		
+		insumo = insumos[pos];
+	}
+	
+	public boolean isCheckInfo() {
+		
+		msgError = "";
+		
+		if(insumo.getNombre().length() < 5) {
+			
+			msgError = "El nombre no puede faltar ni ser demasiado corto.";
+			return false;
+		} else if(insumo.getDescripcion().length() < 5) {
+			
+			msgError = "La descripción no puede faltar ni ser demasiado corto.";
+			return false;
+		} else if(insumo.getPresentacion().length() < 3) {
+			
+			msgError = "Por favor indique en qué formato viene el producto.";
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean setGuardarNuevo() {
+		
+		boolean bandera;
+		insumosDAO = new InsumosMySQL();
+		bandera = insumosDAO.nuevo(insumo);
+		insumo = new Insumo();
+		return bandera;
+	}
+	
+	public boolean setActualizarInfo() {
+		
+		insumosDAO = new InsumosMySQL();
+		return insumosDAO.update(insumo);
+	}
+
+	public String [] getListaEmpleados() {
+		
+		EmpleadoDAO empleadoDAO = new EmpleadoMySQL();
+		String listado[] = null;
+		listaEmpleados = empleadoDAO.getListado("Todos", true, "");
+		
+		if(listaEmpleados != null) {
+			
+			listado = new String[listaEmpleados.length];
+		
+			for(int i = 0; i < listaEmpleados.length; i++) {
+				
+				listado[i] = listaEmpleados[i].getNombre() + " " + listaEmpleados[i].getApellido();
+			}
+		}
+		return listado;
+	}
+	
+	public DefaultTableModel getTablaPedidos(String filtro, int estado) {
+	
+		insumosDAO = new InsumosMySQL();
+		pedidoInsumos = insumosDAO.getPedidos(estado);
+		String titulo[] = new String[] {"ID", "Fecha", "Sector", "Solicitante", "Elementos pedidos"};
+		Object tabla[][] = new Object[pedidoInsumos.length][5];
+		
+		for(int i = 0; i < pedidoInsumos.length; i++) {
+			
+			tabla[i][0] = pedidoInsumos[i].getIdCompra();
+			tabla[i][1] = pedidoInsumos[i].getFechaSolicitud();
+			tabla[i][2] = pedidoInsumos[i].getSectorSolicitante();
+			tabla[i][3] = pedidoInsumos[i].getNombreSolicitante();
+			tabla[i][4] = "";
+			
+			for(int e = 0; e < pedidoInsumos[i].getInsumos().length; e++) {
+				
+				if(!tabla[i][4].equals(""))
+					tabla[i][4] += ", ";
+				tabla[i][4] += pedidoInsumos[i].getInsumos()[e].getNombre();
+			}
+		}
+		DefaultTableModel respuesta = new DefaultTableModel(tabla, titulo);
+		return respuesta;
+	}
+	
+	public void setPedidoSeleccionado(int pos) {
+		
+		pedidoInsumo = new PedidoInsumo(pedidoInsumos[pos]);
+	}
+
+	public DefaultTableModel getTablaSeleccionados() {
+		
+		if(insumosSeleccionados == null)
+			insumosSeleccionados = new Insumo[0];
+		
+		if(pedidoInsumo != null && pedidoInsumo.getInsumos() != null) {
+
+			cantElementos = pedidoInsumo.getInsumos().length;
+			insumosSeleccionados = pedidoInsumo.getInsumos().clone();
+			pedidoInsumo.setInsumos(null);
+		}
+		String titulo[] = new String[] {"Cant.", "Nombre", "Descripción", "Presentación"};
+		Object tabla[][] = new Object[insumosSeleccionados.length][4];
+
+		for(int i = 0; i < insumosSeleccionados.length; i++) {
+		
+			tabla[i][0] = insumosSeleccionados[i].getCantSolicitada();
+			tabla[i][1] = insumosSeleccionados[i].getNombre();
+			tabla[i][2] = insumosSeleccionados[i].getDescripcion();
+			tabla[i][3] = insumosSeleccionados[i].getPresentacion();
+		}
+		DefaultTableModel respuesta = new DefaultTableModel(tabla, titulo){
+
+			private static final long serialVersionUID = 1L;
+			public boolean isCellEditable(int row, int column) {
+				
+				return column > 0? false: true;
+			}
+		};
+		return respuesta;
+	}
+	
+	public String getInfoInsumo(int pos) {
+		
+		return insumos[pos].getNombre() + ", " + insumos[pos].getDescripcion() + ", " + insumos[pos].getPresentacion();
+	}
+	
+	public boolean actualizarLista(char operación, int pos, String cantidad) {
+		
+		Insumo temp[] = null;
+		int i = 0;
+	
+		if(operación == '+') {
+
+			try {
+				
+				i = Integer.parseInt(cantidad);
+			}catch (Exception e) {
+
+				msgError = "La cantidad a pedir debe ser numérica.";
+				return false;
+			}
+			
+			if(i < 1) {
+				
+				msgError = "La cantidad a pedir debe ser un número positivo mayor a cero.";
+				return false;				
+			}
+			cantElementos++;
+		
+			if(insumosSeleccionados != null) {
+
+				temp = insumosSeleccionados.clone();
+				System.arraycopy(insumosSeleccionados, 0, temp, 0, temp.length);
+				insumosSeleccionados = new Insumo[cantElementos];
+				System.arraycopy(temp, 0, insumosSeleccionados, 0, temp.length);
+			} else {
+				
+				insumosSeleccionados = new Insumo[cantElementos];
+			}
+			insumosSeleccionados[cantElementos - 1] = new Insumo(insumos[pos]);
+			insumosSeleccionados[cantElementos - 1].setCantSolicitada(i);
+			return true;
+		}
+		
+		if(operación == '-') {
+			
+			if(cantElementos > 0) {
+				
+				cantElementos--;
+
+				if(cantElementos < 1) {
+					
+					insumosSeleccionados = null;
+					cantElementos = 0;
+					return true;
+				}				
+				int e = 0;
+				temp = insumosSeleccionados.clone();
+				insumosSeleccionados = new Insumo[cantElementos];
+				
+				while(e < temp.length) {
+					
+					if(e != pos) {
+						
+						insumosSeleccionados[i] = temp[e];
+						i++;
+					}
+					e++;
+				}
+			}
+		}
+		return true;
+	}
+
+	public boolean setGuardarPedido() {
+		
+		if(insumosSeleccionados.length < 1) {
+			
+			msgError = "La lista de pedido está vacía.";
+			return false;	
+		}
+		pedidoInsumo.setInsumos(insumosSeleccionados);
+		msgError = "Error al intentar guardar en la base de datos.";
+		return insumosDAO.nuevoPedido(pedidoInsumo);
+	}
+	
+	public boolean setActualizarPedido() {
+		
+		if(insumosSeleccionados.length < 1) {
+			
+			msgError = "La lista de pedido está vacía.";
+			return false;	
+		}
+		pedidoInsumo.setInsumos(insumosSeleccionados);
+		msgError = "Error al intentar guardar en la base de datos.";
+		return insumosDAO.updatePedido(pedidoInsumo);
+	}
+	
+	public boolean setEliminarPedido() {
+		
+		msgError = "Error en la base de datos al intentar borrar el pedido";
+		pedidoInsumo.setEstado(0);
+		return insumosDAO.updatePedido(pedidoInsumo);
+	}
+	
+	public DefaultTableModel getListadoProveedores(String filtro) {
+		
+		ProveedoresDAO proveedoresDAO = new ProveedoresMySQL();
+		emailProveedores = proveedoresDAO.getListadoEmail(filtro);
+		String titulo[] = new String[] {"Proveedor", "Sector", "Contacto", "Email"};
+		DefaultTableModel respuesta = new DefaultTableModel(emailProveedores, titulo);
+		return respuesta;
+	}
+	
+	public void setIdProveedor(int pos) {
+		
+		if(presupuesto == null) {
+			
+			presupuesto = new Presupuesto();
+			presupuesto.setProveedores(new Proveedor[1]);
+		}
+
+		if(pos == -1)
+			presupuesto.getProveedores()[0].setId(0);
+		else
+			presupuesto.getProveedores()[0].setId((int) emailProveedores[pos][4]);
+		}
+
+	public boolean setGuardarSolicitudCotizacion() {
+
+		if(asunto.length() < 5) {
+			
+			msgError = "Falta completar el asunto del email.";
+			return false;
+		}
+
+		if(destinatario.length() < 6) {
+			
+			msgError = "Falta completar el campo destinatario con la dirección de email.";
+			return false;
+		}
+		
+		if(presupuesto.getProveedores()[0].getId() == 0) {
+			
+			msgError = "Solo puede enviar email a destinatarios que previamente estén cargados.";
+			return false;
+		}
+		msgError = "Error en el formato del email.";
+		
+		if(!destinatario.contains("@") || destinatario.contains(" "))			
+			return false;
+		String partes[] = destinatario.split("@");
+		
+		try {
+			
+			if(partes[1].length() < 5 || !partes[1].contains("."))	
+				return false;
+		} catch(Exception e) {
+
+			return false;
+		}
+
+		if(mensaje.length() < 5) {
+			
+			msgError = "El mensaje para el proveedor está vacío.";
+			return false;
+		}
+		presupuesto.setInsumos(insumosSeleccionados);
+		presupuesto.setIdPedido(pedidoInsumo.getIdCompra());
+		insumosDAO = new InsumosMySQL();
+		presupuesto.setIdPresupuesto(insumosDAO.setPedidoPresupuesto(presupuesto));
+
+		if(presupuesto.getIdPresupuesto() == 0) {
+			
+			msgError = "Error al guardar el pedido de cotización en la base de datos.";
+			return false;			
+		}
+		setCuerpoEmail();
+		return true;
+	}
+	
+	public void setCuerpoEmail() {
+		
+		cuerpoEmail = mensaje + "\n\nSolicitud cotización nro : " + presupuesto.getIdPresupuesto() +"\n\nElementos a cotizar:\n\n";	
+		cuerpoEmail += "Cantidad - Nombre - Descripción\n";
+				
+		for(int i = 0; i < insumosSeleccionados.length; i++) {
+			
+			cuerpoEmail += ((i + 1) + ") " + insumosSeleccionados[i].getCantSolicitada() 
+							+ " - " +  insumosSeleccionados[i].getNombre() 
+							+ " - " + insumosSeleccionados[i].getDescripcion() + "\n");
+		}
+	}
+		
+	public boolean enviarEmail() {
+		
+		EmailSenderService emailService = new EmailSenderService();
+		
+		if(!emailService.mandarCorreo(destinatario, asunto, cuerpoEmail)) {
+			
+			msgError = "Error en el emvío del email.";
+			return false;
+		}
+		msgError = "Pedido de cotización enviado.";	
+		return true;
+	}
+	
+	public DefaultTableModel getProveedoresCotización() {
+		
+		if(presupuesto == null)
+			presupuesto = new Presupuesto();
+		presupuesto.setIdPedido(pedidoInsumo.getIdCompra());
+		ProveedoresDAO proveedoresDAO = new ProveedoresMySQL();
+		presupuesto.setProveedores(proveedoresDAO.getProveedoresPresupuesto(pedidoInsumo.getIdCompra()));
+		String titulo[] = new String[] {"ID","Nombre","CUIT","Dirección"};
+		Object tabla[][] = new Object[presupuesto.getProveedores().length][4];
+		
+		for(int i = 0; i < presupuesto.getProveedores().length; i++) {
+			
+			tabla[i][0] = presupuesto.getProveedores()[i].getId();
+			tabla[i][1] = presupuesto.getProveedores()[i].getNombre();
+			tabla[i][2] = presupuesto.getProveedores()[i].getCuit();
+			tabla[i][3] = presupuesto.getProveedores()[i].getDireccion();
+		}
+		DefaultTableModel respuesta = new DefaultTableModel(tabla, titulo);
+		return respuesta;
+	}
+	
+	public boolean isFechaOK(String valor) {
+		
+		String partes[] = null;
+		msgError = "El formato de la fecha es incorrecto, debe ser DD/MM/AAAA";
+		
+		try {
+
+			partes = valor.split(valor.contains("/")?"/":"-");
+			
+			for(int i = 0; i < 3; i++) {
+				
+				if(!isNumerico(partes[i])) 
+					return false;
+			}
+			
+			if(Integer.parseInt(partes[0]) < 1 || Integer.parseInt(partes[0]) > 31)
+				return false;
+			
+			if(Integer.parseInt(partes[1]) < 1 || Integer.parseInt(partes[1]) > 12)
+				return false;
+			
+			if(Integer.parseInt(partes[2]) < 2023)
+				return false;
+		} catch(Exception e) {
+			
+			return false;
+		}
+		presupuesto.setValidez(partes[2] + "/" + partes[1] + "/" + partes[0]);
+		msgError = "";
+		return true;
+	}
+
+	public DefaultTableModel getTablaInsumos(int pos) {
+		
+		insumosDAO = new InsumosMySQL();
+		insumosDAO.getPedidoPresupuesto(presupuesto, pos);
+		String titulo[] = new String[] {"ID", "Cant.", "Nombre", "Descripción", "Precio"};
+		String tabla[][] = new String[presupuesto.getInsumos().length][5];
+		
+		for(int i = 0; i < presupuesto.getInsumos().length; i++) {
+			
+			tabla[i][0] = presupuesto.getInsumos()[i].getId() + "";
+			tabla[i][1] = presupuesto.getInsumos()[i].getCantSolicitada() + "";
+			tabla[i][2] = presupuesto.getInsumos()[i].getNombre();
+			tabla[i][3] = presupuesto.getInsumos()[i].getDescripcion();
+			tabla[i][4] = String.format("%.2f", presupuesto.getInsumos()[i].getPrecio()).replace(",", ".");
+		}
+		DefaultTableModel respuesta = new DefaultTableModel(tabla, titulo){
+
+			private static final long serialVersionUID = 1L;
+			public boolean isCellEditable(int row, int column) {
+				
+				return column > 3? true: false;
+			}
+		};
+		return respuesta;
+	}
+
+	public boolean setGuardarCotización(JTable valores) {
+
+		for(int i = 0; i < valores.getRowCount(); i++) {
+
+			if(!valores.getValueAt(i, 4).equals("")) {	
+					
+				try {
+					
+					float temp = Float.parseFloat((String)valores.getValueAt(i, 4));
+					presupuesto.getInsumos()[i].setPrecio(temp);
+				} catch(Exception e) {
+
+					msgError = "El Campo precio debe ser numérico";
+					return false;
+				}
+			} else {
+				
+				presupuesto.getInsumos()[i].setPrecio(0);
+			}
+		}
+		
+		if(!insumosDAO.setPrecios(presupuesto)) {
+			
+			msgError = "Hubo un problema al intentar guardar la información en la base de datos.";
+			return false; 
+		}
+		msgError = "La información se guardó correctamente.";
+		return true; 
+	}
+
+	public DefaultTableModel getStockInsumos(String filtro) {
+		
+		insumosDAO = new InsumosMySQL();
+		String titulo[] = new String[] {"ID", "Nombre", "Descripción", "Presentacíon", "Cant."};
+		insumos = insumosDAO.listado(filtro);
+		
+		Object tabla[][] = new Object[insumos.length][5];
+		
+		for(int i = 0; i < insumos.length; i++) {
+			
+			tabla[i][0] = insumos[i].getId();
+			tabla[i][1] = insumos[i].getNombre();
+			tabla[i][2] = insumos[i].getDescripcion();
+			tabla[i][3] = insumos[i].getPresentacion();
+			tabla[i][4] = insumos[i].getCant();
+		}
+		DefaultTableModel respuesta = new DefaultTableModel(tabla, titulo);
+		return respuesta;
+	}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	
+	
+	
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public String getMsgError() {
+		
+		return msgError;
+	}
+	
+	public String getId() {
+		
+		return insumo.getId() + "";
+	}
+	
+	public void setNombre(String nombre) {
+		
+		if(insumo == null)
+			insumo = new Insumo();
+		insumo.setNombre(nombre);
+	}
+	
+	public String getNombre() {
+		
+		return insumo.getNombre();
+	}
+	
+	public void setDescripción(String descripción) {
+		
+		insumo.setDescripcion(descripción);
+	}
+	
+	public String getDescripción() {
+		
+		return insumo.getDescripcion();
+	}
+	
+	public void setPresentación(String presentación) {
+		
+		insumo.setPresentacion(presentación);
+	}
+
+	public String getPresentación() {
+		
+		return insumo.getPresentacion();
+	}
+	
+	public void setEstado(int estado) {
+		
+		insumo.setEstado(estado);
+	}
+	
+	public void setSectorSolicitante(String sector) {
+		
+		if(pedidoInsumo == null)
+			pedidoInsumo = new PedidoInsumo();
+		pedidoInsumo.setSectorSolicitante(sector);
+	}
+
+	public void setIdSolicitante(int pos) {
+		
+		pedidoInsumo.setIdSolicitante(listaEmpleados[pos].getLegajo());
+	}
+
+	public String getFechaSolicitud() {
+		
+		return pedidoInsumo.getFechaSolicitud();
+	}
+
+	public String getSectorSolicitante() {
+		
+		return pedidoInsumo.getSectorSolicitante();
+	}
+	
+	public String getNombreSolicitante() {
+		
+		return pedidoInsumo.getNombreSolicitante();
+	}
+
+	public String getEmailSeleccionado(int pos) {
+		
+		return (String) emailProveedores[pos][3];
+	}
+
+	public void setAsunto(String asunto) {
+		
+		this.asunto = asunto;
+	}
+	
+	public void setMensaje(String mensaje) {
+		
+		this.mensaje = mensaje;
+	}
+
+	
+	
+
+
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	public DefaultTableModel getElementosAutorizados() {
 		
@@ -137,76 +711,9 @@ public class DtosInsumos {
 		return respuesta;
 	}
 
-	public void getInfoPedido() {
-		
-		insumosDAO = new InsumosMySQL();
-		tablaSeleccionados = insumosDAO.getPedido(id);
-		cantElementos = tablaSeleccionados.length;
-		idSolicitante = Integer.parseInt(insumosDAO.getIdSolicitante());
-		nombre = insumosDAO.getNombreSolicitante();
-		sectorSolicitante = insumosDAO.getSectorSolicitante();
-		fechaSolicitud = insumosDAO.getFechaSolicitud();
-	}
-	
-
-	public void setCuerpoEmail() {
-		
-		cuerpoEmail = mensaje + "\n\nSolicitud cotización nro : " + idCotización +"\n\nElementos a cotizar:\n\n";	
-		
-		for(int i = 0; i < tablaSeleccionados.length; i++) {
-			
-			cuerpoEmail += ((i + 1) + ") " + tablaSeleccionados[i][0] + " - " +  tablaSeleccionados[i][1] + " - " + tablaSeleccionados[i][2] + "\n");
-		}
-	}
-	
 	public void setEmail(String email) {
 		
 		destinatario = email;
-	}
-	
-	public void setIdProveedor(int pos) {
-		
-		if(pos == -1)
-			idProveedor = null;
-		else
-			idProveedor = tabla[pos][4];
-	}
-	
-	public void setEstado(String estado) {
-		
-		this.estado = estado;
-	}
-	
-	public void setAsunto(String asunto) {
-		
-		this.asunto = asunto;
-	}
-	
-	public void setNombre(String nombre) {
-		
-		DtosInsumos.nombre = nombre;
-	}
-	
-	public void setIdSolicitante(int pos) {
-		
-		idSolicitante = Integer.parseInt(respuesta[pos][1]);
-	}
-	
-	public void setIdProveedor(String id) {
-		
-		idProveedor = id;
-	}
-	
-	public void getInfoPedidoPresupuesto() {
-		
-		insumosDAO = new InsumosMySQL();
-		tablaSeleccionados = insumosDAO.getPedidoPresupuesto(id, idProveedor);
-		cantElementos = tablaSeleccionados.length;
-	}
-	
-	public void setMensaje(String mensaje) {
-		
-		this.mensaje = mensaje;
 	}
 
 	public void setIdOrdenCompra(int posición) {
@@ -214,148 +721,11 @@ public class DtosInsumos {
 		idOrdenCompra = tabla[posición][0];
 	}
 
-	public void setElementoSeleccionado(int pos) {
-		
-		id = tabla[pos][0];
-		nombre = tabla[pos][1];
-		descripción = tabla[pos][2];
-		formato = tabla[pos][3];
-		
-		try {
-		
-			stock = Integer.parseInt(tabla[pos][4]);
-		} catch(Exception e) {
-
-			stock = 0;
-		}
-		estado = "1";
-	}
-	
-	public void setDescripción(String descripción) {
-		
-		DtosInsumos.descripción = descripción;
-	}
-	
-	public void setSectorSolicitante(String sector) {
-		
-		sectorSolicitante = sector;
-	}
-	
-	public void setPresentación(String presentación) {
-		
-		DtosInsumos.formato = presentación;
-	}
-	
 	public void setIdPresupuesto(String idPresupuesto) {
 		
 		this.idPresupuesto = idPresupuesto;
 	}
-	
-	public void actualizarLista(char operación, int pos, String cantidad) {
-		
-		String tablaTemp[][] = null;
-		int i = 0;
-		
-		if(operación == '+') {
-			
-			cantElementos++;
-			
-			if(tablaSeleccionados != null) {
-				
-				tablaTemp = tablaSeleccionados.clone();
-				tablaSeleccionados = new String[cantElementos][5];
-				
-				while(i < tablaTemp.length) {
-					
-					tablaSeleccionados[i][0] = tablaTemp[i][0];
-					tablaSeleccionados[i][1] = tablaTemp[i][1];
-					tablaSeleccionados[i][2] = tablaTemp[i][2];
-					tablaSeleccionados[i][3] = tablaTemp[i][3];
-					tablaSeleccionados[i][4] = tablaTemp[i][4];
-					i++;
-				}
-			} else {
-				
-				tablaSeleccionados = new String[cantElementos][5];
-			}
-			tablaSeleccionados[i][0] = isNumerico(cantidad)?cantidad:"1";
-			tablaSeleccionados[i][1] = tabla[pos][1];
-			tablaSeleccionados[i][2] = tabla[pos][2];
-			tablaSeleccionados[i][3] = tabla[pos][3];
-			tablaSeleccionados[i][4] = tabla[pos][0];
-			return;
-		}
-		
-		if(operación == '-') {
-			
-			if(cantElementos > 0) {
-				
-				cantElementos--;
 
-				if(cantElementos < 1) {
-					
-					tablaSeleccionados = null;
-					cantElementos = 0;
-					return;
-				}				
-				int e = 0;
-				tablaTemp = tablaSeleccionados.clone();
-				tablaSeleccionados = new String[cantElementos][5];
-				
-				while(e < tablaTemp.length) {
-					
-					if(e != pos) {
-						
-						tablaSeleccionados[i][0] = tablaTemp[e][0];
-						tablaSeleccionados[i][1] = tablaTemp[e][1];
-						tablaSeleccionados[i][2] = tablaTemp[e][2];
-						tablaSeleccionados[i][3] = tablaTemp[e][3];
-						tablaSeleccionados[i][4] = tablaTemp[e][4];
-						i++;
-					}
-					e++;
-				}
-			}
-		}
-	}
-	
-	public boolean enviarEmail() {
-		
-		EmailSenderService emailService = new EmailSenderService();
-		
-		if(!emailService.mandarCorreo(destinatario, asunto, cuerpoEmail)) {
-			
-			msgError = "Error en el emvío del email.";
-			return false;
-		}
-		msgError = "Pedido de cotización enviado.";	
-		return true;
-	}
-	
-	public boolean setGuardarNuevo() {
-		
-		boolean bandera;
-		insumosDAO = new InsumosMySQL();
-		bandera = insumosDAO.setInsumo(nombre, descripción, formato);
-		ResetearDatos();
-		return bandera;
-	}
-	
-	public boolean setActualizarInfo() {
-		
-		insumosDAO = new InsumosMySQL();
-		boolean bandera;
-		bandera = insumosDAO.setActualizarInsumo(id, nombre, descripción, formato, estado);
-		ResetearDatos();
-		return bandera;
-	}
-	
-	public boolean setEliminarPedido() {
-		
-		msgError = "Error en la base de datos al intentar borrar el pedido";
-		return insumosDAO.setEliminarPedido(id);
-	}
-	
 	public boolean setAprobarCotización() {
 		
 		OperadorSistema operador = new OperadorSistema();
@@ -372,134 +742,6 @@ public class DtosInsumos {
 		
 		insumosDAO = new InsumosMySQL();
 		return insumosDAO.setActualizarStock(id, stock + nuevoStock);
-	}
-	
-	public boolean isFechaOK(String valor) {
-		
-		String partes[] = null;
-		msgError = "El formato de la fecha es incorrecto, debe ser DD/MM/AAAA";
-		
-		try {
-
-			partes = valor.split(valor.contains("/")?"/":"-");
-			
-			for(int i = 0; i < 3; i++) {
-				
-				if(!isNumerico(partes[i])) 
-					return false;
-			}
-			
-			if(Integer.parseInt(partes[0]) < 1 || Integer.parseInt(partes[0]) > 31)
-				return false;
-			
-			if(Integer.parseInt(partes[1]) < 1 || Integer.parseInt(partes[1]) > 12)
-				return false;
-			
-			if(Integer.parseInt(partes[2]) < 2023)
-				return false;
-		} catch(Exception e) {
-			
-			return false;
-		}
-		fechaValidez = partes[2] + "/" + partes[1] + "/" + partes[0];
-		msgError = "";
-		return true;
-	}
-	
-	public boolean isCheckInfo(String operacion) {
-		
-		msgError = "";
-		
-		if(operacion.equals("ABML Insumo")) {
-			
-			if(nombre.length() < 5) {
-				
-				msgError = "El nombre no puede faltar ni ser demasiado corto.";
-				return false;
-			} else if(descripción.length() < 5) {
-				
-				msgError = "La descripción no puede faltar ni ser demasiado corto.";
-				return false;
-			} else if(formato.length() < 3) {
-				
-				msgError = "Por favor indique en qué formato viene el producto.";
-				return false;
-			}
-		} else {
-
-			for(int i = 0; i < tablaSeleccionados.length; i++) {
-		
-				if(!isNumerico(tablaSeleccionados[i][0])){
-					
-					msgError = "En la lista de elementos pedidos el valor de Cant. debe ser numérico.";
-					return false;	
-				} else if(Integer.parseInt(tablaSeleccionados[i][0]) < 1) {
-					
-					msgError = "En la lista de elementos pedidos el valor de Cant. debe ser mayor a cero.";
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-
-	public boolean setGuardarSolicitudCotizacion() {
-
-		if(asunto.length() < 5) {
-			
-			msgError = "Falta completar el asunto del email.";
-			return false;
-		}
-
-		if(destinatario.length() < 6) {
-			
-			msgError = "Falta completar el campo destinatario con la dirección de email.";
-			return false;
-		}
-		
-		if(idProveedor == null) {
-			
-			msgError = "Solo puede enviar email a destinatarios que previamente estén cargados.";
-			return false;
-		}
-		msgError = "Error en el formato del email.";
-		
-		if(!destinatario.contains("@") || destinatario.contains(" "))			
-			return false;
-		String partes[] = destinatario.split("@");
-		
-		try {
-			
-			if(partes[1].length() < 5 || !partes[1].contains("."))	
-				return false;
-		} catch(Exception e) {
-
-			return false;
-		}
-
-		if(mensaje.length() < 5) {
-			
-			msgError = "El mensaje para el proveedor está vacío.";
-			return false;
-		}
-		String idInsumos[] = new String[tablaSeleccionados.length];
-		
-		for(int i = 0; i < idInsumos.length; i++) {
-			
-			idInsumos[i] = tablaSeleccionados[i][4];
-		}
-		idCotización = insumosDAO.setPedidoPresupuesto(id, idProveedor, idInsumos);
-
-		if(idCotización == null) {
-			
-			msgError = "Error al guardar el pedido de cotización en la base de datos.";
-			return false;			
-		}
-		setCuerpoEmail();
-		
-		if(idCotización.equals(""))
-			msgError = "";
-		return true;
 	}
 
 	public boolean setStockAgregar(String aDescontar) {
@@ -546,160 +788,22 @@ public class DtosInsumos {
 		return true;
 	}
 
-	public boolean setGuardarPedido(JTable tablaPedido) {
-		
-		if(tablaPedido.getRowCount() < 1) {
-			
-			msgError = "La lista de pedido está vacía.";
-			return false;	
-		}
-		
-		for(int i = 0; i < tablaPedido.getRowCount(); i++) {
-			
-			tablaSeleccionados[i][0] = (String)tablaPedido.getValueAt(i, 0);
-		}
-		
-		if(!isCheckInfo("Pedido insumos"))
-			return false;
-		msgError = "Error al intentar guardar en la base de datos.";
-		return insumosDAO.setListadoPedido(sectorSolicitante, idSolicitante, tablaSeleccionados);
-	}
-	
-	public boolean setGuardarCotización(JTable valores) {
-
-		for(int i = 0; i < valores.getRowCount(); i++) {
-			
-			tablaSeleccionados[i][4] = (valores.getValueAt(i, 4) == null)?"":(String)valores.getValueAt(i, 4);
-
-			if(!tablaSeleccionados[i][4].equals("")) {	
-				
-				if(!isFloat(tablaSeleccionados[i][4])) {
-					
-					msgError = "El Campo precio debe ser numérico";
-					return false;
-				}
-			}
-		}
-		
-		if(!insumosDAO.setPrecios(tablaSeleccionados, fechaValidez)) {
-			
-			msgError = "Hubo un problema al intentar guardar la información en la base de datos.";
-			return false; 
-		}
-		msgError = "La información se guardó correctamente.";
-		return true; 
-	}
-	
-	public boolean setActualizarPedido(JTable tablaPedido) {
-		
-		if(tablaPedido.getRowCount() < 1) {
-			
-			msgError = "La lista de pedido está vacía.";
-			return false;	
-		}
-		
-		for(int i = 0; i < tablaPedido.getRowCount(); i++) {
-			
-			tablaSeleccionados[i][0] = (String)tablaPedido.getValueAt(i, 0);
-		}
-		
-		if(!isCheckInfo("Pedido insumos"))
-			return false;
-		msgError = "Error al intentar guardar en la base de datos.";
-		return insumosDAO.setActualizarPedido(id, tablaSeleccionados);
-	}
-	
-	public String getId() {
-		
-		return id;
-	}
-	
 	public String getStock() {
 		
 		return stock + "";
-	}
-	
-	public String getNombre() {
-		
-		return nombre;
-	}
-	
-	public String getMsgError() {
-		
-		return msgError;
 	}
 	
 	public String getCuerpoEmail() {
 		
 		return cuerpoEmail;
 	}
-	
-	public String getDescripción() {
-		
-		return descripción;
-	}
-	
-	public String getPresentación() {
-		
-		return formato;
-	}
-	
-	public String getFechaSolicitud() {
-		
-		return fechaSolicitud;
-	}
-	
-	public String getSectorSolicitante() {
-		
-		return sectorSolicitante;
-	}
-	
-	public String getInfoInsumo(int pos) {
-		
-		return tabla[pos][1] + ", " + tabla[pos][2] + ", " + tabla[pos][3];
-	}
-	
-	public String [] getListaEmpleados() {
-		
-		EmpleadoMySQL empleadosDAO = new EmpleadoMySQL();
-		String listado[] = null;
-		respuesta = empleadosDAO.getEmpleadosActivos();
-		
-		if(respuesta != null)
-			listado = new String[respuesta.length];
-		
-		for(int i = 0; i < respuesta.length; i++) {
-			
-			listado[i] = respuesta[i][0];
-		}
-		return listado;
-	}
-	
-	public String getEmailSeleccionado(int pos) {
-		
-		return tabla[pos][3];
-	}
-	
+
 	public DefaultTableModel getTablaOrdenes() {
 		
 		insumosDAO = new InsumosMySQL();
 		String titulo[] = new String[] {"ID", "Fecha", "Sector", "Solicitante", "Autorizado"};
 		tabla = insumosDAO.getListadoOrdenesCompra(id, "1");
 		DefaultTableModel respuesta = new DefaultTableModel(tabla, titulo);
-		return respuesta;
-	}
-
-	public DefaultTableModel getTablaInsumos() {
-		
-		String titulo[] = new String[] {"ID", "Cant.", "Nombre", "Descripción", "Precio"};
-		DefaultTableModel respuesta = new DefaultTableModel(tablaSeleccionados, titulo){
-
-			private static final long serialVersionUID = 1L;
-			public boolean isCellEditable(int row, int column) {
-				
-				return column > 3? true: false;
-			}
-		};
 		return respuesta;
 	}
 	
@@ -732,78 +836,7 @@ public class DtosInsumos {
 		DefaultTableModel respuesta = new DefaultTableModel(tablaSeleccionados, titulo);
 		return respuesta;
 	}
-	
-	public DefaultTableModel getTablaSeleccionados() {
-		
-		String titulo[] = new String[] {"Cant.", "Nombre", "Descripción", "Presentación"};
-		DefaultTableModel respuesta = new DefaultTableModel(tablaSeleccionados, titulo){
 
-			private static final long serialVersionUID = 1L;
-			public boolean isCellEditable(int row, int column) {
-				
-				return column > 0? false: true;
-			}
-		};
-		return respuesta;
-	}
-	
-	public DefaultTableModel getProveedoresCotización() {
-		
-		insumosDAO = new InsumosMySQL();
-		String titulo[] = new String[] {"ID","Nombre","CUIT","Dirección"};
-		tabla = insumosDAO.getProveedoresPresupuesto(id);
-		DefaultTableModel respuesta = new DefaultTableModel(tabla, titulo);
-		return respuesta;
-	}
-	
-	public DefaultTableModel getTablaInsumos(String filtro) {
-		
-		insumosDAO = new InsumosMySQL();
-		String titulo[] = new String[] {"ID", "Nombre", "Descripción", "Presentacíon"};
-		tabla = insumosDAO.getListadoInsumos(filtro);
-		DefaultTableModel respuesta = new DefaultTableModel(tabla, titulo);
-		return respuesta;
-	}
-
-	public DefaultTableModel getStockInsumos(String filtro) {
-		
-		insumosDAO = new InsumosMySQL();
-		String titulo[] = new String[] {"ID", "Nombre", "Descripción", "Presentacíon", "Cant."};
-		tabla = insumosDAO.getListadoInsumos(filtro);
-		DefaultTableModel respuesta = new DefaultTableModel(tabla, titulo);
-		return respuesta;
-	}
-	
-	public DefaultTableModel getListadoProveedores(String filtro) {
-		
-		ProveedoresDAO proveedoresDAO = new ProveedoresDAO();
-		String titulo[] = new String[] {"Proveedor", "Sector", "Contacto", "Email"};
-		tabla = proveedoresDAO.getListadoEmail(filtro);
-		DefaultTableModel respuesta = new DefaultTableModel(tabla, titulo);
-		return respuesta;
-	}
-	
-	public DefaultTableModel getTablaPedidos(String filtro, int estado) {
-		
-		insumosDAO = new InsumosMySQL();
-		String titulo[] = new String[] {"ID", "Fecha", "Sector", "Solicitante", "Elementos pedidos"};
-		tabla = insumosDAO.getListadoPedidos(estado, filtro);
-		DefaultTableModel respuesta = new DefaultTableModel(tabla, titulo);
-		return respuesta;
-	}
-
-	private boolean isFloat(String valor) {
-		
-		try {
-			
-			Float.parseFloat(valor);
-		} catch(Exception e) {
-			
-			return false;
-		}
-		return true;
-	}
-	
 	private boolean isNumerico(String valor) {
 		
 		try {
@@ -814,14 +847,5 @@ public class DtosInsumos {
 			return false;
 		}
 		return true;
-	}
-	
-	private void ResetearDatos() {
-		
-		id = "";
-		nombre = "";
-		descripción = "";
-		formato = "";
-		msgError = "";
 	}
 }

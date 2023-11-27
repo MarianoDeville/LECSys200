@@ -7,9 +7,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import javax.swing.JOptionPane;
-
 import modelo.DtosInsumos;
 import vista.ListadoDoble2;
 
@@ -80,7 +78,6 @@ public class CtrlEnviarPedido implements ActionListener {
 		ventana.lblTxtArea.setVisible(true);
 		ventana.lblTxtArea.setText("Mensage:");
 		ventana.btnGuardar.setText("Enviar");
-		dtosInsumos.getInfoPedido();
 		ventana.tabla2.setModel(dtosInsumos.getTablaSeleccionados());
 		ventana.tabla2.getColumnModel().getColumn(0).setMaxWidth(40);
 		ventana.tabla2.setEnabled(false);

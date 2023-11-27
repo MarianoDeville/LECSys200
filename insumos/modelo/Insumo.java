@@ -1,6 +1,6 @@
 package modelo;
 
-public class Insumos {
+public class Insumo {
 
 	private int id;
 	private String nombre;
@@ -8,7 +8,24 @@ public class Insumos {
 	private String presentacion;
 	private int estado;
 	private int cant;
-	private PedidoInsumo pedido[];
+	private int cantSolicitada;
+	private float precio;
+	
+	public Insumo() {
+		
+	}
+	
+	public Insumo(Insumo insumo) {
+	
+		id = insumo.getId();
+		nombre = insumo.getNombre();
+		descripcion = insumo.getDescripcion();
+		presentacion = insumo.getPresentacion();
+		estado = insumo.getEstado();
+		cant = insumo.getCant();
+		cantSolicitada = insumo.getCantSolicitada();
+		precio = insumo.getPrecio();
+	}
 	
 	public int getId() {
 		
@@ -70,13 +87,23 @@ public class Insumos {
 		this.cant = cant;
 	}
 
-	public PedidoInsumo[] getPedido() {
+	public int getCantSolicitada() {
 		
-		return pedido;
+		return cantSolicitada;
 	}
 
-	public void setPedido(PedidoInsumo pedido[]) {
+	public void setCantSolicitada(int cantSolicitada) {
 		
-		this.pedido = pedido;
+		this.cantSolicitada = cantSolicitada;
+	}
+
+	public float getPrecio() {
+		
+		return precio;
+	}
+
+	public void setPrecio(float precio) {
+		
+		this.precio = precio;
 	}
 }

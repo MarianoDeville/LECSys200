@@ -8,7 +8,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JOptionPane;
-
 import modelo.DtosInsumos;
 import vista.ListadoDoble2;
 
@@ -111,10 +110,8 @@ public class CtrlCargarPresupuestos implements ActionListener {
 
 	private void elementoSeleccionado() {
 
-		dtosInsumos.setIdProveedor((String)ventana.tabla1.getValueAt(elemento, 0));
-		dtosInsumos.getInfoPedidoPresupuesto();
 		ventana.tabla2.setEnabled(false);
-		ventana.tabla2.setModel(dtosInsumos.getTablaInsumos());
+		ventana.tabla2.setModel(dtosInsumos.getTablaInsumos(elemento));
 		ventana.tabla2.getColumnModel().getColumn(0).setMinWidth(20);
 		ventana.tabla2.getColumnModel().getColumn(0).setMaxWidth(30);
 		ventana.tabla2.getColumnModel().getColumn(1).setMinWidth(30);

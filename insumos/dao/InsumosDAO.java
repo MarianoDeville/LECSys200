@@ -1,25 +1,21 @@
 package dao;
 
-import modelo.Insumos;
+import modelo.Insumo;
+import modelo.PedidoInsumo;
+import modelo.Presupuesto;
 
 public interface InsumosDAO {
 
-	public Insumos[] getHistoriaCompras(int idInsumo);
-	public boolean setAgregarStock(String idOrdenCompra[]);
-	public String [][] getOrdenCompra(String idOrdenCompra);
-	public String [][] getListadoOrdenesCompra(String idInsumo, String estado);
-	public boolean setActualizarStock(String idInsumo, int cantidad);
-	public String[][] getTablaCotizaciones(String idPedidoCompra, String idInsumos[]);
-	public boolean setPrecios(String tabla[][], String validez);
-	public String[][] getPedidoPresupuesto(String idPedidoCompra, String idProveedor);
-	public String [][] getProveedoresPresupuesto(String idPedidoCompra);
-	public String setPedidoPresupuesto(String idPedidoCompra, String idProveedor, String idInsumos[]);
-	public boolean setEliminarPedido(String idPedidoCompra);
-	public boolean setActualizarPedido(String idPedidoCompra, String tablaPedidos[][]);
-	public String [][] getPedido(String idPedidoCompra);
-	public boolean setListadoPedido(String sector, int idSolicitante, String tablaPedidos[][]);
-	public String [][] getListadoPedidos(int estado, String sector);
-	public boolean setActualizarInsumo(String id, String nombre, String descrip, String formato, String estado);
-	public boolean setInsumo(String nombre, String descrip, String formato);
-	public String [][] getListadoInsumos(String filtrado);
+	public boolean nuevo(Insumo insumo);
+	public boolean update(Insumo insumo);
+	public Insumo [] listado(String filtrado);
+	public PedidoInsumo [] getPedidos(int estado);
+	public boolean nuevoPedido(PedidoInsumo solicitud);
+	public boolean updatePedido(PedidoInsumo solicitud);
+	public int setPedidoPresupuesto(Presupuesto presupuesto);
+	public void getPedidoPresupuesto(Presupuesto presupuesto, int proveedor);
+	public boolean setPrecios(Presupuesto presupuesto);
+	
+	
+
 }

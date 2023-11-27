@@ -8,7 +8,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.print.PrinterException;
 import javax.swing.JOptionPane;
-
 import modelo.DtosInsumos;
 import vista.ABML;
 import vista.NuevoSimple;
@@ -125,8 +124,11 @@ public class CtrlStock implements ActionListener {
 			JOptionPane.showMessageDialog(null, "Debe seleccionar un elemento para cambiar el stock.");
 			return;
 		}
-		dtosInsumos.setElementoSeleccionado(elemento);
-		ventanaCambiarStock = new NuevoSimple("Baja de stock");
+		
+		if(ventanaCambiarStock != null && ventanaCambiarStock.isVisible())
+			ventanaCambiarStock.dispose();
+		dtosInsumos.setInsumoSeleccionado(elemento);
+		ventanaCambiarStock = new NuevoSimple("Baja de stock", ventana.getX(), ventana.getY());
 		CtrlBajaInsumo ctrlBajaInsumo = new CtrlBajaInsumo(ventanaCambiarStock);
 		ctrlBajaInsumo.iniciar();
 		ventanaCambiarStock.btnVolver.addActionListener(this);		
@@ -140,8 +142,11 @@ public class CtrlStock implements ActionListener {
 			JOptionPane.showMessageDialog(null, "Debe seleccionar un elemento para cambiar el stock.");
 			return;
 		}
-		dtosInsumos.setElementoSeleccionado(elemento);
-		ventanaCargarStoc = new NuevoSimple("Ingreso de productos al stock.");
+		
+		if(ventanaCargarStoc != null && ventanaCargarStoc.isVisible())
+			ventanaCargarStoc.dispose();
+		dtosInsumos.setInsumoSeleccionado(elemento);
+		ventanaCargarStoc = new NuevoSimple("Ingreso de productos al stock.", ventana.getX(), ventana.getY());
 		CtrlCargarInsumo ctrlCargarCompra = new CtrlCargarInsumo(ventanaCargarStoc);
 		ctrlCargarCompra.iniciar();
 		ventanaCargarStoc.btnVolver.addActionListener(this);

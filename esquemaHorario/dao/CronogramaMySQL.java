@@ -22,14 +22,14 @@ public class CronogramaMySQL extends Conexion implements CronogramaDAO{
 		if(legajo == 0)
 			return null;
 		boolean matrizDiasHorarios[][] = null;
-		String comandoStatement = "SELECT día, HOUR(hora), MINUTE(hora), duración, granularidad "
-								+ "FROM `lecsys2.00`.horarios "
-								+ "WHERE idPertenece =  ?";
+		String cmsStm = "SELECT día, HOUR(hora), MINUTE(hora), duración, granularidad "
+						+ "FROM `lecsys2.00`.horarios "
+						+ "WHERE idPertenece =  ?";
 
 		try {
 
 			this.conectar();
-			PreparedStatement ppstm = this.conexion.prepareStatement(comandoStatement,ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			PreparedStatement ppstm = this.conexion.prepareStatement(cmsStm,ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			ppstm.setInt(1, legajo);
 			ResultSet rs = ppstm.executeQuery();
 
@@ -69,7 +69,7 @@ public class CronogramaMySQL extends Conexion implements CronogramaDAO{
 			
 			CtrlLogErrores.guardarError(e.getMessage());
 			CtrlLogErrores.guardarError("CronogramaMySQL, getTablaSemanal()");
-			CtrlLogErrores.guardarError(comandoStatement);
+			CtrlLogErrores.guardarError(cmsStm);
 		} finally {
 			
 			this.cerrar();
@@ -83,17 +83,19 @@ public class CronogramaMySQL extends Conexion implements CronogramaDAO{
 		boolean bandera = true;
 		long tiempo = System.currentTimeMillis();
 		DtosActividad dtosActividad = new DtosActividad();
-
+		String cmsStm = "DELETE FROM `lecsys2.00`.horarios WHERE idPertenece = ?";
+				
 		try {
 			
 			this.conectar();
-			PreparedStatement stm = this.conexion.prepareStatement("DELETE FROM `lecsys2.00`.horarios WHERE idPertenece = ?");
+			PreparedStatement stm = this.conexion.prepareStatement(cmsStm);
 			stm.setInt(1, horarios[0].getIdPertenece());
 			stm.executeUpdate();
-
+			cmsStm = "INSERT INTO `lecsys2.00`.horarios (día, hora, duración, idPertenece, granularidad) VALUES (?, ?, ?, ?, ?)";
+			stm = this.conexion.prepareStatement(cmsStm);
+			
 			for(int i = 0 ; i < horarios.length ; i++) {
-				
-				stm = this.conexion.prepareStatement("INSERT INTO `lecsys2.00`.horarios (día, hora, duración, idPertenece, granularidad) VALUES (?, ?, ?, ?, ?)");
+								
 				stm.setInt(1, horarios[i].getDia());
 				stm.setString(2, horarios[i].getHora());
 				stm.setInt(3, horarios[i].getDuración());
@@ -106,6 +108,7 @@ public class CronogramaMySQL extends Conexion implements CronogramaDAO{
 			bandera = false;
 			CtrlLogErrores.guardarError(e.getMessage());
 			CtrlLogErrores.guardarError("CronogramaMySQL, setCronograma()");
+			CtrlLogErrores.guardarError(cmsStm);
 		} finally {
 			
 			this.cerrar();

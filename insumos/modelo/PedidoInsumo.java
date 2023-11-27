@@ -3,13 +3,27 @@ package modelo;
 public class PedidoInsumo {
 
 	private int idCompra;
-	private int cantSolicitada;
 	private int estado;
 	private String fechaSolicitud;
 	private int idSolicitante;
 	private String sectorSolicitante;
 	private String nombreSolicitante;
-	private CotizacionInsumo cotizacion[];
+	private Insumo insumos[];
+	
+	public PedidoInsumo() {
+		
+	}
+	
+	public PedidoInsumo(PedidoInsumo pedido) {
+	
+		idCompra = pedido.getIdCompra();
+		estado = pedido.getEstado();
+		fechaSolicitud = pedido.getFechaSolicitud();
+		idSolicitante = pedido.getIdSolicitante();
+		sectorSolicitante = pedido.getSectorSolicitante();
+		nombreSolicitante = pedido.getNombreSolicitante();
+		insumos = pedido.getInsumos();
+	}
 	
 	public int getIdCompra() {
 		
@@ -19,16 +33,6 @@ public class PedidoInsumo {
 	public void setIdCompra(int idCompra) {
 		
 		this.idCompra = idCompra;
-	}
-	
-	public int getCantSolicitada() {
-		
-		return cantSolicitada;
-	}
-	
-	public void setCantSolicitada(int cantSolicitada) {
-		
-		this.cantSolicitada = cantSolicitada;
 	}
 	
 	public int getEstado() {
@@ -81,13 +85,13 @@ public class PedidoInsumo {
 		this.nombreSolicitante = nombreSolicitante;
 	}
 
-	public CotizacionInsumo[] getCotizacion() {
+	public Insumo[] getInsumos() {
 		
-		return cotizacion;
+		return insumos;
 	}
 
-	public void setCotizacion(CotizacionInsumo cotizacion[]) {
+	public void setInsumos(Insumo insumos[]) {
 		
-		this.cotizacion = cotizacion;
-	}	
+		this.insumos = insumos;
+	}
 }

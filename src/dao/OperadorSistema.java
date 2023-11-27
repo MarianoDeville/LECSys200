@@ -196,30 +196,30 @@ public class OperadorSistema extends Conexion {
 				break;
 									// Permisos para Insumos.	///////////////////////////////////////////////
 			case "CtrlInsumos.iniciar":
-			case "InsumosDAO.getPedidoPresupuesto":
+			case "InsumosMySQL.getPedidoPresupuesto":
 			case "InsumosDAO.getListadoOrdenesCompra":
 			case "InsumosDAO.getHistoriaCompras":
 			case "InsumosDAO.getOrdenCompra":
 				bandera = checkLectura(5);
 				break;
 				
-			case "InsumosDAO.getListadoInsumos":
-			case "InsumosDAO.getListadoPedidos":
+			case "InsumosMySQL.listado":
+			case "InsumosMySQL.getPedidos":
 			case "InsumosDAO.getPedido":
 			case "InsumosDAO.getTablaCotizaciones":
 				bandera = checkLectura(1) | checkLectura(5);
 				break;	
 				
-			case "InsumosDAO.setInsumo":
-			case "InsumosDAO.setListadoPedido":
-			case "InsumosDAO.setPedidoPresupuesto":
-			case "InsumosDAO.getProveedoresPresupuesto":
-			case "InsumosDAO.setPrecios":
+			case "InsumosMySQL.nuevo":
+			case "InsumosMySQL.nuevoPedido":
+			case "InsumosMySQL.setPedidoPresupuesto":
+			case "ProveedoresMySQL.getProveedoresPresupuesto":
+			case "InsumosMySQL.setPrecios":
 				bandera = permisos[5][1];
 				break;	
 				
-			case "InsumosDAO.setActualizarInsumo":
-			case "InsumosDAO.setActualizarPedido":
+			case "InsumosMySQL.update":
+			case "InsumosMySQL.updatePedido":
 			case "InsumosDAO.setActualizarStock":
 				bandera = permisos[5][2];
 				break;	
@@ -260,7 +260,7 @@ public class OperadorSistema extends Conexion {
 				bandera = checkLectura(7);
 				break;
 				
-			case "ProveedoresDAO.getListadoEmail":
+			case "ProveedoresMySQL.getListadoEmail":
 				bandera = checkLectura(5) | checkLectura(7);
 				break;	
 				

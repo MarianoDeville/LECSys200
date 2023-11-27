@@ -8,12 +8,6 @@ public interface ProveedoresDAO {
 	public boolean setNuevo(Proveedor proveedor);
 	public boolean update(Proveedor proveedor);
 	public boolean isCUITExistente(String cuit);
-	
-	
-	public String[][] getListadoEmail(String filtrado);
-	
-	
-	
-//	public String [][] getListadoContactos(String idProveedor);
-	
+	public Object[][] getListadoEmail(String filtrado);
+	public Proveedor [] getProveedoresPresupuesto(int idPedidoCompra);
 }

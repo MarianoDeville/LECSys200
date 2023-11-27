@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
-
 import modelo.DtosInsumos;
 import vista.NuevoSimple;
 
@@ -55,9 +54,8 @@ public class CtrlEditarInsumo implements ActionListener {
 		dtosInsumos.setNombre(ventana.txtNombre.getText());
 		dtosInsumos.setDescripción(ventana.txtDescripción.getText());
 		dtosInsumos.setPresentación(ventana.txtFormato.getText());
-		dtosInsumos.setEstado("1");
 		
-		if(!dtosInsumos.isCheckInfo("ABML Insumo")) {
+		if(!dtosInsumos.isCheckInfo()) {
 			
 			ventana.lblMsgError.setForeground(Color.RED);
 			ventana.lblMsgError.setText(dtosInsumos.getMsgError());
@@ -77,10 +75,9 @@ public class CtrlEditarInsumo implements ActionListener {
 	
 	private void borrar() {
 		
-		
 		if(JOptionPane.showConfirmDialog(null, "¿Esta seguro de borrar el insumo?", "Alerta!", JOptionPane.YES_NO_OPTION) == 0) {
 			
-			dtosInsumos.setEstado("0");
+			dtosInsumos.setEstado(0);
 			
 			if(!dtosInsumos.setActualizarInfo()) {
 				

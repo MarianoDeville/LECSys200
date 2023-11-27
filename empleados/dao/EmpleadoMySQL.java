@@ -61,14 +61,13 @@ public class EmpleadoMySQL extends Conexion implements EmpleadoDAO{
 		boolean bandera = true;
 		long tiempo = System.currentTimeMillis();
 		DtosActividad dtosActividad = new DtosActividad();
-		String pprStm = "";
+		String cmdStm = "UPDATE `lecsys2.00`.persona SET "
+						+ "nombre = ?, apellido = ?, dirección = ?, fechaNacimiento = ?, teléfono = ?, email = ? "
+						+ "WHERE dni = ?";
 		try {
 			
 			this.conectar();
-			pprStm = "UPDATE `lecsys2.00`.persona SET "
-					 + "nombre = ?, apellido = ?, dirección = ?, fechaNacimiento = ?, teléfono = ?, email = ? "
-					 + "WHERE dni = ?";
-			PreparedStatement stm = this.conexion.prepareStatement(pprStm);
+			PreparedStatement stm = this.conexion.prepareStatement(cmdStm);
 			stm.setString(1, empleado.getNombre());
 			stm.setString(2, empleado.getApellido());
 			stm.setString(3, empleado.getDireccion());
@@ -77,10 +76,10 @@ public class EmpleadoMySQL extends Conexion implements EmpleadoDAO{
 			stm.setString(6, empleado.getEmail());
 			stm.setString(7, empleado.getDni());
 			stm.executeUpdate();
-			pprStm = "UPDATE `lecsys2.00`.empleados SET sueldo = ?, estado = ?, sector = ?, cargo = ?, tipo = ?, fechaBaja = "
+			cmdStm = "UPDATE `lecsys2.00`.empleados SET sueldo = ?, estado = ?, sector = ?, cargo = ?, tipo = ?, fechaBaja = "
 					+ (empleado.getFechaBaja() != null? "DATE(NOW()) ": "NULL ") 
 					+ "WHERE legajo = ?";
-			stm = this.conexion.prepareStatement(pprStm);
+			stm = this.conexion.prepareStatement(cmdStm);
 			stm.setFloat(1, empleado.getSalario());
 			stm.setInt(2, empleado.getEstado());
 			stm.setString(3, empleado.getSector());
@@ -93,7 +92,7 @@ public class EmpleadoMySQL extends Conexion implements EmpleadoDAO{
 			bandera = false;
 			CtrlLogErrores.guardarError(e.getMessage());
 			CtrlLogErrores.guardarError("EmpleadoMySQL, update()");
-			CtrlLogErrores.guardarError(pprStm);
+			CtrlLogErrores.guardarError(cmdStm);
 		} finally {
 			
 			this.cerrar();
@@ -107,14 +106,16 @@ public class EmpleadoMySQL extends Conexion implements EmpleadoDAO{
 	public Empleado getEmpleado(String legajo) {
 		
 		Empleado empleado = new Empleado();
+		String cmdStm = "SELECT persona.nombre, apellido, empleados.dni, dirección, "
+						+ "teléfono, email, sueldo, DATE_FORMAT(fechaNacimiento, '%d/%m/%Y') "
+						+ "FROM `lecsys2.00`.empleados "
+						+ "JOIN `lecsys2.00`.persona on empleados.dni = persona.dni "
+						+ "WHERE empleados.legajo = ?";
+				
 		try {
 			
 			this.conectar();
-			PreparedStatement stm = this.conexion.prepareStatement("SELECT persona.nombre, apellido, empleados.dni, dirección, "
-					+ "teléfono, email, sueldo, DATE_FORMAT(fechaNacimiento, '%d/%m/%Y') "
-					+ "FROM `lecsys2.00`.empleados "
-					+ "JOIN `lecsys2.00`.persona on empleados.dni = persona.dni "
-					+ "WHERE empleados.legajo = ?");
+			PreparedStatement stm = this.conexion.prepareStatement(cmdStm);
 			stm.setString(1, legajo);
 			ResultSet rs = stm.executeQuery();
 
@@ -160,18 +161,18 @@ public class EmpleadoMySQL extends Conexion implements EmpleadoDAO{
 				where = "WHERE (empleados.estado = " + (estado? "1":"0") + " AND sector = '" + tipo + "'" + where;
 
 		}
-		String comandoStatement = "SELECT empleados.legajo, persona.nombre, apellido, empleados.dni, dirección, teléfono, "
-								+ "email, sector, cargo , sueldo, tipo, estado, fechaNacimiento, fechaBaja "
-								+ "FROM `lecsys2.00`.empleados "
-				 				+ "JOIN `lecsys2.00`.persona on empleados.dni = persona.dni "
-				 				+ where
-				 				+ "ORDER BY apellido, nombre";
+		String cmdStm = "SELECT empleados.legajo, persona.nombre, apellido, empleados.dni, dirección, teléfono, "
+						+ "email, sector, cargo , sueldo, tipo, estado, fechaNacimiento, fechaBaja "
+						+ "FROM `lecsys2.00`.empleados "
+		 				+ "JOIN `lecsys2.00`.persona on empleados.dni = persona.dni "
+		 				+ where
+		 				+ "ORDER BY apellido, nombre";
 		
 		try {
 			
 			this.conectar();
 			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stm.executeQuery(comandoStatement);
+			ResultSet rs = stm.executeQuery(cmdStm);
 			rs.last();
 
 			empleados = new Empleado[rs.getRow()];
@@ -201,7 +202,7 @@ public class EmpleadoMySQL extends Conexion implements EmpleadoDAO{
 			
 			CtrlLogErrores.guardarError(e.getMessage());
 			CtrlLogErrores.guardarError("EmpleadoMySQL, getListado()");
-			CtrlLogErrores.guardarError(comandoStatement);
+			CtrlLogErrores.guardarError(cmdStm);
 		} finally {
 			
 			this.cerrar();

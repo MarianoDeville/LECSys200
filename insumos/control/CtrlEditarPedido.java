@@ -8,7 +8,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JOptionPane;
-
 import modelo.DtosInsumos;
 import vista.ListadoDoble;
 
@@ -18,8 +17,6 @@ public class CtrlEditarPedido implements ActionListener {
 	private DtosInsumos dtosInsumos;
 	private int elemento1;
 	private int elemento2;
-	private boolean bandera1;
-	private boolean bandera2;
 	
 	public CtrlEditarPedido(ListadoDoble vista) {
 		
@@ -42,8 +39,6 @@ public class CtrlEditarPedido implements ActionListener {
 		        if (e.getClickCount() == 1) {
 
 					elemento1 = ventana.tabla1.getSelectedRow();
-					bandera1 = true;
-					bandera2 = false;
 					ventana.lblMsgError.setForeground(Color.BLACK);
 					ventana.lblMsgError.setText(dtosInsumos.getInfoInsumo(elemento1));
 					ventana.tabla2.clearSelection();
@@ -55,8 +50,6 @@ public class CtrlEditarPedido implements ActionListener {
 		        if (e.getClickCount() == 1) {
 
 					elemento2 = ventana.tabla2.getSelectedRow();
-					bandera2 = true;
-					bandera1 = false;
 					ventana.lblMsgError.setText("");
 					ventana.tabla1.clearSelection();
 		        }
@@ -66,7 +59,6 @@ public class CtrlEditarPedido implements ActionListener {
 	
 	public void iniciar() {
 		
-		dtosInsumos.getInfoPedido();
 		ventana.txt1Tabla2.setVisible(false);
 		ventana.checkBoxActivos.setVisible(false);
 		ventana.txt1Tabla1.setEditable(false);
@@ -85,7 +77,7 @@ public class CtrlEditarPedido implements ActionListener {
 		ventana.txt1Tabla2.setColumns(6);
 		ventana.txt1Tabla2.setText(dtosInsumos.getFechaSolicitud());
 		ventana.txt1Tabla1.setColumns(15);
-		ventana.txt1Tabla1.setText(dtosInsumos.getNombre());
+		ventana.txt1Tabla1.setText(dtosInsumos.getNombreSolicitante());
 		ventana.txt2Tabla1.setColumns(15);
 		ventana.txt2Tabla1.setText(dtosInsumos.getSectorSolicitante());
 		actualizarTabla1();
@@ -125,7 +117,7 @@ public class CtrlEditarPedido implements ActionListener {
 		
 		ventana.tabla1.clearSelection();
 		ventana.tabla2.clearSelection();
-		if(!bandera1) {
+		if(elemento1 == -1) {
 			
 			ventana.lblMsgError.setForeground(Color.RED);
 			ventana.lblMsgError.setText("Debe seleccionar un elemento para agregar.");
@@ -139,7 +131,7 @@ public class CtrlEditarPedido implements ActionListener {
 		
 		ventana.tabla1.clearSelection();
 		ventana.tabla2.clearSelection();
-		if(!bandera2) {
+		if(elemento2 == -1) {
 
 			ventana.lblMsgError.setForeground(Color.RED);
 			ventana.lblMsgError.setText("Debe seleccionar un elemento para eliminar.");
@@ -157,8 +149,8 @@ public class CtrlEditarPedido implements ActionListener {
 		ventana.tabla1.clearSelection();
 		ventana.tabla2.clearSelection();
 		ventana.lblMsgError.setText("");
-		bandera1 = false;
-		bandera2 = false;
+		elemento1 = -1;
+		elemento2 = -1;
 	}
 	
 	private void actualizarTabla2() {
@@ -166,16 +158,13 @@ public class CtrlEditarPedido implements ActionListener {
 		ventana.lblMsgError.setText("");
 		ventana.tabla2.setModel(dtosInsumos.getTablaSeleccionados());
 		ventana.tabla2.getColumnModel().getColumn(0).setMaxWidth(40);
-		bandera1 = false;
-		bandera2 = false;
+		elemento1 = -1;
+		elemento2 = -1;
 	}
 	
 	private void guardar() {
 		
-		ventana.lblMsgError.setForeground(Color.BLACK);
-		ventana.lblMsgError.setText("Guardando....");
-		
-		if(!dtosInsumos.setActualizarPedido(ventana.tabla2)) {
+		if(!dtosInsumos.setActualizarPedido()) {
 			
 			ventana.lblMsgError.setForeground(Color.RED);
 			ventana.lblMsgError.setText(dtosInsumos.getMsgError());
@@ -193,7 +182,7 @@ public class CtrlEditarPedido implements ActionListener {
 		
 		if(JOptionPane.showConfirmDialog(null, "¿Esta seguro de borrar el pedido?", "Alerta!", JOptionPane.YES_NO_OPTION) == 0) {
 			
-			if(dtosInsumos.setEliminarPedido()) {
+			if(!dtosInsumos.setEliminarPedido()) {
 			
 				ventana.lblMsgError.setForeground(Color.RED);
 				ventana.lblMsgError.setText(dtosInsumos.getMsgError());

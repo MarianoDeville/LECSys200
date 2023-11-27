@@ -10,6 +10,7 @@ import modelo.Proveedor;
 
 public class ProveedoresMySQL extends Conexion implements ProveedoresDAO {
 
+	@Override
 	public Proveedor [] getListado(String filtrado, boolean estado) {
 
 		Proveedor proveedores[] = null;
@@ -74,6 +75,7 @@ public class ProveedoresMySQL extends Conexion implements ProveedoresDAO {
 		return proveedores;
 	}
 	
+	@Override
 	public boolean setNuevo(Proveedor proveedor) {
 
 		boolean bandera = true;
@@ -123,6 +125,7 @@ public class ProveedoresMySQL extends Conexion implements ProveedoresDAO {
 		return bandera;
 	}
 	
+	@Override
 	public boolean update(Proveedor proveedor) {
 
 		boolean bandera = true;
@@ -178,6 +181,7 @@ public class ProveedoresMySQL extends Conexion implements ProveedoresDAO {
 		return bandera;
 	}
 	
+	@Override
 	public boolean isCUITExistente(String cuit) {
 		
 		boolean bandera = false;
@@ -200,12 +204,13 @@ public class ProveedoresMySQL extends Conexion implements ProveedoresDAO {
 		return bandera;
 	}
 	
-	public String[][] getListadoEmail(String filtrado){
+	@Override
+	public Object[][] getListadoEmail(String filtrado){
 
-		String matriz[][] = null;
-		String cmdStm = "SELECT proveedores.nombre, sector, contacto.nombre, email, proveedores.idProveedores "
-						+ "FROM `lecsys2.00`.contacto "
-						+ "JOIN `lecsys2.00`.proveedores ON contacto.idProveedores = proveedores.IdProveedores "
+		Object matriz[][] = null;
+		String cmdStm = "SELECT proveedores.nombre,sector, contacto.nombre, email, proveedores.idProveedores "
+						+ "FROM contacto "
+						+ "JOIN proveedores ON contacto.idProveedores = proveedores.IdProveedores "
 		 				+ "WHERE (proveedores.estado = 1 AND (proveedores.nombre LIKE '%" + filtrado + "%' "
 		 											 + "OR contacto.nombre LIKE'%" + filtrado + "%' "
 		 											 + "OR email LIKE'%" + filtrado + "%')) "
@@ -217,7 +222,7 @@ public class ProveedoresMySQL extends Conexion implements ProveedoresDAO {
 			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			ResultSet rs = stm.executeQuery(cmdStm);
 			rs.last();	
-			matriz = new String[rs.getRow()][5];
+			matriz = new Object[rs.getRow()][5];
 			rs.beforeFirst();
 			int i=0;
 
@@ -227,19 +232,60 @@ public class ProveedoresMySQL extends Conexion implements ProveedoresDAO {
 				matriz[i][1] = rs.getString(2);
 				matriz[i][2] = rs.getString(3);
 				matriz[i][3] = rs.getString(4);
-				matriz[i][4] = rs.getString(5);
+				matriz[i][4] = rs.getInt(5);
 				i++;
 			}
 	
 		}catch (Exception e) {
 			
 			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("ProveedoresDAO, getListadoEmail()");
+			CtrlLogErrores.guardarError("ProveedoresMySQL, getListadoEmail()");
 			CtrlLogErrores.guardarError(cmdStm);
 		} finally {
 			
 			this.cerrar();
 		}
 		return matriz;
+	}
+
+	@Override
+	public Proveedor [] getProveedoresPresupuesto(int idPedidoCompra){
+		
+		Proveedor respuesta[] = null;
+		String cmdStm = "SELECT presupuesto.idProveedor, nombre, cuit, direccion "
+						+ "FROM `lecsys2.00`.presupuesto "
+						+ "JOIN `lecsys2.00`.proveedores ON presupuesto.idProveedor = proveedores.idProveedores "
+						+ "WHERE idPedidoCompra = ?";
+		
+		try {
+			
+			this.conectar();
+			PreparedStatement stm = this.conexion.prepareStatement(cmdStm, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			stm.setInt(1, idPedidoCompra);
+			ResultSet rs = stm.executeQuery();
+			rs.last();	
+			respuesta = new Proveedor[rs.getRow()];
+			rs.beforeFirst();
+			int i = 0;
+			
+			while(rs.next()) {
+				
+				respuesta[i] = new Proveedor();
+				respuesta[i].setId(rs.getInt(1));
+				respuesta[i].setNombre(rs.getString(2));
+				respuesta[i].setCuit(rs.getString(3));
+				respuesta[i].setDireccion(rs.getString(4));
+				i++;
+			}
+		} catch(Exception e) {
+			
+			CtrlLogErrores.guardarError(e.getMessage());
+			CtrlLogErrores.guardarError("ProveedoresMySQL, getProveedoresPresupuesto()");
+			CtrlLogErrores.guardarError(cmdStm);
+		} finally {
+			
+			this.cerrar();
+		}
+		return respuesta;
 	}
 }

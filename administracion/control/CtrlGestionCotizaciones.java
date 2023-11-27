@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JOptionPane;
-
 import modelo.DtosInsumos;
 import vista.ABML;
 import vista.Listado;
@@ -92,13 +91,15 @@ public class CtrlGestionCotizaciones implements ActionListener {
 			JOptionPane.showMessageDialog(null, "Debe seleccionar un elemento para editar.");
 			return;
 		}
-		dtosInsumos.setInsumoSeleccionado(elemento);
+		dtosInsumos.setPedidoSeleccionado(elemento);
 		elemento = -1;
 		cargarCotizaciones();
 	}
 	
 	private void cargarCotizaciones() {
 		
+		if(ventanaCotizacioes != null && ventanaCotizacioes.isVisible())
+			ventanaCotizacioes.dispose();
 		ventanaCotizacioes = new Listado("Revisión de cotizaciones", ventana.getX(), ventana.getY());
 		CtrlCotizaciones ctrlCotizaciones = new CtrlCotizaciones(ventanaCotizacioes);
 		ctrlCotizaciones.iniciar();

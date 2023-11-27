@@ -15,7 +15,6 @@ public interface InsumosDAO {
 	public int setPedidoPresupuesto(Presupuesto presupuesto);
 	public void getPedidoPresupuesto(Presupuesto presupuesto, int proveedor);
 	public boolean setPrecios(Presupuesto presupuesto);
-	
-	
-
+	public String [][] getHistoriaCompras(int idInsumo);
+	public Presupuesto [] getCotizaciones(PedidoInsumo pedido);
 }

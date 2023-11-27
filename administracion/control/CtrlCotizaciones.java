@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JOptionPane;
-
 import modelo.DtosInsumos;
 import vista.Listado;
 
@@ -73,9 +72,7 @@ public class CtrlCotizaciones implements ActionListener {
 			return;
 		}
 		
-		dtosInsumos.setIdPresupuesto((String)ventana.tabla.getValueAt(elemento, 0));
-		
-		if(dtosInsumos.setAprobarCotización())
+		if(dtosInsumos.setAprobarCotización(elemento))
 			ventana.btnImprimir.setEnabled(false);
 		
 		JOptionPane.showMessageDialog(null, dtosInsumos.getMsgError());	

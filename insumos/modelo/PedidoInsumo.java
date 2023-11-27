@@ -8,6 +8,7 @@ public class PedidoInsumo {
 	private int idSolicitante;
 	private String sectorSolicitante;
 	private String nombreSolicitante;
+	private String autoriza;
 	private Insumo insumos[];
 	
 	public PedidoInsumo() {
@@ -85,6 +86,15 @@ public class PedidoInsumo {
 		this.nombreSolicitante = nombreSolicitante;
 	}
 
+	public String getAutoriza() {
+		
+		return autoriza;
+	}
+
+	public void setAutoriza(String autoriza) {
+		
+		this.autoriza = autoriza;
+	}
 	public Insumo[] getInsumos() {
 		
 		return insumos;
@@ -94,4 +104,5 @@ public class PedidoInsumo {
 		
 		this.insumos = insumos;
 	}
+
 }

@@ -14,6 +14,8 @@ public class NuevoSimple extends VentanaModelo {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel panel;
+	private int posx;
+	private int posy;
 	public JLabel lblID;
 	public JLabel lblNombre;
 	public JLabel lblDescripción;
@@ -38,6 +40,8 @@ public class NuevoSimple extends VentanaModelo {
 		setMinimumSize(new Dimension(300, 300));
 		setBounds(x + 5, y + 5, 800, 300);
 		panel.setLayout(contenedor);
+		posx = x + 5;
+		posy = y + 5;
 		
 		lblID = new JLabel("ID:");
 		contenedor.putConstraint(SpringLayout.NORTH, lblID, 30, SpringLayout.NORTH, panel);
@@ -127,6 +131,6 @@ public class NuevoSimple extends VentanaModelo {
 	
 	public void setTamaño(int x, int y) {
 		
-		setBounds(10, 10, x, y);
+		setBounds(posx, posy, x, y);
 	}
 }

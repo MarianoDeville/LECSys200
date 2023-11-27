@@ -3,7 +3,7 @@ package modelo;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import control.EmailSenderService;
-import dao.ComprasDAO;
+import dao.ComprasMySQL;
 import dao.EmpleadoDAO;
 import dao.EmpleadoMySQL;
 import dao.InsumosDAO;
@@ -15,23 +15,21 @@ import dao.ProveedoresMySQL;
 public class DtosInsumos {
 
 	private InsumosDAO insumosDAO;
-	
 	private static Insumo insumo;
 	private static PedidoInsumo pedidoInsumo;
-	
-	private Insumo insumos[];
-	private Insumo insumosSeleccionados[];
-	private PedidoInsumo pedidoInsumos[];
-	private Empleado listaEmpleados[];
-	private Presupuesto presupuesto;
-	private Object emailProveedores[][];
-	
 	private int cantElementos = 0;	
 	private String msgError;
 	private String destinatario;
 	private String asunto;
 	private String mensaje;
-	private String cuerpoEmail;
+	private String cuerpoEmail;	
+	private Object emailProveedores[][];
+	private Empleado listaEmpleados[];
+	private Insumo insumos[];
+	private Insumo insumosSeleccionados[];
+	private PedidoInsumo pedidoInsumos[];
+	private Presupuesto presupuesto;
+	private Presupuesto presupuestos[];
 
 	public DefaultTableModel getTablaInsumos(String filtro) {
 		
@@ -297,7 +295,7 @@ public class DtosInsumos {
 			presupuesto.getProveedores()[0].setId(0);
 		else
 			presupuesto.getProveedores()[0].setId((int) emailProveedores[pos][4]);
-		}
+	}
 
 	public boolean setGuardarSolicitudCotizacion() {
 
@@ -506,48 +504,126 @@ public class DtosInsumos {
 		DefaultTableModel respuesta = new DefaultTableModel(tabla, titulo);
 		return respuesta;
 	}
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	
-	
-	
 
+	public boolean setStockAgregar(String ingreso) {
+		
+		int cantidad;
+		try {
+		
+			cantidad = Integer.parseInt(ingreso);
+		} catch(Exception e) {
 
+			msgError = "La cantidad debe ser un número entero.";
+			return false;
+		}
+		
+		if(cantidad < 0) {
+			
+			msgError = "La cantidad debe ser un número positivo.";
+			return false;
+		}
+		insumo.setCant(insumo.getCant() + cantidad);
+		return true;
+	}
+
+	public boolean setStockDescontar(String egreso) {
+		
+		int cantidad;
+		try {
+		
+			cantidad = Integer.parseInt(egreso);
+		} catch(Exception e) {
+
+			msgError = "La cantidad debe ser un número entero.";
+			return false;
+		}
+		
+		if(cantidad > 0) {
+			
+			msgError = "La cantidad debe ser un número positivo.";
+			return false;
+		}
+		
+		if(-cantidad > insumo.getCant()) {
+			
+			msgError = "Quiere dar de baja más elementos de los que posee en el stock actual.";
+			return false;
+		}
+		insumo.setCant(insumo.getCant() - cantidad);
+		return true;
+	}
 	
+	public DefaultTableModel getHistoricoInsumo() {
+		
+		insumosDAO = new InsumosMySQL();
+		String titulo[] = new String[] {"Fecha", "Proveedor", "Solicitante / sector", "Autorizó", "Cantidad", "Precio"};
+		String tabla[][] = insumosDAO.getHistoriaCompras(insumo.getId());
+		DefaultTableModel respuesta = new DefaultTableModel(tabla, titulo);
+		return respuesta;
+	}
+
+	public DefaultTableModel getTablaCotizaciones() {
+		
+		insumosDAO = new InsumosMySQL();
+		presupuestos = insumosDAO.getCotizaciones(pedidoInsumo);
+		String titulo[] = new String[pedidoInsumo.getInsumos().length + 4];
+		titulo[0] = "ID";
+		titulo[1] = "Proveedor";
+		titulo[titulo.length - 2] = "Total";
+		titulo[titulo.length - 1] = "Estado";
+		Object tabla[][] = new Object[presupuestos.length][titulo.length];
+
+		for(int i = 0; i < presupuestos.length; i++) {
+		
+			float sumaTotal = 0;
+			String estado = null;
+			
+			for(int e = 0; e < presupuestos[i].getInsumos().length; e++) {
+				
+				titulo[e + 2] = presupuestos[i].getInsumos()[e].getNombre();
+				float valorizacion = presupuestos[i].getInsumos()[e].getCantSolicitada() * presupuestos[i].getInsumos()[e].getPrecio();
+				tabla[i][e + 2] = valorizacion;
+				sumaTotal += valorizacion;
+			}
+			
+			switch (presupuestos[i].getEstado()) {
+			
+			case 0:
+				estado = "No aprobado";
+				break;
+		
+			case 1:
+				estado = "Pendiente";
+				break;
+		
+			case 2:
+				estado = "Aprobado";
+				break;
+				
+			default:
+				estado = "- - - -";
+			}
+			tabla[i][0] = presupuestos[i].getIdPresupuesto();
+			tabla[i][1] = presupuestos[i].getProveedores()[0].getNombre();
+			tabla[i][titulo.length - 1] = estado;
+			tabla[i][titulo.length - 2] = sumaTotal;
+		}
+		DefaultTableModel respuesta = new DefaultTableModel(tabla, titulo);
+		return respuesta;
+	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	public boolean setAprobarCotización(int pos) {
+		
+		OperadorSistema operador = new OperadorSistema();
+		ComprasMySQL comprasDAO = new ComprasMySQL();
+		
+		if(comprasDAO.setOrdenCompra(presupuestos[pos], operador.getFichaEmpleado()))
+			msgError = "Orden de compra generada.";
+		else
+			msgError = "Hubo un error al intentar actualizar la base de datos.";
+		return true;
+	}
+
 	public String getMsgError() {
 		
 		return msgError;
@@ -637,204 +713,14 @@ public class DtosInsumos {
 		this.mensaje = mensaje;
 	}
 
-	
-	
-
-
-	
-	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-	public DefaultTableModel getElementosAutorizados() {
+	public String getStock() {
 		
-		insumosDAO = new InsumosMySQL();
-		String titulo[] = new String[] {"ID", "Nombre", "Descripción", "Cantidad", "Precio", "Total", "Sel."};
-		tablaSeleccionados = insumosDAO.getOrdenCompra(idOrdenCompra);
-		Object cuerpo[][] = new Object[tablaSeleccionados.length][7];
-		
-		if(tablaSeleccionados != null) {
-			
-			for(int i = 0; i < tablaSeleccionados.length; i++) {
-				
-				cuerpo[i][0] = tablaSeleccionados[i][0];
-				cuerpo[i][1] = tablaSeleccionados[i][1];
-				cuerpo[i][2] = tablaSeleccionados[i][2];
-				cuerpo[i][3] = tablaSeleccionados[i][3];
-				cuerpo[i][4] = tablaSeleccionados[i][4];
-				cuerpo[i][5] = Float.parseFloat(tablaSeleccionados[i][4]) * Float.parseFloat(tablaSeleccionados[i][3]);
-				cuerpo[i][6] = true;
-			}
-		}
-		DefaultTableModel respuesta = new DefaultTableModel(cuerpo, titulo){
-
-			private static final long serialVersionUID = 1L;
-			public boolean isCellEditable(int row, int column) {
-				
-				return column > 5? true: false;
-			}
-			
-			public Class<?> getColumnClass(int column) {
-				
-				return column > 5? Boolean.class: String.class;
-		    }
-		};
-		return respuesta;
+		return insumo.getCant() + "";
 	}
 
 	public void setEmail(String email) {
 		
 		destinatario = email;
-	}
-
-	public void setIdOrdenCompra(int posición) {
-		
-		idOrdenCompra = tabla[posición][0];
-	}
-
-	public void setIdPresupuesto(String idPresupuesto) {
-		
-		this.idPresupuesto = idPresupuesto;
-	}
-
-	public boolean setAprobarCotización() {
-		
-		OperadorSistema operador = new OperadorSistema();
-		ComprasDAO comprasDAO = new ComprasDAO();
-		
-		if(comprasDAO.setOrdenCompra(idPresupuesto, id, operador.getFichaEmpleado()))
-			msgError = "Orden de compra generada.";
-		else
-			msgError = "Hubo un error al intentar actualizar la base de datos.";
-		return true;
-	}
-	
-	public boolean actualizarStockInsumo() {
-		
-		insumosDAO = new InsumosMySQL();
-		return insumosDAO.setActualizarStock(id, stock + nuevoStock);
-	}
-
-	public boolean setStockAgregar(String aDescontar) {
-		
-		try {
-		
-			nuevoStock = Integer.parseInt(aDescontar);
-		} catch(Exception e) {
-
-			msgError = "La cantidad debe ser un número entero.";
-			return false;
-		}
-		
-		if(nuevoStock < 0) {
-			
-			msgError = "La cantidad debe ser un número positivo.";
-			return false;
-		}
-		return true;
-	}
-	
-	public boolean setStockDescontar(String aDescontar) {
-		
-		try {
-		
-			nuevoStock = -Integer.parseInt(aDescontar);
-		} catch(Exception e) {
-
-			msgError = "La cantidad debe ser un número entero.";
-			return false;
-		}
-		
-		if(nuevoStock > 0) {
-			
-			msgError = "La cantidad debe ser un número positivo.";
-			return false;
-		}
-		
-		if(-nuevoStock > stock) {
-			
-			msgError = "Quiere dar de baja más elementos de los que posee en el stock actual.";
-			return false;
-		}
-		return true;
-	}
-
-	public String getStock() {
-		
-		return stock + "";
-	}
-	
-	public String getCuerpoEmail() {
-		
-		return cuerpoEmail;
-	}
-
-	public DefaultTableModel getTablaOrdenes() {
-		
-		insumosDAO = new InsumosMySQL();
-		String titulo[] = new String[] {"ID", "Fecha", "Sector", "Solicitante", "Autorizado"};
-		tabla = insumosDAO.getListadoOrdenesCompra(id, "1");
-		DefaultTableModel respuesta = new DefaultTableModel(tabla, titulo);
-		return respuesta;
-	}
-	
-	public DefaultTableModel getHistoricoInsumo() {
-		
-		insumosDAO = new InsumosMySQL();
-		String titulo[] = new String[] {"Fecha", "Proveedor", "Solicitante / sector", "Autorizó", "Cantidad", "Precio"};
-		tablaSeleccionados = insumosDAO.getHistoriaCompras(id);
-		DefaultTableModel respuesta = new DefaultTableModel(tablaSeleccionados, titulo);
-		return respuesta;
-	}
-
-	public DefaultTableModel getTablaCotizaciones() {
-		
-		insumosDAO = new InsumosMySQL();
-		tabla = insumosDAO.getPedido(id);
-		String titulo[] = new String[tabla.length + 4];
-		titulo[0] = "ID";
-		titulo[1] = "Proveedor";
-		titulo[titulo.length - 2] = "Total";
-		titulo[titulo.length - 1] = "Estado";
-		idInsumos = new String[tabla.length];
-		
-		for(int i = 0; i < tabla.length; i++) {
-		
-			titulo[i + 2] = tabla[i][1];
-			idInsumos[i] = tabla[i][4];
-		}
-		tablaSeleccionados = insumosDAO.getTablaCotizaciones(id, idInsumos);
-		DefaultTableModel respuesta = new DefaultTableModel(tablaSeleccionados, titulo);
-		return respuesta;
 	}
 
 	private boolean isNumerico(String valor) {

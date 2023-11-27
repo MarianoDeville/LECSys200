@@ -6,6 +6,7 @@ public class Presupuesto {
 	private int idPedido;
 	private String fecha;
 	private String Validez;
+	private int estado;
 	private Insumo insumos[];
 	private Proveedor proveedores[];
 
@@ -46,6 +47,16 @@ public class Presupuesto {
 	public void setValidez(String validez) {
 		
 		Validez = validez;
+	}
+
+	public int getEstado() {
+		
+		return estado;
+	}
+
+	public void setEstado(int estado) {
+		
+		this.estado = estado;
 	}
 	
 	public Insumo[] getInsumos() {

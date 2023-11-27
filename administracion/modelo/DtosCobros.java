@@ -15,22 +15,22 @@ import dao.GrupoFamiliarMySQL;
 
 public class DtosCobros {
 	
-	private GregorianCalendar fechaSistema;
 	private GrupoFamiliarDAO grupoFamiliarDAO;
 	private CobrosDAO cobrosDAO;
-	private Cobros cobros[];
-	private GrupoFamiliar familias[];
-	private GrupoFamiliar backup;
-	private Alumno alumnos[];
 	private static GrupoFamiliar familia;
 	private static Cobros cobro = new Cobros();
 	private static boolean reinscripción;
+	private GregorianCalendar fechaSistema;
 	private boolean enviarEmail;
 	private int cantidadCuotasSeleccionadas = 1;
 	private float descuentoContado;
 	private float inscripcion;
 	private float recargoMora;	
 	private float sumatoria;
+	private Alumno alumnos[];
+	private Cobros cobros[];
+	private GrupoFamiliar familias[];
+	private GrupoFamiliar backup;
 
 	public TableModel getTablaAlumnos(boolean reinscripción, boolean todos, String busqueda) {
 		
@@ -268,7 +268,7 @@ public class DtosCobros {
 				return false;
 		}else {
 		
-			cobro.setIdGrupoFamiliar(grupoFamiliarDAO.setGrupoFamiliar(familia));
+			cobro.setIdGrupoFamiliar(grupoFamiliarDAO.create(familia));
 			
 			if(cobro.getIdGrupoFamiliar() == 0)
 				return false;

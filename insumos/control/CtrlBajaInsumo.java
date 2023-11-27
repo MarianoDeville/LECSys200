@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-
 import modelo.DtosInsumos;
 import vista.NuevoSimple;
 
@@ -64,7 +63,7 @@ public class CtrlBajaInsumo implements ActionListener {
 			return;
 		}
 
-		if(!dtosInsumos.actualizarStockInsumo()) {
+		if(!dtosInsumos.setActualizarInfo()) {
 			
 			ventana.lblMsgError.setForeground(Color.RED);
 			ventana.lblMsgError.setText("Error al intentar actualizar la base de datos.");

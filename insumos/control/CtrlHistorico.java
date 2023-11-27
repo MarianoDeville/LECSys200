@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.print.PrinterException;
 import javax.swing.JOptionPane;
-
 import modelo.DtosInsumos;
 import vista.Listado;
 

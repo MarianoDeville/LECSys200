@@ -3,7 +3,6 @@ package control;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
-
 import modelo.DtosConfiguracion;
 import vista.ABML;
 import vista.InterfaceBotones;
@@ -12,6 +11,9 @@ import vista.Listado;
 public class CtrlCompras implements ActionListener {
 
 	private InterfaceBotones ventana;
+	private ABML ventanaGestionCotizaciones;
+	private Listado ventanaOrdenesCompra;
+	private Listado ventanaListadoCompras;
 	
 	public CtrlCompras(InterfaceBotones vista) {
 		
@@ -38,30 +40,60 @@ public class CtrlCompras implements ActionListener {
 	
 	public void actionPerformed(ActionEvent e) {
 
-		if(e.getSource() == ventana.btnVolver) {
-			
-			ventana.dispose();
-		}
-		
 		if(e.getSource() == ventana.btn1A) {
 			
-			ABML ventanaGestionCotizaciones = new ABML("Gestión cotizaciones", ventana.getX(), ventana.getY());
-			CtrlGestionCotizaciones ctrlGestiónCotizaciones = new CtrlGestionCotizaciones(ventanaGestionCotizaciones);
-			ctrlGestiónCotizaciones.iniciar();
+			cotizaciones();
 		}
 		
 		if(e.getSource() == ventana.btn1B) {
 			
-			Listado ventanaOrdenesCompra = new Listado("Listado de ordenes de compra", ventana.getX(), ventana.getY());
-			CtrlOrdenesCompra ctrlOrdenesCompra = new CtrlOrdenesCompra(ventanaOrdenesCompra);
-			ctrlOrdenesCompra.iniciar();
+			ordenes();
 		}
 		
 		if(e.getSource() == ventana.btn2A) {
 			
-			Listado ventanaListadoCompras = new Listado("Listado de compras", ventana.getX(), ventana.getY());
-			CtrlListadoCompras ctrlListadoCompras = new CtrlListadoCompras(ventanaListadoCompras);
-			ctrlListadoCompras.iniciar();			
+			listado();		
 		}
+		
+		if(e.getSource() == ventana.btnVolver) {
+			
+			ventana.dispose();
+		}
+	}
+	
+	private void cotizaciones() {
+		
+		if(ventanaGestionCotizaciones != null && ventanaGestionCotizaciones.isVisible()) {
+			
+			ventanaGestionCotizaciones.setVisible(true);
+			return;
+		}
+		ventanaGestionCotizaciones = new ABML("Gestión cotizaciones", ventana.getX(), ventana.getY());
+		CtrlGestionCotizaciones ctrlGestiónCotizaciones = new CtrlGestionCotizaciones(ventanaGestionCotizaciones);
+		ctrlGestiónCotizaciones.iniciar();
+	}
+	
+	private void ordenes() {
+		
+		if(ventanaOrdenesCompra != null && ventanaOrdenesCompra.isVisible()) {
+			
+			ventanaOrdenesCompra.setVisible(true);
+			return;
+		}
+		ventanaOrdenesCompra = new Listado("Listado de ordenes de compra", ventana.getX(), ventana.getY());
+		CtrlOrdenesCompra ctrlOrdenesCompra = new CtrlOrdenesCompra(ventanaOrdenesCompra);
+		ctrlOrdenesCompra.iniciar();
+	}
+	
+	private void listado() {
+		
+		if(ventanaListadoCompras != null && ventanaListadoCompras.isVisible()) {
+			
+			ventanaListadoCompras.setVisible(true);
+			return;
+		}
+		ventanaListadoCompras = new Listado("Listado de compras", ventana.getX(), ventana.getY());
+		CtrlListadoCompras ctrlListadoCompras = new CtrlListadoCompras(ventanaListadoCompras);
+		ctrlListadoCompras.iniciar();			
 	}
 }

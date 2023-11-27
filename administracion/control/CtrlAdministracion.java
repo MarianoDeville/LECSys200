@@ -58,50 +58,22 @@ public class CtrlAdministracion implements ActionListener {
 
 		if(e.getSource() == ventana.btn1A) {
 			
-			if(ventanaCobros != null && ventanaCobros.isVisible()) {
-				
-				ventanaCobros.setVisible(true);
-				return;
-			}
-			ventanaCobros = new InterfaceBotones("Gestión de cobros", ventana.getX(), ventana.getY());
-			CtrlCobros ctrlCobros = new CtrlCobros(ventanaCobros);
-			ctrlCobros.iniciar();
+			cobros();
 		}
 		
 		if(e.getSource() == ventana.btn1B) {
 			
-			if(ventanaPagos != null && ventanaPagos.isVisible()) {
-				
-				ventanaPagos.setVisible(true);
-				return;
-			}
-			ventanaPagos = new InterfaceBotones("Gestión de pagos", ventana.getX(), ventana.getY());
-//			CtrlPagos ctrlPagos = new CtrlPagos(ventanaPagos);
-//			ctrlPagos.iniciar();
+			pagos();
 		}
 
 		if(e.getSource() == ventana.btn1C) {
 			
-			if(ventanaCompras != null && ventanaCompras.isVisible()) {
-				
-				ventanaCompras.setVisible(true);
-				return;
-			}
-			ventanaCompras = new InterfaceBotones("Gestión de compras", ventana.getX(), ventana.getY());
-//			CtrlCompras ctrlCompras = new CtrlCompras(ventanaCompras);
-//			ctrlCompras.iniciar();
+			compras();
 		}
 		
 		if(e.getSource() == ventana.btn2A) {
 			
-			if(ventanaEstadisticas != null && ventanaEstadisticas.isVisible()) {
-				
-				ventanaEstadisticas.setVisible(true);
-				return;
-			}
-			ventanaEstadisticas = new ABML("Estadísticas", ventana.getX(), ventana.getY());
-//			CtrlEstadisticas ctrlEstadisticas = new CtrlEstadisticas(ventanaEstadisticas);
-//			ctrlEstadisticas.iniciar();
+			estadisticas();
 		}
 		
 		if(e.getSource() == ventana.btn2B) {
@@ -123,5 +95,53 @@ public class CtrlAdministracion implements ActionListener {
 			
 			ventana.dispose();
 		}
+	}
+	
+	private void cobros() {
+		
+		if(ventanaCobros != null && ventanaCobros.isVisible()) {
+			
+			ventanaCobros.setVisible(true);
+			return;
+		}
+		ventanaCobros = new InterfaceBotones("Gestión de cobros", ventana.getX(), ventana.getY());
+		CtrlCobros ctrlCobros = new CtrlCobros(ventanaCobros);
+		ctrlCobros.iniciar();
+	}
+	
+	private void pagos() {
+		
+		if(ventanaPagos != null && ventanaPagos.isVisible()) {
+			
+			ventanaPagos.setVisible(true);
+			return;
+		}
+		ventanaPagos = new InterfaceBotones("Gestión de pagos", ventana.getX(), ventana.getY());
+		CtrlPagos ctrlPagos = new CtrlPagos(ventanaPagos);
+		ctrlPagos.iniciar();
+	}
+
+	private void compras() {
+		
+		if(ventanaCompras != null && ventanaCompras.isVisible()) {
+			
+			ventanaCompras.setVisible(true);
+			return;
+		}
+		ventanaCompras = new InterfaceBotones("Gestión de compras", ventana.getX(), ventana.getY());
+		CtrlCompras ctrlCompras = new CtrlCompras(ventanaCompras);
+		ctrlCompras.iniciar();
+	}
+	
+	private void estadisticas() {
+		
+		if(ventanaEstadisticas != null && ventanaEstadisticas.isVisible()) {
+			
+			ventanaEstadisticas.setVisible(true);
+			return;
+		}
+		ventanaEstadisticas = new ABML("Estadísticas", ventana.getX(), ventana.getY());
+		CtrlEstadisticas ctrlEstadisticas = new CtrlEstadisticas(ventanaEstadisticas);
+		ctrlEstadisticas.iniciar();
 	}
 }

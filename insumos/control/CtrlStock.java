@@ -128,6 +128,7 @@ public class CtrlStock implements ActionListener {
 		if(ventanaCambiarStock != null && ventanaCambiarStock.isVisible())
 			ventanaCambiarStock.dispose();
 		dtosInsumos.setInsumoSeleccionado(elemento);
+		elemento = -1;
 		ventanaCambiarStock = new NuevoSimple("Baja de stock", ventana.getX(), ventana.getY());
 		CtrlBajaInsumo ctrlBajaInsumo = new CtrlBajaInsumo(ventanaCambiarStock);
 		ctrlBajaInsumo.iniciar();
@@ -146,6 +147,7 @@ public class CtrlStock implements ActionListener {
 		if(ventanaCargarStoc != null && ventanaCargarStoc.isVisible())
 			ventanaCargarStoc.dispose();
 		dtosInsumos.setInsumoSeleccionado(elemento);
+		elemento = -1;
 		ventanaCargarStoc = new NuevoSimple("Ingreso de productos al stock.", ventana.getX(), ventana.getY());
 		CtrlCargarInsumo ctrlCargarCompra = new CtrlCargarInsumo(ventanaCargarStoc);
 		ctrlCargarCompra.iniciar();

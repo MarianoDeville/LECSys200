@@ -102,7 +102,7 @@ public class OperadorSistema extends Conexion {
 				bandera = permisos[1][2];
 				break;
 				
-			case "ComprasDAO.setOrdenCompra":
+			case "ComprasMySQL.setOrdenCompra":
 			case "AlumnoMySQL.setInactivos":
 				bandera = permisos[1][1] || permisos[1][2];
 				break;
@@ -198,7 +198,7 @@ public class OperadorSistema extends Conexion {
 			case "CtrlInsumos.iniciar":
 			case "InsumosMySQL.getPedidoPresupuesto":
 			case "InsumosDAO.getListadoOrdenesCompra":
-			case "InsumosDAO.getHistoriaCompras":
+			case "InsumosMySQL.getHistoriaCompras":
 			case "InsumosDAO.getOrdenCompra":
 				bandera = checkLectura(5);
 				break;
@@ -206,7 +206,7 @@ public class OperadorSistema extends Conexion {
 			case "InsumosMySQL.listado":
 			case "InsumosMySQL.getPedidos":
 			case "InsumosDAO.getPedido":
-			case "InsumosDAO.getTablaCotizaciones":
+			case "InsumosMySQL.getCotizaciones":
 				bandera = checkLectura(1) | checkLectura(5);
 				break;	
 				
@@ -220,7 +220,6 @@ public class OperadorSistema extends Conexion {
 				
 			case "InsumosMySQL.update":
 			case "InsumosMySQL.updatePedido":
-			case "InsumosDAO.setActualizarStock":
 				bandera = permisos[5][2];
 				break;	
 				

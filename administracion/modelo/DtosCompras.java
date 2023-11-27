@@ -1,11 +1,11 @@
 package modelo;
 
 import javax.swing.table.DefaultTableModel;
-import dao.ComprasDAO;
+import dao.ComprasMySQL;
 
 public class DtosCompras {
 
-	private ComprasDAO comprasDAO;
+	private ComprasMySQL comprasDAO;
 	private static String idPresupuesto;
 	private static String autorizo;
 	private static String proveedor;
@@ -23,7 +23,7 @@ public class DtosCompras {
 	
 	public DefaultTableModel getDetalleCompra() {
 		
-		comprasDAO = new ComprasDAO();
+		comprasDAO = new ComprasMySQL();
 		tabla = null;
 		String titulo[] = new String[] {"Id", "Producto", "Cant.", "Precio", "Monto"};
 		tabla = comprasDAO.getDetalleCompra(idPresupuesto);
@@ -43,7 +43,7 @@ public class DtosCompras {
 
 	public DefaultTableModel getDetalleOrdenCompra() {
 		
-		comprasDAO = new ComprasDAO();
+		comprasDAO = new ComprasMySQL();
 		tabla = null;
 		String titulo[] = new String[] {"Id", "Producto", "Cant.", "Precio", "Monto"};
 		tabla = comprasDAO.getDetalleOrdenCompra(idPresupuesto);
@@ -89,7 +89,7 @@ public class DtosCompras {
 
 	public DefaultTableModel getTablaCompras() {
 		
-		comprasDAO = new ComprasDAO();
+		comprasDAO = new ComprasMySQL();
 		tabla = null;
 		String titulo[] = new String[] {"Fecha", "Ppto.", "Proveedor", "Solicitante", "Autorizó", "Monto"};
 		tabla = comprasDAO.getListadoCompras(año, mes);
@@ -99,7 +99,7 @@ public class DtosCompras {
 
 	public String [] listadoAños() {
 		
-		comprasDAO = new ComprasDAO();
+		comprasDAO = new ComprasMySQL();
 		return comprasDAO.getListadoAños();
 	}
 	
@@ -110,7 +110,7 @@ public class DtosCompras {
 	
 	public DefaultTableModel getTablaOrdenesCompra(boolean estado) {
 		
-		comprasDAO = new ComprasDAO();
+		comprasDAO = new ComprasMySQL();
 		tabla = null;
 		String titulo[] = new String[] {"ID", "Fecha", "Ppto.", "Solicitante", "Autorizó", "Proveedor"};
 		tabla = comprasDAO.getOrdenesCompra(estado?1:2);

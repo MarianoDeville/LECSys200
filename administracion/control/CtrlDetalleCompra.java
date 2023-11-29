@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
-
 import modelo.DtosCompras;
 import vista.Cobro;
 
@@ -81,7 +80,7 @@ public class CtrlDetalleCompra implements ActionListener {
 		ventana.txt3.setText(dtosCompras.getSolicitante());
 		ventana.txt4.setText(dtosCompras.getAutorizo());
 		ventana.txt5.setText(dtosCompras.getProveedor());
-		ventana.txt6.setText(dtosCompras.getMonto());
+		ventana.txt6.setText(dtosCompras.getMontoTotal());
 		ventana.txtTabla2.setText(dtosCompras.getFactura());
 		ventana.setVisible(true);
 	}
@@ -90,7 +89,6 @@ public class CtrlDetalleCompra implements ActionListener {
 		
 		if(e.getSource() == ventana.btnVolver) {
 			
-			dtosCompras.borrarInfo();
 			ventana.dispose();
 		}
 	}

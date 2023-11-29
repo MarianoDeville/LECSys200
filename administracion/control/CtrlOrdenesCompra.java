@@ -5,9 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.print.PrinterException;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableCellRenderer;
 import modelo.DtosCompras;
 import vista.Cobro;
 import vista.Listado;
@@ -16,6 +14,7 @@ public class CtrlOrdenesCompra implements ActionListener {
 
 	private Listado ventana;
 	private DtosCompras dtosCompras;
+	private Cobro ventanaDetalleCompra;
 	private int seleccion;
 
 	public CtrlOrdenesCompra(Listado vista) {
@@ -85,8 +84,6 @@ public class CtrlOrdenesCompra implements ActionListener {
 	private void actualizar() {
 		
 		seleccion = -1;
-		DefaultTableCellRenderer derecha = new DefaultTableCellRenderer();
-		derecha.setHorizontalAlignment(JLabel.RIGHT);
 		ventana.tabla.setModel(dtosCompras.getTablaOrdenesCompra(ventana.chckbx1.isSelected()));
 		ventana.tabla.getColumnModel().getColumn(0).setMinWidth(25);
 		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(40);
@@ -101,7 +98,6 @@ public class CtrlOrdenesCompra implements ActionListener {
 		ventana.tabla.getColumnModel().getColumn(4).setMinWidth(90);
 		ventana.tabla.getColumnModel().getColumn(4).setMaxWidth(120);
 		ventana.tabla.getColumnModel().getColumn(4).setPreferredWidth(100);
-		ventana.tabla.getColumnModel().getColumn(5).setCellRenderer(derecha);
 		ventana.tabla.setDefaultEditor(Object.class, null);
 	}
 	
@@ -112,8 +108,11 @@ public class CtrlOrdenesCompra implements ActionListener {
 			JOptionPane.showMessageDialog(null, "Debe seleccionar un elemento.");
 			return;
 		}
-		dtosCompras.setInfoSelOC(seleccion);
-		Cobro ventanaDetalleCompra = new Cobro("Información de la orden de compra.", ventana.getX(), ventana.getY());
+		dtosCompras.setOCSleccionada(seleccion);
+		
+		if(ventanaDetalleCompra != null && ventanaDetalleCompra.isVisible())
+			ventanaDetalleCompra.dispose();
+		ventanaDetalleCompra = new Cobro("Información de la orden de compra.", ventana.getX(), ventana.getY());
 		CtrlDetalleOrdenCompra ctrlDetalleOrdenCompra = new CtrlDetalleOrdenCompra(ventanaDetalleCompra);
 		ctrlDetalleOrdenCompra.iniciar();
 	}

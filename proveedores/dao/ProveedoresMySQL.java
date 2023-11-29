@@ -106,7 +106,7 @@ public class ProveedoresMySQL extends Conexion implements ProveedoresDAO {
 				stm.setString(1, proveedor.getContactos()[i].getNombre());
 				stm.setString(2, proveedor.getContactos()[i].getTelefono());
 				stm.setString(3, proveedor.getContactos()[i].getEmail());
-				stm.setInt(4, proveedor.getId());
+				stm.setLong(4, proveedor.getId());
 				stm.setString(5, proveedor.getContactos()[i].getSector());
 				stm.executeUpdate();	
 			}
@@ -144,13 +144,13 @@ public class ProveedoresMySQL extends Conexion implements ProveedoresDAO {
 			stm.setString(3, proveedor.getCuit());
 			stm.setString(4, proveedor.getTipo());
 			stm.setInt(5, proveedor.getEstado());
-			stm.setInt(6, proveedor.getId());
+			stm.setLong(6, proveedor.getId());
 			stm.executeUpdate();
 			
 			if(proveedor.getEstado() == 1) {		
 				
 				stm = this.conexion.prepareStatement("DELETE FROM `lecsys2.00`.contacto WHERE idProveedores = ?");
-				stm.setInt(1, proveedor.getId());
+				stm.setLong(1, proveedor.getId());
 				stm.executeUpdate();
 				cmdStm = "INSERT INTO `lecsys2.00`.contacto (nombre, teléfono, email, idProveedores, sector) "
 						+ "VALUES (?, ?, ?, ?, ?)";
@@ -161,7 +161,7 @@ public class ProveedoresMySQL extends Conexion implements ProveedoresDAO {
 					stm.setString(1, proveedor.getContactos()[i].getNombre());
 					stm.setString(2, proveedor.getContactos()[i].getTelefono());
 					stm.setString(3, proveedor.getContactos()[i].getEmail());
-					stm.setInt(4, proveedor.getId());
+					stm.setLong(4, proveedor.getId());
 					stm.setString(5, proveedor.getContactos()[i].getSector());
 					stm.executeUpdate();				
 				}

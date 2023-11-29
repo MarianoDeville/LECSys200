@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
-
 import modelo.DtosCompras;
 import vista.Cobro;
 
@@ -59,7 +58,7 @@ public class CtrlDetalleOrdenCompra implements ActionListener {
 		ventana.txtTabla2.setColumns(10);
 		DefaultTableCellRenderer derecha = new DefaultTableCellRenderer();
 		derecha.setHorizontalAlignment(JLabel.RIGHT);
-		ventana.tabla1.setModel(dtosCompras.getDetalleOrdenCompra());
+		ventana.tabla1.setModel(dtosCompras.getDetalleCompra());
 		ventana.tabla1.getColumnModel().getColumn(0).setMinWidth(30);
 		ventana.tabla1.getColumnModel().getColumn(0).setMaxWidth(50);
 		ventana.tabla1.getColumnModel().getColumn(2).setMinWidth(30);
@@ -86,7 +85,6 @@ public class CtrlDetalleOrdenCompra implements ActionListener {
 		
 		if(e.getSource() == ventana.btnVolver) {
 			
-			dtosCompras.borrarInfo();
 			ventana.dispose();
 		}
 	}

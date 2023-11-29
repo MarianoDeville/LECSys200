@@ -12,9 +12,9 @@ public interface InsumosDAO {
 	public PedidoInsumo [] getPedidos(int estado);
 	public boolean nuevoPedido(PedidoInsumo solicitud);
 	public boolean updatePedido(PedidoInsumo solicitud);
-	public int setPedidoPresupuesto(Presupuesto presupuesto);
+	public long setPedidoPresupuesto(Presupuesto presupuesto);
 	public void getPedidoPresupuesto(Presupuesto presupuesto, int proveedor);
 	public boolean setPrecios(Presupuesto presupuesto);
-	public String [][] getHistoriaCompras(int idInsumo);
+	public String [][] getHistoriaCompras(long idInsumo);
 	public Presupuesto [] getCotizaciones(PedidoInsumo pedido);
 }

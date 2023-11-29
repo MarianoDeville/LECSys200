@@ -70,12 +70,10 @@ public class OperadorSistema extends Conexion {
 									// Permisos para Administración.	///////////////////////////////////////////////
 			case "CtrlAdministracion.iniciar":
 			case "CobrosMySQL.getListado":
-			case "ComprasDAO.getOrdenesCompra":
-			case "ComprasDAO.getListadoAños":
-			case "ComprasDAO.getMontoCompra":
-			case "ComprasDAO.getDetalleCompra":
-			case "ComprasDAO.getListadoCompras":
-			case "ComprasDAO.getDetalleOrdenCompra":	
+			case "ComprasMySQL.getOrdenesCompra":
+			case "ComprasMySQL.getListadoAños":
+			case "ComprasMySQL.getListadoCompras":
+			case "ComprasMySQL.getDetalleOrdenCompra":	
 			case "CtrlPagos.iniciar":
 			case "PagosDAO.getDeudaProveedores":
 			case "PagosDAO.getListadoProveedores":
@@ -197,15 +195,15 @@ public class OperadorSistema extends Conexion {
 									// Permisos para Insumos.	///////////////////////////////////////////////
 			case "CtrlInsumos.iniciar":
 			case "InsumosMySQL.getPedidoPresupuesto":
-			case "InsumosDAO.getListadoOrdenesCompra":
+	//		case "InsumosDAO.getListadoOrdenesCompra":
 			case "InsumosMySQL.getHistoriaCompras":
-			case "InsumosDAO.getOrdenCompra":
+	//		case "InsumosDAO.getOrdenCompra":
 				bandera = checkLectura(5);
 				break;
 				
 			case "InsumosMySQL.listado":
 			case "InsumosMySQL.getPedidos":
-			case "InsumosDAO.getPedido":
+	//		case "InsumosDAO.getPedido":
 			case "InsumosMySQL.getCotizaciones":
 				bandera = checkLectura(1) | checkLectura(5);
 				break;	

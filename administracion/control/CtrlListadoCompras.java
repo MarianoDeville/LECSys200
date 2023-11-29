@@ -9,7 +9,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableCellRenderer;
-
 import modelo.DtosCompras;
 import vista.Cobro;
 import vista.Listado;
@@ -17,6 +16,7 @@ import vista.Listado;
 public class CtrlListadoCompras implements ActionListener {
 
 	private Listado ventana;
+	private Cobro ventanaDetalleCompra;
 	private DtosCompras dtosComras;
 	private int elemento = -1;
 	
@@ -121,8 +121,12 @@ public class CtrlListadoCompras implements ActionListener {
 			JOptionPane.showMessageDialog(null, "Debe seleccionar un elemento.");
 			return;
 		}
-		dtosComras.setInfoSel(elemento);
-		Cobro ventanaDetalleCompra = new Cobro("Detalle de la compra");
+		
+		if(ventanaDetalleCompra != null && ventanaDetalleCompra.isVisible())
+			ventanaDetalleCompra.dispose();
+		dtosComras.setOCSleccionada(elemento);
+		elemento = -1;
+		ventanaDetalleCompra = new Cobro("Detalle de la compra", ventana.getX(), ventana.getY());
 		CtrlDetalleCompra ctrlDetalleCompra = new CtrlDetalleCompra(ventanaDetalleCompra);
 		ctrlDetalleCompra.iniciar();
 	}

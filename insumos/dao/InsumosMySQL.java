@@ -63,7 +63,7 @@ public class InsumosMySQL extends Conexion implements InsumosDAO {
 			stm.setString(3, insumo.getPresentacion());
 			stm.setInt(4, insumo.getEstado());
 			stm.setInt(5, insumo.getCant());
-			stm.setInt(6, insumo.getId());
+			stm.setLong(6, insumo.getId());
 			stm.executeUpdate();
 		} catch(Exception e) {
 			
@@ -221,7 +221,7 @@ public class InsumosMySQL extends Conexion implements InsumosDAO {
 			
 			while(i < solicitud.getInsumos().length) {
 				
-				stm.setInt(1, solicitud.getInsumos()[i].getId());
+				stm.setLong(1, solicitud.getInsumos()[i].getId());
 				stm.setInt(2, solicitud.getIdCompra());
 				stm.setInt(3, solicitud.getInsumos()[i].getCantSolicitada());
 				stm.executeUpdate();
@@ -270,7 +270,7 @@ public class InsumosMySQL extends Conexion implements InsumosDAO {
 				
 				while(i < solicitud.getInsumos().length) {
 				
-					stm.setInt(1, solicitud.getInsumos()[i].getId());
+					stm.setLong(1, solicitud.getInsumos()[i].getId());
 					stm.setInt(2, solicitud.getIdCompra());
 					stm.setInt(3, solicitud.getInsumos()[i].getCantSolicitada());
 					stm.executeUpdate();
@@ -297,7 +297,7 @@ public class InsumosMySQL extends Conexion implements InsumosDAO {
 	}
 
 	@Override
-	public int setPedidoPresupuesto(Presupuesto presupuesto) {
+	public long setPedidoPresupuesto(Presupuesto presupuesto) {
 		
 		long tiempo = System.currentTimeMillis();
 		DtosActividad dtosActividad = new DtosActividad();
@@ -308,8 +308,8 @@ public class InsumosMySQL extends Conexion implements InsumosDAO {
 			
 			this.conectar();
 			PreparedStatement stm = this.conexion.prepareStatement(cmdStm);
-			stm.setInt(1, presupuesto.getIdPedido());
-			stm.setInt(2, presupuesto.getProveedores()[0].getId());
+			stm.setLong(1, presupuesto.getIdPedido());
+			stm.setLong(2, presupuesto.getProveedores()[0].getId());
 			ResultSet rs = stm.executeQuery();
 
 			if(rs.next())
@@ -318,8 +318,8 @@ public class InsumosMySQL extends Conexion implements InsumosDAO {
 			if(presupuesto.getIdPresupuesto() == 0) {
 			
 				stm = this.conexion.prepareStatement("INSERT INTO `lecsys2.00`.presupuesto (idPedidoCompra, fecha, idProveedor, estado) VALUES (?, DATE(NOW()), ?, 1)");
-				stm.setInt(1, presupuesto.getIdPedido());
-				stm.setInt(2, presupuesto.getProveedores()[0].getId());
+				stm.setLong(1, presupuesto.getIdPedido());
+				stm.setLong(2, presupuesto.getProveedores()[0].getId());
 				stm.executeUpdate();
 				rs = stm.executeQuery("SELECT MAX(idPresupuesto) FROM `lecsys2.00`.presupuesto");
 				
@@ -351,8 +351,8 @@ public class InsumosMySQL extends Conexion implements InsumosDAO {
 			
 			this.conectar();
 			PreparedStatement stm = this.conexion.prepareStatement(cmdStm);
-			stm.setInt(1, presupuesto.getIdPedido());
-			stm.setInt(2, presupuesto.getProveedores()[proveedor].getId());
+			stm.setLong(1, presupuesto.getIdPedido());
+			stm.setLong(2, presupuesto.getProveedores()[proveedor].getId());
 			ResultSet rs = stm.executeQuery();
 			
 			if(rs.next()) {
@@ -365,7 +365,7 @@ public class InsumosMySQL extends Conexion implements InsumosDAO {
 					 + "JOIN `lecsys2.00`.insumos ON pedido.idInsumo = insumos.idInsumos "
 					 + "WHERE idSolicitud = ? ORDER BY idInsumos";
 			stm = this.conexion.prepareStatement(cmdStm, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			stm.setInt(1, presupuesto.getIdPedido());
+			stm.setLong(1, presupuesto.getIdPedido());
 			rs = stm.executeQuery();
 			rs.last();	
 			presupuesto.setInsumos(new Insumo[rs.getRow()]);
@@ -388,8 +388,8 @@ public class InsumosMySQL extends Conexion implements InsumosDAO {
 
 			while(i < presupuesto.getInsumos().length) {
 				
-				stm.setInt(1, presupuesto.getInsumos()[i].getId());
-				stm.setInt(2, presupuesto.getIdPresupuesto());
+				stm.setLong(1, presupuesto.getInsumos()[i].getId());
+				stm.setLong(2, presupuesto.getIdPresupuesto());
 				rs = stm.executeQuery();
 				
 				if(rs.next())
@@ -420,22 +420,22 @@ public class InsumosMySQL extends Conexion implements InsumosDAO {
 			this.conectar();
 			PreparedStatement stm = this.conexion.prepareStatement(cmdStm);
 			stm.setString(1, presupuesto.getValidez());
-			stm.setInt(2, presupuesto.getIdPresupuesto());
+			stm.setLong(2, presupuesto.getIdPresupuesto());
 			stm.executeUpdate();
 			
 			for(int i = 0; i < presupuesto.getInsumos().length; i++) {
 
 				cmdStm = "DELETE FROM `lecsys2.00`.cotizaciones WHERE (idInsumo = ? AND idPresupuesto = ?)";
 				stm = this.conexion.prepareStatement(cmdStm);
-				stm.setInt(1, presupuesto.getInsumos()[i].getId());
-				stm.setInt(2, presupuesto.getIdPresupuesto());
+				stm.setLong(1, presupuesto.getInsumos()[i].getId());
+				stm.setLong(2, presupuesto.getIdPresupuesto());
 				stm.executeUpdate();
 				
 				cmdStm = "INSERT INTO `lecsys2.00`.cotizaciones (precio, idInsumo, idPresupuesto) VALUES (?, ?, ?)";
 				stm = this.conexion.prepareStatement(cmdStm);
 				stm.setFloat(1, presupuesto.getInsumos()[i].getPrecio());
-				stm.setInt(2, presupuesto.getInsumos()[i].getId());
-				stm.setInt(3, presupuesto.getIdPresupuesto());
+				stm.setLong(2, presupuesto.getInsumos()[i].getId());
+				stm.setLong(3, presupuesto.getIdPresupuesto());
 				stm.executeUpdate();
 
 			}
@@ -455,7 +455,7 @@ public class InsumosMySQL extends Conexion implements InsumosDAO {
 	}
 
 	@Override
-	public String [][] getHistoriaCompras(int idInsumo) {
+	public String [][] getHistoriaCompras(long idInsumo) {
 		
 		String matriz[][] = null;
 		String cmdStm = "SELECT DATE_FORMAT(ordenCompra.fecha, '%d/%m/%Y'), proveedores.nombre, persona.nombre, persona.apellido, "
@@ -476,7 +476,7 @@ public class InsumosMySQL extends Conexion implements InsumosDAO {
 			
 			this.conectar();
 			PreparedStatement stm = this.conexion.prepareStatement(cmdStm, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			stm.setInt(1, idInsumo);
+			stm.setLong(1, idInsumo);
 			ResultSet rs = stm.executeQuery();
 			rs.last();	
 			matriz = new String[rs.getRow()][6];
@@ -541,8 +541,8 @@ public class InsumosMySQL extends Conexion implements InsumosDAO {
 					
 					cmdStm = "SELECT precio, 2 FROM `lecsys2.00`.cotizaciones WHERE (idPresupuesto = ? AND idInsumo = ?)";
 					stm = this.conexion.prepareStatement(cmdStm);
-					stm.setInt(1, respuesta[i].getIdPresupuesto());
-					stm.setInt(2, respuesta[i].getInsumos()[e].getId());
+					stm.setLong(1, respuesta[i].getIdPresupuesto());
+					stm.setLong(2, respuesta[i].getInsumos()[e].getId());
 					rs = stm.executeQuery();
 			
 					if(rs.next())
@@ -550,7 +550,7 @@ public class InsumosMySQL extends Conexion implements InsumosDAO {
 					cmdStm = "SELECT cant FROM `lecsys2.00`.pedido WHERE (idSolicitud = ? AND idInsumo = ?)";
 					stm = this.conexion.prepareStatement(cmdStm);
 					stm.setInt(1, pedido.getIdCompra());
-					stm.setInt(2, respuesta[i].getInsumos()[e].getId());
+					stm.setLong(2, respuesta[i].getInsumos()[e].getId());
 					rs = stm.executeQuery();
 					
 					if(rs.next())
@@ -568,193 +568,4 @@ public class InsumosMySQL extends Conexion implements InsumosDAO {
 		}
 		return respuesta;
 	}
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	
-	int algo = 0;
-/*	
-
-	public boolean setAgregarStock(String idOrdenCompra[]) {
-		
-		boolean bandera = true;
-		long tiempo = System.currentTimeMillis();
-		DtosActividad dtosActividad = new DtosActividad();
-		
-		try {
-			
-			this.conectar();
-			PreparedStatement stm;
-			
-			for(String idOC: idOrdenCompra) {
-				
-				stm = this.conexion.prepareStatement("UPDATE `lecsys2.00`.insumos "
-												   + "JOIN `lecsys2.00`.pedido ON insumos.idInsumos = pedido.idInsumo "
-												   + "JOIN `lecsys2.00`.pedidoCompra ON pedido.idSolicitud = pedidoCompra.idPedidoCompra "
-												   + "JOIN `lecsys2.00`.presupuesto ON pedidoCompra.idPedidoCompra = presupuesto.idPedidoCompra "
-												   + "JOIN `lecsys2.00`.cotizaciones ON presupuesto.idPresupuesto = cotizaciones.idPresupuesto "
-												   + "JOIN `lecsys2.00`.ordenCompra ON presupuesto.idPresupuesto = ordenCompra.idPresupuesto "
-												   + "SET insumos.cant = pedido.cant "
-												   + "WHERE (ordenCompra.idOrdenCompra = ? AND insumos.idInsumos = cotizaciones.idInsumo)");
-				stm.setString(1, idOC);
-				stm.executeUpdate();
-			}
-		} catch(Exception e) {
-			
-			bandera = false;
-			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("InsumosDAO, setAgregarStock()");
-		} finally {
-			
-			this.cerrar();
-		}
-		tiempo = System.currentTimeMillis() - tiempo;
-		dtosActividad.registrarActividad("Carga de compras en el stock de insumos.", "Insumos.", tiempo);
-		return bandera;
-	}
-	
-	public String [][] getOrdenCompra(String idOrdenCompra){
-		
-		String matriz[][] = null;
-		String cmdStm = "SELECT insumos.idInsumos, nombre, descripción, pedido.cant, precio, pedidoCompra.idPedidoCompra "
-								+ "FROM `lecsys2.00`.pedidoCompra "
-								+ "JOIN `lecsys2.00`.pedido ON pedidoCompra.idPedidoCompra = pedido.idSolicitud "
-								+ "JOIN `lecsys2.00`.insumos ON pedido.idInsumo = insumos.idInsumos "
-								+ "JOIN `lecsys2.00`.presupuesto ON pedidoCompra.idPedidoCompra = presupuesto.idPedidoCompra "
-								+ "JOIN `lecsys2.00`.ordenCompra ON presupuesto.idPresupuesto = ordenCompra.idPresupuesto "
-								+ "JOIN `lecsys2.00`.cotizaciones ON presupuesto.idPresupuesto = cotizaciones.idPresupuesto "
-								+ "WHERE (ordenCompra.idOrdenCompra = " + idOrdenCompra + " AND insumos.idInsumos = cotizaciones.idInsumo)";
-		
-		try {
-			
-			this.conectar();
-			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stm.executeQuery(cmdStm);
-			rs = stm.executeQuery(cmdStm);
-			rs.last();	
-			matriz = new String[rs.getRow()][6];
-			rs.beforeFirst();
-			int i=0;
-
-			while(rs.next()) {
-				
-				matriz[i][0] = rs.getString(1);
-				matriz[i][1] = rs.getString(2);
-				matriz[i][2] = rs.getString(3);
-				matriz[i][3] = rs.getString(4);
-				matriz[i][4] = String.format("%.2f", rs.getFloat(5));
-				matriz[i][5] = rs.getString(6);
-				i++;
-			}
-		} catch(Exception e) {
-			
-			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("InsumosDAO, getOrdenCompra()");
-		} finally {
-			
-			this.cerrar();
-		}
-		return matriz;
-	}
-	
-	public String [][] getListadoOrdenesCompra(String idInsumo, String estado) {
-		
-		String matriz[][]=null;
-		String cmdStm = "SELECT idOrdenCompra, date_format(ordenCompra.fecha, '%d/%m/%Y'), sectorSolicitante, "
-								+ "persona.nombre, persona.apellido, usuarios.nombre, pedidoCompra.idPedidoCompra "
-								+ "FROM `lecsys2.00`.ordenCompra " 
-								+ "JOIN `lecsys2.00`.presupuesto ON ordenCompra.idPresupuesto = presupuesto.idPresupuesto "
-								+ "JOIN `lecsys2.00`.pedidoCompra ON presupuesto.idPedidoCompra = pedidoCompra.idPedidoCompra "
-								+ "JOIN `lecsys2.00`.cotizaciones ON presupuesto.idPresupuesto = cotizaciones.idPresupuesto "
-								+ "JOIN `lecsys2.00`.usuarios ON ordenCompra.idAutorizante = usuarios.idUsuarios "
-								+ "JOIN `lecsys2.00`.empleados ON pedidoCompra.idSolicitante = empleados.idEmpleado "
-								+ "JOIN `lecsys2.00`.persona ON empleados.idPersona = persona.idPersona "
-				 				+ "WHERE (presupuesto.estado = 2 AND pedidoCompra.estado = " + estado 
-				 				+ " AND cotizaciones.idInsumo = " + idInsumo + ") "
-				 				+ "ORDER BY idOrdenCompra";
-		
-		try {
-			
-			this.conectar();
-			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stm.executeQuery(cmdStm);
-			rs.last();	
-			matriz = new String[rs.getRow()][6];
-			rs.beforeFirst();
-			int i=0;
-
-			while (rs.next()) {
-				
-				matriz[i][0] = rs.getString(1);
-				matriz[i][1] = rs.getString(2);
-				matriz[i][2] = rs.getString(3);
-				matriz[i][3] = rs.getString(4) + " " + rs.getString(5);
-				matriz[i][4] = rs.getString(6);
-				matriz[i][5] = rs.getString(7);
-				i++;
-			}
-		}catch(Exception e) {
-			
-			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("InsumosDAO, getListadoOrdenesCompra()");
-			CtrlLogErrores.guardarError(cmdStm);
-		} finally {
-			
-			this.cerrar();
-		}
-		return matriz;
-	}
-
-	public String [][] getPedido(String idPedidoCompra){
-		
-		String matriz[][] = null;
-		String cmdStm = "SELECT fecha, sectorSolicitante, idSolicitante, nombre, apellido, pedidoCompra.estado "
-								+ "FROM `lecsys2.00`.pedidoCompra "
-								+ "JOIN `lecsys2.00`.empleados ON pedidoCompra.idSolicitante = empleados.idEmpleado "
-								+ "JOIN `lecsys2.00`.persona ON empleados.idPersona = persona.idPersona "
-								+ "WHERE idPedidoCompra = " + idPedidoCompra;
-		
-		try {
-			
-			this.conectar();
-			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stm.executeQuery(cmdStm);
-
-			if(rs.next()) {
-				
-				fechaSolicitud = rs.getString(1);
-				sectorSolicitante = rs.getString(2);
-				idSolicitante = rs.getString(3);
-				nombreSolicitante = rs.getString(4) + ", " + rs.getString(5);
-				estado = rs.getString(6);
-			}
-			
-			cmdStm = "SELECT pedido.cant, nombre, descripción, presentación, idInsumos FROM `lecsys2.00`.pedido "
-							 + "JOIN `lecsys2.00`.insumos ON pedido.idInsumo = insumos.idInsumos "
-							 + "WHERE idSolicitud = " + idPedidoCompra;
-			rs = stm.executeQuery(cmdStm);
-			rs.last();	
-			matriz = new String[rs.getRow()][5];
-			rs.beforeFirst();
-			int i=0;
-
-			while(rs.next()) {
-				
-				matriz[i][0] = rs.getString(1);
-				matriz[i][1] = rs.getString(2);
-				matriz[i][2] = rs.getString(3);
-				matriz[i][3] = rs.getString(4);
-				matriz[i][4] = rs.getString(5);
-				i++;
-			}
-		} catch(Exception e) {
-			
-			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("InsumosDAO, getPedido()");
-		} finally {
-			
-			this.cerrar();
-		}
-		return matriz;
-	}
-	*/
 }

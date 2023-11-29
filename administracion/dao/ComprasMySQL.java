@@ -5,7 +5,10 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import control.CtrlLogErrores;
 import modelo.DtosActividad;
+import modelo.Insumo;
+import modelo.OrdenCompra;
 import modelo.Presupuesto;
+import modelo.Proveedor;
 
 public class ComprasMySQL extends Conexion implements ComprasDAO{
 
@@ -21,7 +24,7 @@ public class ComprasMySQL extends Conexion implements ComprasDAO{
 
 			this.conectar();
 			PreparedStatement stm = this.conexion.prepareStatement(cmdStm);
-			stm.setInt(1, presupuesto.getIdPedido());
+			stm.setLong(1, presupuesto.getIdPedido());
 			ResultSet rs = stm.executeQuery();
 			cmdStm = "DELETE FROM `lecsys2.00`.ordenCompra WHERE idPresupuesto = ? ";
 			
@@ -41,21 +44,21 @@ public class ComprasMySQL extends Conexion implements ComprasDAO{
 			cmdStm = "INSERT INTO `lecsys2.00`.ordenCompra (fecha, autoriza, idPresupuesto) VALUES (DATE(NOW()), ?, ?)";
 			stm = this.conexion.prepareStatement(cmdStm);
 			stm.setString(1, autoriza);
-			stm.setInt(2, presupuesto.getIdPresupuesto());
+			stm.setLong(2, presupuesto.getIdPresupuesto());
 			stm.executeUpdate();
 			cmdStm = "UPDATE `lecsys2.00`.presupuesto SET estado = 0 WHERE idPedidoCompra = ?";
 			stm = this.conexion.prepareStatement(cmdStm);
-			stm.setInt(1, presupuesto.getIdPedido());
+			stm.setLong(1, presupuesto.getIdPedido());
 			stm.executeUpdate();
 			cmdStm = "UPDATE `lecsys2.00`.presupuesto SET estado = 2 WHERE idPresupuesto = ?";
 			stm = this.conexion.prepareStatement(cmdStm);
-			stm.setInt(1, presupuesto.getIdPresupuesto());
+			stm.setLong(1, presupuesto.getIdPresupuesto());
 			stm.executeUpdate();
 		} catch(Exception e) {
 			
 			bandera = false;
 			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("ComprasDAO, setOrdenCompra()");
+			CtrlLogErrores.guardarError("ComprasMySQL, setOrdenCompra()");
 			CtrlLogErrores.guardarError(cmdStm);
 		} finally {
 			
@@ -65,205 +68,128 @@ public class ComprasMySQL extends Conexion implements ComprasDAO{
 		dtosActividad.registrarActividad("Generar orden de compra y baja de los presupuestos no seleccionados.", "Insumos.", tiempo);
 		return bandera;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	public String [][] getDetalleCompra(String idPresupuesto) {
 
-		String matriz[][] = null;
-		String comandoStatement = "SELECT insumos.idInsumos, insumos.nombre, pedido.cant, TRUNCATE(precio, 2),TRUNCATE(precio * pedido.cant, 2), "
-								+ "DATE_FORMAT(pedidoCompra.fecha, '%d/%m/%Y'), DATE_FORMAT(ordenCompra.fecha, '%d/%m/%Y')"
-								+ ", DATE_FORMAT(pagos.fecha, '%d/%m/%Y'), factura "
-								+ "FROM pedidoCompra "
-								+ "JOIN pedido ON pedidoCompra.idPedidoCompra = pedido.idSolicitud "
-								+ "JOIN insumos ON pedido.idInsumo = insumos.idInsumos "
-								+ "JOIN presupuesto ON pedidoCompra.idPedidoCompra = presupuesto.idPedidoCompra "
-								+ "JOIN ordenCompra ON presupuesto.idPresupuesto = ordenCompra.idPresupuesto "
-								+ "JOIN cotizaciones ON presupuesto.idPresupuesto = cotizaciones.idPresupuesto "
-								+ "JOIN pagos ON ordenCompra.idPago = pagos.idPagos "
-								+ "WHERE (presupuesto.idPresupuesto = " + idPresupuesto + " AND insumos.idInsumos = cotizaciones.idInsumo)";
-		
+	@Override
+	public OrdenCompra [] getOrdenesCompra(int estado) {
+
+		OrdenCompra respuesta[] = null;
+		String cmdStm = "SELECT idOrdenCompra, DATE_FORMAT(ordenCompra.fecha, '%d/%m/%Y'), ordenCompra.idPresupuesto, "
+						+ "persona.nombre, apellido, proveedores.nombre, autoriza "
+						+ "FROM `lecsys2.00`.pedidoCompra "
+						+ "JOIN `lecsys2.00`.presupuesto ON pedidoCompra.idPedidoCompra = presupuesto.idPedidoCompra "
+						+ "JOIN `lecsys2.00`.ordenCompra ON presupuesto.idPresupuesto = ordenCompra.idPresupuesto "
+						+ "JOIN `lecsys2.00`.proveedores ON presupuesto.idProveedor = proveedores.idProveedores "
+						+ "JOIN `lecsys2.00`.empleados ON pedidoCompra.idSolicitante = empleados.legajo "
+						+ "JOIN `lecsys2.00`.persona ON empleados.dni = persona.dni "
+						+ "WHERE pedidoCompra.estado = ? GROUP BY idOrdenCompra ORDER BY ordenCompra.fecha DESC";
+
 		try {
-			
+		
 			this.conectar();
-			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);			
-			ResultSet rs = stm.executeQuery(comandoStatement);
+			PreparedStatement stm = this.conexion.prepareStatement(cmdStm,ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);	
+			stm.setInt(1, estado);
+			ResultSet rs = stm.executeQuery();
 			rs.last();	
-			matriz = new String[rs.getRow()][9];
-			rs.beforeFirst();
-			int i = 0;
-
-			while(rs.next()) {
-	
-				matriz[i][0] = rs.getString(1);
-				matriz[i][1] = rs.getString(2);
-				matriz[i][2] = rs.getString(3);
-				matriz[i][3] = String.format("%.2f", rs.getFloat(4));
-				matriz[i][4] = String.format("%.2f", rs.getFloat(5));
-				matriz[i][5] = rs.getString(6);
-				matriz[i][6] = rs.getString(7);
-				matriz[i][7] = rs.getString(8);
-				matriz[i][8] = rs.getString(9);
-				i++;
-			}
-		} catch(Exception e) {
-
-			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("ComprasDAO, getDetalleCompra()");
-			CtrlLogErrores.guardarError(comandoStatement);
-		} finally {
-			
-			this.cerrar();
-		}
-		return matriz;
-	}
-	
-	public String [][] getDetalleOrdenCompra(String idPresupuesto) {
-
-		String matriz[][] = null;
-		String comandoStatement = "SELECT insumos.idInsumos, insumos.nombre, pedido.cant, TRUNCATE(precio, 2),TRUNCATE(precio * pedido.cant, 2), "
-								+ "DATE_FORMAT(pedidoCompra.fecha, '%d/%m/%Y'), DATE_FORMAT(ordenCompra.fecha, '%d/%m/%Y') "
-								+ "FROM pedidoCompra "
-								+ "JOIN pedido ON pedidoCompra.idPedidoCompra = pedido.idSolicitud "
-								+ "JOIN insumos ON pedido.idInsumo = insumos.idInsumos "
-								+ "JOIN presupuesto ON pedidoCompra.idPedidoCompra = presupuesto.idPedidoCompra "
-								+ "JOIN ordenCompra ON presupuesto.idPresupuesto = ordenCompra.idPresupuesto "
-								+ "JOIN cotizaciones ON presupuesto.idPresupuesto = cotizaciones.idPresupuesto "
-								+ "WHERE (presupuesto.idPresupuesto = " + idPresupuesto + " AND insumos.idInsumos = cotizaciones.idInsumo)";
-	
-		try {
-			
-			this.conectar();
-			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);			
-			ResultSet rs = stm.executeQuery(comandoStatement);
-			rs.last();	
-			matriz = new String[rs.getRow()][7];
-			rs.beforeFirst();
-			int i = 0;
-			while(rs.next()) {
-	
-				matriz[i][0] = rs.getString(1);
-				matriz[i][1] = rs.getString(2);
-				matriz[i][2] = rs.getString(3);
-				matriz[i][3] = String.format("%.2f", rs.getFloat(4));
-				matriz[i][4] = String.format("%.2f", rs.getFloat(5));
-				matriz[i][5] = rs.getString(6);
-				matriz[i][6] = rs.getString(7);
-				i++;
-			}
-		} catch(Exception e) {
-
-			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("ComprasDAO, getDetalleOrdenCompra()");
-			CtrlLogErrores.guardarError(comandoStatement);
-		} finally {
-			
-			this.cerrar();
-		}
-		return matriz;
-	}
-	
-	public String [][] getListadoCompras(String año, int mes) {
-
-		String matriz[][] = null;
-		String idAtorizante[];
-		String comandoStatement = "SELECT DATE_FORMAT(ordenCompra.fecha, '%d/%m/%Y'), ordenCompra.idPresupuesto, proveedores.nombre, persona.nombre, "
-								+ "apellido, idAutorizante, TRUNCATE(SUM(pedido.cant * precio) ,2) "
-								+ "FROM pedidoCompra "
-								+ "JOIN pedido ON pedidoCompra.idPedidoCompra = pedido.idSolicitud "
-								+ "JOIN insumos ON pedido.idInsumo = insumos.idInsumos "
-								+ "JOIN presupuesto ON pedidoCompra.idPedidoCompra = presupuesto.idPedidoCompra "
-								+ "JOIN ordenCompra ON presupuesto.idPresupuesto = ordenCompra.idPresupuesto "
-								+ "JOIN cotizaciones ON presupuesto.idPresupuesto = cotizaciones.idPresupuesto "
-								+ "JOIN empleados ON pedidoCompra.idSolicitante = empleados.idEmpleado "
-								+ "JOIN persona ON empleados.idPersona = persona.idPersona "
-								+ "JOIN proveedores ON presupuesto.idProveedor = proveedores.idProveedores ";
-		String where = "WHERE (pedidoCompra.estado = 2 AND insumos.idInsumos = cotizaciones.idInsumo";
-		
-		if(!año.equals("Todos"))
-			where += " AND YEAR(ordenCompra.fecha) = " + año;
-		
-		if(mes != 0)
-			where += " AND MONTH(ordenCompra.fecha) = " + mes;
-		
-		comandoStatement += where + ") GROUP BY idOrdenCompra ORDER BY ordenCompra.fecha";
-		
-		try {
-			
-			this.conectar();
-			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);			
-			ResultSet rs = stm.executeQuery(comandoStatement);
-			rs.last();	
-			matriz = new String[rs.getRow()][6];
-			idAtorizante = new String[rs.getRow()];
+			respuesta = new OrdenCompra[rs.getRow()];
 			rs.beforeFirst();
 			int i = 0;
 			
 			while(rs.next()) {
 				
-				matriz[i][0] = rs.getString(1);
-				matriz[i][1] = rs.getString(2);
-				matriz[i][2] = rs.getString(3);
-				matriz[i][3] = rs.getString(4) + " " + rs.getString(5);
-				idAtorizante[i] = rs.getString(6);
-				matriz[i][5] = String.format("%.2f", rs.getFloat(7));
-				
+				respuesta[i] = new OrdenCompra();
+				respuesta[i].setPresupuesto(new Presupuesto());
+				respuesta[i].getPresupuesto().setProveedores(new Proveedor[1]);
+				respuesta[i].getPresupuesto().getProveedores()[0] = new Proveedor();
+				respuesta[i].setId(rs.getLong(1));
+				respuesta[i].setFecha(rs.getString(2));
+				respuesta[i].getPresupuesto().setIdPresupuesto(rs.getInt(3));
+				respuesta[i].setNombreSolicitante(rs.getString(4) + " " + rs.getString(5));
+				respuesta[i].getPresupuesto().getProveedores()[0].setNombre(rs.getString(6));
+				respuesta[i].setIdAutoriza(rs.getLong(7));
 				i++;
 			}
 			i = 0;
+			cmdStm = "SELECT persona.nombre, apellido FROM `lecsys2.00`.usuarios "
+					 + "JOIN `lecsys2.00`.empleados ON usuarios.dni = empleados.dni "
+					 + "JOIN `lecsys2.00`.persona ON empleados.dni = persona.dni "
+					 + "WHERE usuarios.dni = ?";
 			
-			while(i < matriz.length) {
-			
-				comandoStatement = "SELECT persona.nombre, apellido FROM usuarios "
-								 + "JOIN empleados ON usuarios.idEmpleado = empleados.idEmpleado "
-								 + "JOIN persona ON empleados.idPersona = persona.idPersona "
-								 + "WHERE usuarios.idUsuarios = " + idAtorizante[i];
-				rs = stm.executeQuery(comandoStatement);
+			while(i < respuesta.length) {
+				
+				stm = this.conexion.prepareStatement(cmdStm);	
+				stm.setLong(1, respuesta[i].getIdAutoriza());
+				rs = stm.executeQuery();
 			
 				if(rs.next())
-					matriz[i][4] = rs.getString(1) + " " + rs.getString(2);	// nombre del autorizante
+					respuesta[i].setNombreAutoriza(rs.getString(1) + " " + rs.getString(2));
 				i++;
 			}
 		} catch(Exception e) {
 			
 			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("ComprasDAO, getListadoCompras()");
-			CtrlLogErrores.guardarError(comandoStatement);
+			CtrlLogErrores.guardarError("ComprasMySQL, getOrdenesCompra()");
+			CtrlLogErrores.guardarError(cmdStm);
 		} finally {
 			
 			this.cerrar();
 		}
-		return matriz;
+		return respuesta;
 	}
+		
+	@Override
+	public void getDetalleOrdenCompra(OrdenCompra ordenCompra) {
+
+		String cmdStm = "SELECT idInsumos, nombre, pedido.cant, precio, DATE_FORMAT(pedidoCompra.fecha, '%d/%m/%Y') "
+						+ "FROM `lecsys2.00`.pedidoCompra "
+						+ "JOIN `lecsys2.00`.pedido ON pedidoCompra.idPedidoCompra = pedido.idSolicitud "
+						+ "JOIN `lecsys2.00`.insumos ON pedido.idInsumo = insumos.idInsumos "
+						+ "JOIN `lecsys2.00`.presupuesto ON pedidoCompra.idPedidoCompra = presupuesto.idPedidoCompra "
+						+ "JOIN `lecsys2.00`.ordenCompra ON presupuesto.idPresupuesto = ordenCompra.idPresupuesto "
+						+ "JOIN `lecsys2.00`.cotizaciones ON presupuesto.idPresupuesto = cotizaciones.idPresupuesto "
+						+ "WHERE (presupuesto.idPresupuesto = ? AND insumos.idInsumos = cotizaciones.idInsumo)";
 	
+		try {
+			
+			this.conectar();
+			PreparedStatement stm = this.conexion.prepareStatement(cmdStm, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			stm.setLong(1, ordenCompra.getPresupuesto().getIdPresupuesto());
+			ResultSet rs = stm.executeQuery();
+			rs.last();
+			ordenCompra.getPresupuesto().setInsumos(new Insumo[rs.getRow()]);
+			rs.beforeFirst();
+			int i = 0;
+			while(rs.next()) {
+	
+				ordenCompra.getPresupuesto().getInsumos()[i] = new Insumo();
+				ordenCompra.getPresupuesto().getInsumos()[i].setId(rs.getLong(1));
+				ordenCompra.getPresupuesto().getInsumos()[i].setNombre(rs.getString(2));
+				ordenCompra.getPresupuesto().getInsumos()[i].setCantSolicitada(rs.getInt(3));
+				ordenCompra.getPresupuesto().getInsumos()[i].setPrecio(rs.getFloat(4));
+				ordenCompra.setFechaPedido(rs.getString(5));
+				i++;
+			}
+		} catch(Exception e) {
+
+			CtrlLogErrores.guardarError(e.getMessage());
+			CtrlLogErrores.guardarError("ComprasMySQL, getDetalleOrdenCompra()");
+			CtrlLogErrores.guardarError(cmdStm);
+		} finally {
+			
+			this.cerrar();
+		}
+	}
+
+	@Override
 	public String[] getListadoAños() {
 		
 		String listado[] = null;
-		String comandoStatement = "SELECT YEAR(fecha) FROM ordenCompra GROUP BY YEAR(fecha)";
+		String cmdStm = "SELECT YEAR(fecha) FROM `lecsys2.00`.ordenCompra GROUP BY YEAR(fecha)";
 		
 		try {
 			
 			this.conectar();
 			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);			
-			ResultSet rs = stm.executeQuery(comandoStatement);
+			ResultSet rs = stm.executeQuery(cmdStm);
 			rs.last();	
 			listado = new String[rs.getRow() + 1];
 			rs.beforeFirst();
@@ -278,73 +204,86 @@ public class ComprasMySQL extends Conexion implements ComprasDAO{
 		} catch(Exception e) {
 			
 			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("ComprasDAO, getListadoAños()");
-			CtrlLogErrores.guardarError(comandoStatement);
+			CtrlLogErrores.guardarError("ComprasMySQL, getListadoAños()");
+			CtrlLogErrores.guardarError(cmdStm);
 		} finally {
 			
 			this.cerrar();
 		}
 		return listado;
 	}
-	
-	public String [][] getOrdenesCompra(int estado) {
 
-		String matriz[][] = null;
-		String idAtorizante[];
-		String comandoStatement = "SELECT idOrdenCompra, DATE_FORMAT(ordenCompra.fecha, '%d/%m/%Y'), ordenCompra.idPresupuesto, "
-								+ "persona.nombre, apellido, proveedores.nombre, idAutorizante "
-								+ "FROM pedidoCompra "
-								+ "JOIN presupuesto ON pedidoCompra.idPedidoCompra = presupuesto.idPedidoCompra "
-								+ "JOIN ordenCompra ON presupuesto.idPresupuesto = ordenCompra.idPresupuesto "
-								+ "JOIN proveedores ON presupuesto.idProveedor = proveedores.idProveedores "
-								+ "JOIN empleados ON pedidoCompra.idSolicitante = empleados.idEmpleado "
-								+ "JOIN persona ON empleados.idPersona = persona.idPersona "
-								+ "WHERE pedidoCompra.estado = "+ estado +" GROUP BY idOrdenCompra ORDER BY ordenCompra.fecha DESC";
+	@Override
+	public OrdenCompra [] getListadoCompras(String año, int mes) {
 
-		try {
+		OrdenCompra respuesta[] = null;
+		String cmdStm = "SELECT DATE_FORMAT(ordenCompra.fecha, '%d/%m/%Y'), ordenCompra.idPresupuesto, proveedores.nombre, persona.nombre, "
+						+ "apellido, autoriza, TRUNCATE(SUM(pedido.cant * precio) ,2) "
+						+ "FROM `lecsys2.00`.pedidoCompra "
+						+ "JOIN `lecsys2.00`.pedido ON pedidoCompra.idPedidoCompra = pedido.idSolicitud "
+						+ "JOIN `lecsys2.00`.insumos ON pedido.idInsumo = insumos.idInsumos "
+						+ "JOIN `lecsys2.00`.presupuesto ON pedidoCompra.idPedidoCompra = presupuesto.idPedidoCompra "
+						+ "JOIN `lecsys2.00`.ordenCompra ON presupuesto.idPresupuesto = ordenCompra.idPresupuesto "
+						+ "JOIN `lecsys2.00`.cotizaciones ON presupuesto.idPresupuesto = cotizaciones.idPresupuesto "
+						+ "JOIN `lecsys2.00`.empleados ON pedidoCompra.idSolicitante = empleados.legajo "
+						+ "JOIN `lecsys2.00`.persona ON empleados.dni = persona.dni "
+						+ "JOIN `lecsys2.00`.proveedores ON presupuesto.idProveedor = proveedores.idProveedores "
+						+ "WHERE (pedidoCompra.estado = 2 AND insumos.idInsumos = cotizaciones.idInsumo";
 		
+		if(!año.equals("Todos"))
+			cmdStm += " AND YEAR(ordenCompra.fecha) = " + año;
+		
+		if(mes != 0)
+			cmdStm += " AND MONTH(ordenCompra.fecha) = " + mes;
+		cmdStm += ") GROUP BY idOrdenCompra ORDER BY ordenCompra.fecha";
+		
+		try {
+			
 			this.conectar();
 			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);			
-			ResultSet rs = stm.executeQuery(comandoStatement);
+			ResultSet rs = stm.executeQuery(cmdStm);
 			rs.last();	
-			matriz = new String[rs.getRow()][6];
-			idAtorizante = new String[rs.getRow()];
+			respuesta = new OrdenCompra[rs.getRow()];
 			rs.beforeFirst();
 			int i = 0;
 			
 			while(rs.next()) {
 				
-				matriz[i][0] = rs.getString(1);
-				matriz[i][1] = rs.getString(2);
-				matriz[i][2] = rs.getString(3);
-				matriz[i][3] = rs.getString(4) + " " + rs.getString(5);
-				matriz[i][5] = rs.getString(6);
-				idAtorizante[i] = rs.getString(7);
+				respuesta[i] = new OrdenCompra();
+				respuesta[i].setPresupuesto(new Presupuesto());
+				respuesta[i].getPresupuesto().setProveedores(new Proveedor[1]);
+				respuesta[i].getPresupuesto().getProveedores()[0] = new Proveedor();
+				respuesta[i].setFecha(rs.getString(1));
+				respuesta[i].getPresupuesto().setIdPresupuesto(rs.getLong(2));
+				respuesta[i].getPresupuesto().getProveedores()[0].setNombre(rs.getString(3));
+				respuesta[i].setNombreSolicitante(rs.getString(4) + " " + rs.getString(5));
+				respuesta[i].setIdAutoriza(rs.getLong(6));
+				respuesta[i].setMontoTotal(rs.getFloat(7));
 				i++;
 			}
 			i = 0;
 			
-			while(i < matriz.length) {
+			while(i < respuesta.length) {
 			
-				comandoStatement = "SELECT persona.nombre, apellido FROM usuarios "
-								 + "JOIN empleados ON usuarios.idEmpleado = empleados.idEmpleado "
-								 + "JOIN persona ON empleados.idPersona = persona.idPersona "
-								 + "WHERE usuarios.idUsuarios = " + idAtorizante[i];
-				rs = stm.executeQuery(comandoStatement);
+				cmdStm = "SELECT persona.nombre, apellido FROM `lecsys2.00`.usuarios "
+						 + "JOIN `lecsys2.00`.empleados ON usuarios.dni = empleados.dni "
+						 + "JOIN `lecsys2.00`.persona ON empleados.dni = persona.dni "
+						 + "WHERE usuarios.dni = " + respuesta[i].getIdAutoriza();
+				rs = stm.executeQuery(cmdStm);
 			
 				if(rs.next())
-					matriz[i][4] = rs.getString(1) + " " + rs.getString(2);	// nombre del autorizante
+					respuesta[i].setNombreAutoriza(rs.getString(1) + " " + rs.getString(2));
 				i++;
 			}
 		} catch(Exception e) {
 			
 			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("ComprasDAO, getOrdenesCompra()");
-			CtrlLogErrores.guardarError(comandoStatement);
+			CtrlLogErrores.guardarError("ComprasMySQL, getListadoCompras()");
+			CtrlLogErrores.guardarError(cmdStm);
 		} finally {
 			
 			this.cerrar();
 		}
-		return matriz;
-	}
+		return respuesta;
+	}	
 }

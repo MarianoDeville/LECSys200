@@ -2,30 +2,30 @@ package modelo;
 
 public class Presupuesto {
 
-	private int idPresupuesto;
-	private int idPedido;
+	private long idPresupuesto;
+	private long idPedido;
 	private String fecha;
-	private String Validez;
+	private String validez;
 	private int estado;
 	private Insumo insumos[];
 	private Proveedor proveedores[];
 
-	public int getIdPresupuesto() {
+	public long getIdPresupuesto() {
 		
 		return idPresupuesto;
 	}
 
-	public void setIdPresupuesto(int idPresupuesto) {
+	public void setIdPresupuesto(long idPresupuesto) {
 		
 		this.idPresupuesto = idPresupuesto;
 	}
 	
-	public int getIdPedido() {
+	public long getIdPedido() {
 		
 		return idPedido;
 	}
 	
-	public void setIdPedido(int idPedido) {
+	public void setIdPedido(long idPedido) {
 		
 		this.idPedido = idPedido;
 	}
@@ -41,12 +41,12 @@ public class Presupuesto {
 	}
 	
 	public String getValidez() {
-		return Validez;
+		return validez;
 	}
 	
 	public void setValidez(String validez) {
 		
-		Validez = validez;
+		this.validez = validez;
 	}
 
 	public int getEstado() {

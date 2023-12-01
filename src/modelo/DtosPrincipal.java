@@ -4,6 +4,7 @@ import javax.swing.JOptionPane;
 import control.EmailSenderService;
 import dao.BackupDB;
 import dao.EstadisticasDAO;
+import dao.EstadisticasMySQL;
 import dao.GrupoFamiliarDAO;
 import dao.GrupoFamiliarMySQL;
 import dao.UsuariosDAO;
@@ -11,13 +12,13 @@ import dao.UsuariosMySQL;
 
 public class DtosPrincipal {
 	
-	private EstadisticasDAO estadisticasDAO = new EstadisticasDAO();
+	private EstadisticasDAO estadisticasDAO = new EstadisticasMySQL();
 	DtosConfiguracion config = new DtosConfiguracion();
 	
 	public void inicializar() {
 
 		if(estadisticasDAO.isNuevoMes()) {
-JOptionPane.showMessageDialog(null, "generando el resumen mensual");
+			JOptionPane.showMessageDialog(null, "generando el resumen mensual");
 			GrupoFamiliarDAO grupoFamiliarDAO = new GrupoFamiliarMySQL();
 			UsuariosDAO usuariosDAO = new UsuariosMySQL();
 			grupoFamiliarDAO.updateDeuda(0, 1);
@@ -30,18 +31,18 @@ JOptionPane.showMessageDialog(null, "generando el resumen mensual");
 	private void mandarInforme() {
 
 		EmailSenderService emailService = new EmailSenderService();
-		String estadiscica[] = estadisticasDAO.getUltima();		
+		Estadisticas estadiscica = estadisticasDAO.getResumenMensual();		
 		String cuerpoEmail = null;
 		cuerpoEmail = "Informe mensual\n";
-		cuerpoEmail += "\nFecha de generacion del informe: " + estadiscica[0];
-		cuerpoEmail += "\n\nCantidad de estudiantes: " + estadiscica[1];
-		cuerpoEmail += "\n       Cantidad de faltas en el mes: " + estadiscica[2];
-		cuerpoEmail += "\n\nCantidsa de empleados: " + estadiscica[3];
-		cuerpoEmail += "\n       Cantidad de faltas en el mes: " + estadiscica[4];
-		cuerpoEmail += "\n\nIngresos: " + estadiscica[5];
-		cuerpoEmail += "\nSueldos: " + estadiscica[6];
-		cuerpoEmail += "\nCompras: " + estadiscica[7];
-		cuerpoEmail += "\nUtilidad del mes: " + estadiscica[8];
+		cuerpoEmail += "\nFecha de generacion del informe: " + estadiscica.getFecha();
+		cuerpoEmail += "\n\nCantidad de estudiantes: " + estadiscica.getCantidadEstudientas();
+		cuerpoEmail += "\n       Cantidad de faltas en el mes: " + estadiscica.getFaltasEstudiantes();
+		cuerpoEmail += "\n\nCantidsa de empleados: " + estadiscica.getCantidadEmpleados();
+		cuerpoEmail += "\n       Cantidad de faltas en el mes: " + estadiscica.getFaltasEmpleados();
+		cuerpoEmail += "\n\nIngresos: " + estadiscica.getIngresos();
+		cuerpoEmail += "\nSueldos: " + estadiscica.getSueldos();
+		cuerpoEmail += "\nCompras: " + estadiscica.getCompras();
+		cuerpoEmail += "\nUtilidad del mes: " + (estadiscica.getIngresos() - estadiscica.getSueldos() - estadiscica.getCompras());
 		emailService.mandarCorreo(config.getEmailInforme(), "Resumen mensual", cuerpoEmail);
 	}
 }

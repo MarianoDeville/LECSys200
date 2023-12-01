@@ -1,5 +1,6 @@
 package dao;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Arrays;
@@ -52,13 +53,15 @@ public class OperadorSistema extends Conexion {
 		boolean bandera = false;
 		switch (clase) {
 									// Permisos para generales para el sistema.	///////////////////////////////////////////////
-			case "ActividadDAO.setActividad":
+			case "ActividadMySQL.setActividad":
 			case "CambioPasswordDAO.checkContraseña":
 			case "CambioPasswordDAO.guardarNuevaContraseña":
-			case "EstadisticasDAO.isNuevoMes":
-			case "EstadisticasDAO.getUltima":	
+			case "EstadisticasMySQL.isNuevoMes":
+			case "EstadisticasMySQL.getResumenMensual":	
+			case "EstadisticasMySQL.getListadoAños":	
 			case "GrupoFamiliarMySQL.updateDeuda":
 			case "OperadorSistema.checkUsuario":
+			case "OperadorSistema.getLegajoUsuario":
 			case "PersonaMySQL.getListadoCumpleAños":
 			case "UsuariosMySQL.updateTiempoPass":
 			case "UsuariosMySQL.isNombreUsado":
@@ -75,14 +78,15 @@ public class OperadorSistema extends Conexion {
 			case "ComprasMySQL.getListadoCompras":
 			case "ComprasMySQL.getDetalleOrdenCompra":	
 			case "CtrlPagos.iniciar":
-			case "PagosDAO.getDeudaProveedores":
-			case "PagosDAO.getListadoProveedores":
-			case "PagosDAO.getPagosProveedor":
-			case "PagosDAO.getDetallePagoProveedor":
-			case "PagosDAO.getPagosEmpleado":
-			case "PagosDAO.getHistorialPagos":
+			case "PagosMySQL.getDeudaProveedores":
+			case "PagosMySQL.getProveedores":
+			case "PagosMySQL.getPagosProveedor":
+			case "PagosMySQL.getDetallePagoProveedor":
+			case "PagosMySQL.getPagosEmpleado":
+			case "PagosMySQL.getListadoAños":	
+			case "PagosMySQL.getHistorialPagos":
 			case "EmpleadoMySQL.getEmpleado":
-			case "EstadisticasDAO.getEstadisticasAnuales":
+			case "EstadisticasMySQL.getEstadisticasAnuales":
 				bandera = checkLectura(1);
 				break;
 
@@ -91,8 +95,8 @@ public class OperadorSistema extends Conexion {
 				break;
 			
 			case "CobrosMySQL.setCobro":
-			case "PagosDAO.setPagoProveedor":
-			case "PagosDAO.setPagoEmpleado":
+			case "PagosMySQL.setPagoProveedor":
+			case "PagosMySQL.setPagoEmpleado":
 				bandera = permisos[1][1] | permisos[2][1];
 				break;
 				
@@ -154,7 +158,7 @@ public class OperadorSistema extends Conexion {
 				bandera = true;
 				break;
 
-			case "ActividadDAO.getActividad":
+			case "ActividadMySQL.getActividad":
 			case "CtrlABMLUsuarios.iniciar":
 			case "CtrlActividad.iniciar":
 			case "UsuariosMySQL.getListado":
@@ -195,15 +199,12 @@ public class OperadorSistema extends Conexion {
 									// Permisos para Insumos.	///////////////////////////////////////////////
 			case "CtrlInsumos.iniciar":
 			case "InsumosMySQL.getPedidoPresupuesto":
-	//		case "InsumosDAO.getListadoOrdenesCompra":
 			case "InsumosMySQL.getHistoriaCompras":
-	//		case "InsumosDAO.getOrdenCompra":
 				bandera = checkLectura(5);
 				break;
 				
 			case "InsumosMySQL.listado":
 			case "InsumosMySQL.getPedidos":
-	//		case "InsumosDAO.getPedido":
 			case "InsumosMySQL.getCotizaciones":
 				bandera = checkLectura(1) | checkLectura(5);
 				break;	
@@ -221,7 +222,7 @@ public class OperadorSistema extends Conexion {
 				bandera = permisos[5][2];
 				break;	
 				
-			case "InsumosDAO.setAgregarStock":
+			case "InsumosMySQL.updateStock":
 				bandera = permisos[5][1] | permisos[5][2];
 				break;
 									// Permisos para Empleados.	///////////////////////////////////////////////
@@ -253,7 +254,6 @@ public class OperadorSistema extends Conexion {
 			case "CtrlABMLProveedores.iniciar":
 			case "ProveedoresMySQL.isCUITExistente":
 			case "ProveedoresMySQL.getListado":
-//			case "ProveedoresDAO.getListadoContactos":
 				bandera = checkLectura(7);
 				break;
 				
@@ -289,8 +289,8 @@ public class OperadorSistema extends Conexion {
 		
 		try {
 
-			this.conectar();
-			Statement stm = this.conexion.createStatement();
+			conectar();
+			Statement stm = conexion.createStatement();
 			ResultSet rs = stm.executeQuery("SELECT COUNT(*) FROM usuarios WHERE estado = 1");
 
 			if(rs.next()) {
@@ -320,11 +320,41 @@ public class OperadorSistema extends Conexion {
 		} catch (Exception e) {
 			
 			CtrlLogErrores.guardarError(e.getMessage());
+			CtrlLogErrores.guardarError("OperadorSistema.checkUsuario");
 		}finally {
 			
 			this.cerrar();
 		}
 		return bandera;
+	}
+	
+	public int getLegajoUsuario() {
+	
+		int legajo = 0;
+		
+		try {
+
+			this.conectar();
+			PreparedStatement stm = this.conexion.prepareStatement("SELECT legajo FROM `lecsys2.00`.empleados "
+												+ "JOIN `lecsys2.00`.usuarios ON usuarios.dni = empleados.dni "
+												+ "WHERE idUsuario = ?");
+			stm.setString(1, idUsuarioActual);
+			ResultSet rs = stm.executeQuery();
+
+			if(rs.next()) {
+				
+				legajo = rs.getInt(1);
+			}
+
+		} catch (Exception e) {
+			
+			CtrlLogErrores.guardarError(e.getMessage());
+			CtrlLogErrores.guardarError("OperadorSistema, getLegajoUsuario");
+		}finally {
+			
+			this.cerrar();
+		}
+		return legajo;
 	}
 	
 	private void setMatrizPermisos() {

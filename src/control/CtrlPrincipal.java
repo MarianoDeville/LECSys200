@@ -2,6 +2,7 @@ package control;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.JOptionPane;
 import dao.OperadorSistema;
 import modelo.DtosActividad;
 import modelo.DtosPrincipal;
@@ -42,8 +43,8 @@ public class CtrlPrincipal implements ActionListener {
 	}
 	
 	public void iniciar() {
-int algo;
-//		JOptionPane.showMessageDialog(null, "Welcome to LECSys.\nVer.2.00\nRev. 27092023.1316");//////////////////////////////////////////////////////////////////////////////
+
+		JOptionPane.showMessageDialog(null, "Welcome to LECSys.\nVer.2.00\nRev. 01122023.1737");
 		actividad.registrarActividad("Inicio del sistema", "Principal", 0);
 		ventana.setVisible(true);
 		
@@ -164,8 +165,8 @@ int algo;
 		if(acceso.isActualizarContraseña()) {
 			
 			CambioContraseña ventanaCambioPass = new CambioContraseña();
-//			CtrlCambioPassword ctrlCambioPass = new CtrlCambioPassword(ventanaCambioPass);
-//			ctrlCambioPass.iniciar();
+			CtrlCambioPassword ctrlCambioPass = new CtrlCambioPassword(ventanaCambioPass);
+			ctrlCambioPass.iniciar();
 		}
 	}
 	

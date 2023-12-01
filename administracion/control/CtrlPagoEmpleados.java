@@ -8,7 +8,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.print.PrinterException;
 import javax.swing.JOptionPane;
-
 import modelo.DtosPagos;
 import vista.ABML;
 import vista.Listado;
@@ -18,6 +17,8 @@ public class CtrlPagoEmpleados implements ActionListener{
 	
 	private ABML ventana;
 	private DtosPagos dtosPagos;
+	private Listado ventanaDetallePagos;
+	private Nuevo ventanaPago;
 	private int elemento = -1;
 	
 	public CtrlPagoEmpleados(ABML vista) {
@@ -83,6 +84,14 @@ public class CtrlPagoEmpleados implements ActionListener{
 			ventana.dispose();
 		}
 		
+		if(ventanaPago != null) {
+		
+			if(e.getSource() == ventanaPago.btnVolver) {
+				
+				actualizar();
+			}
+		}
+		
 		if(e.getSource() == ventana.btnImprimir) {
 			
 			try {
@@ -107,13 +116,16 @@ public class CtrlPagoEmpleados implements ActionListener{
 		ventana.tabla.getColumnModel().getColumn(3).setMinWidth(20);
 		ventana.tabla.getColumnModel().getColumn(4).setMinWidth(20);
 		ventana.tabla.setDefaultEditor(Object.class, null);
+		ventana.tabla.clearSelection();
 	}
 	
 	private void historialPagos() {
 		
 		if(checkSeleccion()) {
 			
-			Listado ventanaDetallePagos = new Listado("Detalle pagos empleados");
+			if(ventanaDetallePagos != null && ventanaDetallePagos.isVisible())
+				ventanaDetallePagos.dispose();
+			ventanaDetallePagos = new Listado("Detalle pagos empleados", ventana.getX(), ventana.getY());
 			CtrlListadoPagosEmpleado ctrlDetallePagos = new CtrlListadoPagosEmpleado(ventanaDetallePagos);
 			ctrlDetallePagos.iniciar();
 		}
@@ -123,9 +135,12 @@ public class CtrlPagoEmpleados implements ActionListener{
 		
 		if(checkSeleccion()) {
 		
-			Nuevo ventanaPago = new Nuevo("Pago mensualidad");
+			if(ventanaPago != null && ventanaPago.isVisible())
+				ventanaPago.dispose();
+			ventanaPago = new Nuevo("Pago mensualidad", ventana.getX(), ventana.getY());
 			CtrlPagarEmpleado ctrlEmpleado = new CtrlPagarEmpleado(ventanaPago);
 			ctrlEmpleado.iniciar();
+			ventanaPago.btnVolver.addActionListener(this);
 		}
 	}
 	
@@ -136,8 +151,8 @@ public class CtrlPagoEmpleados implements ActionListener{
 			JOptionPane.showMessageDialog(null, "Debe seleccionar un elemento.");
 			return false;
 		}
-		dtosPagos.setSelecionado(elemento);
-		actualizar();
+		dtosPagos.setEmpleado(elemento);
+		elemento = -1;
 		return true;
 	}
 }

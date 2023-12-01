@@ -2,7 +2,9 @@ package modelo;
 
 public class Pago {
 
-	private long id;
+	private int id;
+	private int idProveedor;
+	private int idEmpleado;
 	private String concepto;
 	private String fecha;
 	private String hora;
@@ -10,16 +12,26 @@ public class Pago {
 	private String factura;
 	private String comentario;
 	private String formaPago;
-	private Empleado empleado;
+	private String nombre;
 
-	public long getId() {
+	public int getId() {
 		
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(int id) {
 		
 		this.id = id;
+	}
+
+	public int getIdProveedor() {
+		
+		return idProveedor;
+	}
+
+	public void setIdProveedor(int idProveedor) {
+		
+		this.idProveedor = idProveedor;
 	}
 	
 	public String getConcepto() {
@@ -92,13 +104,23 @@ public class Pago {
 		this.formaPago = formaPago;
 	}
 
-	public Empleado getEmpleado() {
+	public int getIdEmpleado() {
 		
-		return empleado;
+		return idEmpleado;
 	}
 
-	public void setEmpleado(Empleado empleado) {
+	public void setIdEmpleado(int idEmpleado) {
 		
-		this.empleado = empleado;
+		this.idEmpleado = idEmpleado;
+	}
+
+	public String getNombre() {
+		
+		return nombre;
+	}
+
+	public void setNombre(String nombre) {
+		
+		this.nombre = nombre;
 	}
 }

@@ -7,7 +7,6 @@ import java.awt.event.MouseEvent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableCellRenderer;
-
 import modelo.DtosPagos;
 import vista.Cobro;
 import vista.Listado;
@@ -40,12 +39,12 @@ public class CtrlListadoDeudaProveedor implements ActionListener{
 		ventana.lblTxt1.setVisible(true);
 		ventana.lblTxt1.setText("Empresa:");
 		ventana.txt1.setVisible(true);
-		ventana.txt1.setText(dtosPagos.getNombre());
+		ventana.txt1.setText(dtosPagos.getNombreEmpresa());
 		ventana.txt1.setColumns(15);
 		ventana.lblTxt2.setVisible(true);
 		ventana.lblTxt2.setText("CUIT:");
 		ventana.txt2.setVisible(true);
-		ventana.txt2.setText(dtosPagos.getDNI());
+		ventana.txt2.setText(dtosPagos.getCUIT());
 		ventana.txt2.setColumns(10);
 		ventana.lblChckbx2.setVisible(true);
 		ventana.lblChckbx2.setText("Monto:");
@@ -95,7 +94,9 @@ public class CtrlListadoDeudaProveedor implements ActionListener{
 			JOptionPane.showMessageDialog(null, dtosPagos.getMsgError());
 			return;
 		}
-		ventanaPagarProveedor = new Cobro("Pagar proveedor.");
+		if(ventanaPagarProveedor != null && ventanaPagarProveedor.isVisible())
+			ventanaPagarProveedor.dispose();
+		ventanaPagarProveedor = new Cobro("Pagar proveedor.", ventana.getX(), ventana.getY());
 		CtrlPagarProveedor ctrlPagarProveedor = new CtrlPagarProveedor(ventanaPagarProveedor);
 		ctrlPagarProveedor.iniciar();
 		ventanaPagarProveedor.btnVolver.addActionListener(this);

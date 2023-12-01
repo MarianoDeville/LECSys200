@@ -13,7 +13,7 @@ public class ProveedoresMySQL extends Conexion implements ProveedoresDAO {
 	@Override
 	public Proveedor [] getListado(String filtrado, boolean estado) {
 
-		Proveedor proveedores[] = null;
+		Proveedor respuesta[] = null;
 		String cmdStm = "SELECT idProveedores, nombre, cuit, direccion, tipo, estado "
 					+ "FROM `lecsys2.00`.proveedores "
 	 				+ "WHERE (estado = " + (estado?"1":"0") +  " AND (nombre LIKE '%" + filtrado + "%' OR cuit LIKE'" + filtrado + "%')) "
@@ -25,40 +25,40 @@ public class ProveedoresMySQL extends Conexion implements ProveedoresDAO {
 			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			ResultSet rs = stm.executeQuery(cmdStm);
 			rs.last();	
-			proveedores = new Proveedor[rs.getRow()];
+			respuesta = new Proveedor[rs.getRow()];
 			rs.beforeFirst();
 			int i=0;
 
 			while (rs.next()) {
 				
-				proveedores[i] = new Proveedor();
-				proveedores[i].setId(rs.getInt(1));
-				proveedores[i].setNombre(rs.getString(2));
-				proveedores[i].setCuit(rs.getString(3));
-				proveedores[i].setDireccion(rs.getString(4));
-				proveedores[i].setTipo(rs.getString(5));
-				proveedores[i].setEstado(rs.getInt(6));
+				respuesta[i] = new Proveedor();
+				respuesta[i].setId(rs.getInt(1));
+				respuesta[i].setNombre(rs.getString(2));
+				respuesta[i].setCuit(rs.getString(3));
+				respuesta[i].setDireccion(rs.getString(4));
+				respuesta[i].setTipo(rs.getString(5));
+				respuesta[i].setEstado(rs.getInt(6));
 				i++;
 			}
 			
 			i = 0;
-			while(i < proveedores.length) {		
+			while(i < respuesta.length) {		
 
 				cmdStm = "SELECT nombre, teléfono, email, sector "
-						+ "FROM `lecsys2.00`.contacto WHERE idProveedores = " + proveedores[i].getId();
+						+ "FROM `lecsys2.00`.contacto WHERE idProveedores = " + respuesta[i].getId();
 				rs = stm.executeQuery(cmdStm);
 				rs.last();
-				proveedores[i].setContactos(new Contacto[rs.getRow()]);
+				respuesta[i].setContactos(new Contacto[rs.getRow()]);
 				rs.beforeFirst();
 				int e = 0;
 				
 				while (rs.next()) {
 					
-					proveedores[i].getContactos()[e] = new Contacto();
-					proveedores[i].getContactos()[e].setNombre(rs.getString(1));
-					proveedores[i].getContactos()[e].setTelefono(rs.getString(2));
-					proveedores[i].getContactos()[e].setEmail(rs.getString(3));
-					proveedores[i].getContactos()[e].setSector(rs.getString(4));
+					respuesta[i].getContactos()[e] = new Contacto();
+					respuesta[i].getContactos()[e].setNombre(rs.getString(1));
+					respuesta[i].getContactos()[e].setTelefono(rs.getString(2));
+					respuesta[i].getContactos()[e].setEmail(rs.getString(3));
+					respuesta[i].getContactos()[e].setSector(rs.getString(4));
 					e++;
 				}
 				i++;
@@ -72,7 +72,7 @@ public class ProveedoresMySQL extends Conexion implements ProveedoresDAO {
 			
 			this.cerrar();
 		}
-		return proveedores;
+		return respuesta;
 	}
 	
 	@Override

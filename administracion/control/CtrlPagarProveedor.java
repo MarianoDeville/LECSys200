@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
-
 import modelo.DtosPagos;
 import vista.Cobro;
 
@@ -64,8 +63,8 @@ public class CtrlPagarProveedor implements ActionListener {
 		ventana.tabla1.getColumnModel().getColumn(3).setMaxWidth(150);
 		ventana.tabla1.getColumnModel().getColumn(3).setCellRenderer(derecha);
 		ventana.tabla1.setDefaultEditor(Object.class, null);
-		ventana.txtNombre.setText(dtosPagos.getNombre());
-		ventana.txt1.setText(dtosPagos.getSuma());
+		ventana.txtNombre.setText(dtosPagos.getNombreEmpresa());
+		ventana.txt1.setText(dtosPagos.getMontoTotal());
 		ventana.setVisible(true);
 	}
 	

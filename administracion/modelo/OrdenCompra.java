@@ -2,9 +2,9 @@ package modelo;
 
 public class OrdenCompra {
 
-	private long id;
+	private int id;
 	private String fecha;
-	private long idAutoriza;
+	private int idAutoriza;
 	private float montoTotal;
 	private String nombreSolicitante;
 	private String nombreAutoriza;
@@ -12,30 +12,32 @@ public class OrdenCompra {
 	private Presupuesto presupuesto;
 	private Pago pago;
 
-	public long getId() {
+	public int getId() {
 		
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(int id) {
 		
 		this.id = id;
 	}
 
 	public String getFecha() {
+		
 		return fecha;
 	}
 
 	public void setFecha(String fecha) {
+		
 		this.fecha = fecha;
 	}
 
-	public long getIdAutoriza() {
+	public int getIdAutoriza() {
 		
 		return idAutoriza;
 	}
 
-	public void setIdAutoriza(long idAutoriza) {
+	public void setIdAutoriza(int idAutoriza) {
 		
 		this.idAutoriza = idAutoriza;
 	}

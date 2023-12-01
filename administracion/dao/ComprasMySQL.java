@@ -24,7 +24,7 @@ public class ComprasMySQL extends Conexion implements ComprasDAO{
 
 			this.conectar();
 			PreparedStatement stm = this.conexion.prepareStatement(cmdStm);
-			stm.setLong(1, presupuesto.getIdPedido());
+			stm.setInt(1, presupuesto.getIdPedido());
 			ResultSet rs = stm.executeQuery();
 			cmdStm = "DELETE FROM `lecsys2.00`.ordenCompra WHERE idPresupuesto = ? ";
 			
@@ -44,15 +44,15 @@ public class ComprasMySQL extends Conexion implements ComprasDAO{
 			cmdStm = "INSERT INTO `lecsys2.00`.ordenCompra (fecha, autoriza, idPresupuesto) VALUES (DATE(NOW()), ?, ?)";
 			stm = this.conexion.prepareStatement(cmdStm);
 			stm.setString(1, autoriza);
-			stm.setLong(2, presupuesto.getIdPresupuesto());
+			stm.setInt(2, presupuesto.getIdPresupuesto());
 			stm.executeUpdate();
 			cmdStm = "UPDATE `lecsys2.00`.presupuesto SET estado = 0 WHERE idPedidoCompra = ?";
 			stm = this.conexion.prepareStatement(cmdStm);
-			stm.setLong(1, presupuesto.getIdPedido());
+			stm.setInt(1, presupuesto.getIdPedido());
 			stm.executeUpdate();
 			cmdStm = "UPDATE `lecsys2.00`.presupuesto SET estado = 2 WHERE idPresupuesto = ?";
 			stm = this.conexion.prepareStatement(cmdStm);
-			stm.setLong(1, presupuesto.getIdPresupuesto());
+			stm.setInt(1, presupuesto.getIdPresupuesto());
 			stm.executeUpdate();
 		} catch(Exception e) {
 			
@@ -100,12 +100,12 @@ public class ComprasMySQL extends Conexion implements ComprasDAO{
 				respuesta[i].setPresupuesto(new Presupuesto());
 				respuesta[i].getPresupuesto().setProveedores(new Proveedor[1]);
 				respuesta[i].getPresupuesto().getProveedores()[0] = new Proveedor();
-				respuesta[i].setId(rs.getLong(1));
+				respuesta[i].setId(rs.getInt(1));
 				respuesta[i].setFecha(rs.getString(2));
 				respuesta[i].getPresupuesto().setIdPresupuesto(rs.getInt(3));
 				respuesta[i].setNombreSolicitante(rs.getString(4) + " " + rs.getString(5));
 				respuesta[i].getPresupuesto().getProveedores()[0].setNombre(rs.getString(6));
-				respuesta[i].setIdAutoriza(rs.getLong(7));
+				respuesta[i].setIdAutoriza(rs.getInt(7));
 				i++;
 			}
 			i = 0;
@@ -117,7 +117,7 @@ public class ComprasMySQL extends Conexion implements ComprasDAO{
 			while(i < respuesta.length) {
 				
 				stm = this.conexion.prepareStatement(cmdStm);	
-				stm.setLong(1, respuesta[i].getIdAutoriza());
+				stm.setInt(1, respuesta[i].getIdAutoriza());
 				rs = stm.executeQuery();
 			
 				if(rs.next())
@@ -152,7 +152,7 @@ public class ComprasMySQL extends Conexion implements ComprasDAO{
 			
 			this.conectar();
 			PreparedStatement stm = this.conexion.prepareStatement(cmdStm, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			stm.setLong(1, ordenCompra.getPresupuesto().getIdPresupuesto());
+			stm.setInt(1, ordenCompra.getPresupuesto().getIdPresupuesto());
 			ResultSet rs = stm.executeQuery();
 			rs.last();
 			ordenCompra.getPresupuesto().setInsumos(new Insumo[rs.getRow()]);
@@ -161,7 +161,7 @@ public class ComprasMySQL extends Conexion implements ComprasDAO{
 			while(rs.next()) {
 	
 				ordenCompra.getPresupuesto().getInsumos()[i] = new Insumo();
-				ordenCompra.getPresupuesto().getInsumos()[i].setId(rs.getLong(1));
+				ordenCompra.getPresupuesto().getInsumos()[i].setId(rs.getInt(1));
 				ordenCompra.getPresupuesto().getInsumos()[i].setNombre(rs.getString(2));
 				ordenCompra.getPresupuesto().getInsumos()[i].setCantSolicitada(rs.getInt(3));
 				ordenCompra.getPresupuesto().getInsumos()[i].setPrecio(rs.getFloat(4));
@@ -254,10 +254,10 @@ public class ComprasMySQL extends Conexion implements ComprasDAO{
 				respuesta[i].getPresupuesto().setProveedores(new Proveedor[1]);
 				respuesta[i].getPresupuesto().getProveedores()[0] = new Proveedor();
 				respuesta[i].setFecha(rs.getString(1));
-				respuesta[i].getPresupuesto().setIdPresupuesto(rs.getLong(2));
+				respuesta[i].getPresupuesto().setIdPresupuesto(rs.getInt(2));
 				respuesta[i].getPresupuesto().getProveedores()[0].setNombre(rs.getString(3));
 				respuesta[i].setNombreSolicitante(rs.getString(4) + " " + rs.getString(5));
-				respuesta[i].setIdAutoriza(rs.getLong(6));
+				respuesta[i].setIdAutoriza(rs.getInt(6));
 				respuesta[i].setMontoTotal(rs.getFloat(7));
 				i++;
 			}

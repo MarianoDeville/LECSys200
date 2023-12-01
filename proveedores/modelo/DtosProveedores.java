@@ -127,6 +127,12 @@ public class DtosProveedores {
 	
 	public boolean setGuardar(JTable contactos) {
 		
+		if(contactos.getRowCount() == 0) {
+			
+			mensageError = "Falta ingrsar información de contacto para este proveedor.";
+			return true;
+		}
+		
 		if(!isInfoCorrecta(contactos, true))
 			return false;
 		

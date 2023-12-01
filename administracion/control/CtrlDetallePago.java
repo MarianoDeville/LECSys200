@@ -2,7 +2,6 @@ package control;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import modelo.DtosPagos;
 import vista.Cobro;
 
@@ -29,7 +28,7 @@ public class CtrlDetallePago implements ActionListener{
 		ventana.txtFactura.setVisible(false);
 		ventana.lblNombre.setText("Nombre:");
 		ventana.txtNombre.setColumns(20);
-		ventana.txtNombre.setText(dtosPagos.getNombre());
+		ventana.txtNombre.setText(dtosPagos.getNombreEmpresa());
 		ventana.lbl1.setVisible(true);
 		ventana.lbl1.setText("Fecha:");
 		ventana.txt1.setEditable(false);
@@ -40,7 +39,7 @@ public class CtrlDetallePago implements ActionListener{
 		ventana.lbl2.setText("Monto total:");
 		ventana.txt2.setEditable(false);
 		ventana.txt2.setColumns(10);
-		ventana.txt2.setText(dtosPagos.getSuma());
+		ventana.txt2.setText(dtosPagos.getMontoTotal());
 		ventana.lbl3.setVisible(true);
 		ventana.lbl3.setText("Factura:");
 		ventana.txt3.setEditable(false);
@@ -58,7 +57,6 @@ public class CtrlDetallePago implements ActionListener{
 		ventana.txt5.setColumns(40);
 		ventana.txt5.setText(dtosPagos.getComentario());
 		ventana.tabla1.setModel(dtosPagos.getSeleccionados());
-		dtosPagos.borrarInfo();
 		ventana.setVisible(true);
 	}
 	

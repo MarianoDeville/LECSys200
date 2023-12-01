@@ -7,7 +7,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JOptionPane;
-
 import modelo.DtosPagos;
 import vista.ABML;
 import vista.Listado;
@@ -17,6 +16,7 @@ public class CtrlProveedores implements ActionListener{
 	private ABML ventana;
 	private DtosPagos dtosPagos;
 	private Listado ventanaListadoDeuda;
+	private Listado ventanaDetallePagos;
 	private int elemento = -1;
 	
 	public CtrlProveedores(ABML vista) {
@@ -66,7 +66,7 @@ public class CtrlProveedores implements ActionListener{
 	
 	public void actionPerformed(ActionEvent e) {
 
-		if(e.getSource() == ventana.chckbx1) {
+		if(e.getSource() == ventana.chckbx1 && ventana.isVisible()) {
 			
 			actualizar();
 		}
@@ -106,23 +106,14 @@ public class CtrlProveedores implements ActionListener{
 		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(50);
 		ventana.tabla.setDefaultEditor(Object.class, null);
 	}
-	
-	private boolean checkSeleccion() {
-		
-		if(elemento == -1) {
-			
-			JOptionPane.showMessageDialog(null, "Debe elegir un elemento.");
-			return false;
-		}
-		dtosPagos.setSelecionado(elemento);
-		return true;
-	}
-	
+
 	private void historialPagos() {
 		
 		if(checkSeleccion()) {
 			
-			Listado ventanaDetallePagos = new Listado("Detalle pagos proveedor", ventana.getX(), ventana.getY());
+			if(ventanaDetallePagos != null && ventanaDetallePagos.isVisible())
+				ventanaDetallePagos.dispose();
+			ventanaDetallePagos = new Listado("Detalle pagos proveedor", ventana.getX(), ventana.getY());
 			CtrlListadoPagosProveedor ctrlDetallePagos = new CtrlListadoPagosProveedor(ventanaDetallePagos);
 			ctrlDetallePagos.iniciar();
 		}
@@ -132,10 +123,23 @@ public class CtrlProveedores implements ActionListener{
 		
 		if(checkSeleccion()) {
 			
+			if(ventanaListadoDeuda != null && ventanaListadoDeuda.isVisible())
+				ventanaListadoDeuda.dispose();
 			ventanaListadoDeuda = new Listado("Listado adeudado al proveedor", ventana.getX(), ventana.getY());
 			CtrlListadoDeudaProveedor ctrlListadoDeuda = new CtrlListadoDeudaProveedor(ventanaListadoDeuda);
 			ctrlListadoDeuda.iniciar();
 			ventanaListadoDeuda.btnVolver.addActionListener(this);
 		}
+	}
+	
+	private boolean checkSeleccion() {
+		
+		if(elemento == -1) {
+			
+			JOptionPane.showMessageDialog(null, "Debe elegir un elemento.");
+			return false;
+		}
+		dtosPagos.setProveedor(elemento);
+		return true;
 	}
 }

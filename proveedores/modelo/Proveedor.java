@@ -2,7 +2,7 @@ package modelo;
 
 public class Proveedor {
 
-	private long id;
+	private int id;
 	private String nombre;
 	private String direccion;
 	private String cuit;
@@ -10,12 +10,12 @@ public class Proveedor {
 	private int estado;
 	private Contacto contactos[];
 	
-	public long getId() {
+	public int getId() {
 		
 		return id;
 	}
 	
-	public void setId(long id) {
+	public void setId(int id) {
 		
 		this.id = id;
 	}

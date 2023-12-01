@@ -2,30 +2,30 @@ package modelo;
 
 public class Presupuesto {
 
-	private long idPresupuesto;
-	private long idPedido;
+	private int idPresupuesto;
+	private int idPedido;
 	private String fecha;
 	private String validez;
 	private int estado;
 	private Insumo insumos[];
 	private Proveedor proveedores[];
 
-	public long getIdPresupuesto() {
+	public int getIdPresupuesto() {
 		
 		return idPresupuesto;
 	}
 
-	public void setIdPresupuesto(long idPresupuesto) {
+	public void setIdPresupuesto(int idPresupuesto) {
 		
 		this.idPresupuesto = idPresupuesto;
 	}
 	
-	public long getIdPedido() {
+	public int getIdPedido() {
 		
 		return idPedido;
 	}
 	
-	public void setIdPedido(long idPedido) {
+	public void setIdPedido(int idPedido) {
 		
 		this.idPedido = idPedido;
 	}

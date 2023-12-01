@@ -1,6 +1,7 @@
 package dao;
 
 import modelo.Insumo;
+import modelo.OrdenCompra;
 import modelo.PedidoInsumo;
 import modelo.Presupuesto;
 
@@ -12,9 +13,10 @@ public interface InsumosDAO {
 	public PedidoInsumo [] getPedidos(int estado);
 	public boolean nuevoPedido(PedidoInsumo solicitud);
 	public boolean updatePedido(PedidoInsumo solicitud);
-	public long setPedidoPresupuesto(Presupuesto presupuesto);
+	public int setPedidoPresupuesto(Presupuesto presupuesto);
 	public void getPedidoPresupuesto(Presupuesto presupuesto, int proveedor);
 	public boolean setPrecios(Presupuesto presupuesto);
-	public String [][] getHistoriaCompras(long idInsumo);
+	public String [][] getHistoriaCompras(int idInsumo);
 	public Presupuesto [] getCotizaciones(PedidoInsumo pedido);
+	public boolean updateStock(OrdenCompra ordenesCompra[]);
 }

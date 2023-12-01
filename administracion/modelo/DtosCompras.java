@@ -86,7 +86,7 @@ public class DtosCompras {
 			tabla[i][2] = ordenesCompra[i].getPresupuesto().getProveedores()[0].getNombre();
 			tabla[i][3] = ordenesCompra[i].getNombreSolicitante();
 			tabla[i][4] = ordenesCompra[i].getNombreAutoriza();
-			tabla[i][4] = ordenesCompra[i].getMontoTotal();
+			tabla[i][5] = ordenesCompra[i].getMontoTotal();
 		}
 		DefaultTableModel respuesta = new DefaultTableModel(tabla, titulo);
 		return respuesta;

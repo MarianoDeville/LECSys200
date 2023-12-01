@@ -22,7 +22,7 @@ public class CtrlArgumentos {
 			dtosConfig.setServidor(argumentos[1]);
 			dtosConfig.setUsuarioBD(argumentos[2]);
 			dtosConfig.setPassBD(argumentos[3]);
-			dtosConfig.setDirectorio("C:\\LECSys 1.0\\");
+			dtosConfig.setDirectorio("C:\\LECSys 2.0\\");
 			dtosConfig.setConfiguracion();
 		}else {
 			

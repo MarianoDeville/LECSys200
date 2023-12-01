@@ -12,6 +12,9 @@ import vista.Listado;
 public class CtrlPagos implements ActionListener {
 
 	private InterfaceBotones ventana;
+	private ABML ventanaEmpleados;
+	private ABML ventanaProveedores;
+	private Listado ventanaHistorial;
 	
 	public CtrlPagos(InterfaceBotones vista) {
 		
@@ -45,28 +48,58 @@ public class CtrlPagos implements ActionListener {
 
 		if(e.getSource() == ventana.btn1A) {
 
-			ABML ventanaEmpleados = new ABML("Pago a empleados", ventana.getX(), ventana.getY());
-			CtrlPagoEmpleados ctrlEmpleados = new CtrlPagoEmpleados(ventanaEmpleados);
-			ctrlEmpleados.iniciar();			
+			empleados();
 		}
 		
 		if(e.getSource() == ventana.btn1B) {
 			
-			ABML ventanaProveedores = new ABML("Pago a proveedores", ventana.getX(), ventana.getY());
-			CtrlProveedores ctrlProveedores = new CtrlProveedores(ventanaProveedores);
-			ctrlProveedores.iniciar();
+			proveedores();
 		}
 		
 		if(e.getSource() == ventana.btn1C) {
 			
-			Listado ventanaHistorial = new Listado("Historial de pagos", ventana.getX(), ventana.getY());
-			CtrlListadoPagos ctrlListadoPagos = new CtrlListadoPagos(ventanaHistorial);
-			ctrlListadoPagos.iniciar();
+			historial();
 		}
 		
 		if(e.getSource() == ventana.btnVolver) {
 			
 			ventana.dispose();
 		}
+	}
+	
+	private void empleados() {
+
+		if(ventanaEmpleados != null && ventanaEmpleados.isVisible()) {
+			
+			ventanaEmpleados.setVisible(true);
+			return;
+		}
+		ventanaEmpleados = new ABML("Pago a empleados", ventana.getX(), ventana.getY());
+		CtrlPagoEmpleados ctrlEmpleados = new CtrlPagoEmpleados(ventanaEmpleados);
+		ctrlEmpleados.iniciar();			
+	}
+	
+	private void proveedores() {
+
+		if(ventanaProveedores != null && ventanaProveedores.isVisible()) {
+			
+			ventanaProveedores.setVisible(true);
+			return;
+		}
+		ventanaProveedores = new ABML("Pago a proveedores", ventana.getX(), ventana.getY());
+		CtrlProveedores ctrlProveedores = new CtrlProveedores(ventanaProveedores);
+		ctrlProveedores.iniciar();
+	}
+	
+	private void historial() {
+		
+		if(ventanaHistorial != null && ventanaHistorial.isVisible()) {
+			
+			ventanaHistorial.setVisible(true);
+			return;
+		}
+		ventanaHistorial = new Listado("Historial de pagos", ventana.getX(), ventana.getY());
+		CtrlListadoPagos ctrlListadoPagos = new CtrlListadoPagos(ventanaHistorial);
+		ctrlListadoPagos.iniciar();
 	}
 }

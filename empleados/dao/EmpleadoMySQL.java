@@ -162,7 +162,7 @@ public class EmpleadoMySQL extends Conexion implements EmpleadoDAO{
 
 		}
 		String cmdStm = "SELECT empleados.legajo, persona.nombre, apellido, empleados.dni, dirección, teléfono, "
-						+ "email, sector, cargo , sueldo, tipo, estado, fechaNacimiento, fechaBaja "
+						+ "email, sector, cargo , sueldo, tipo, estado, DATE_FORMAT(fechaNacimiento, '%d/%m/%Y'), DATE_FORMAT(fechaBaja, '%d/%m/%Y') "
 						+ "FROM `lecsys2.00`.empleados "
 		 				+ "JOIN `lecsys2.00`.persona on empleados.dni = persona.dni "
 		 				+ where

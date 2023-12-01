@@ -53,18 +53,17 @@ public class CtrlPagarEmpleado implements ActionListener{
 		ventana.lblTxt3.setVisible(true);
 		ventana.txt3.setColumns(30);
 		ventana.txt3.setVisible(true);
-		dtosPagos.setInfoEmpleado();
 		ventana.comboBox1.setModel(new DefaultComboBoxModel<String>(dtosPagos.listadoConcepto()));
 		ventana.comboBox2.setModel(new DefaultComboBoxModel<String>(dtosPagos.formasPago()));
-		ventana.txtLegajo.setText(dtosPagos.getId());
-		ventana.txtNombre.setText(dtosPagos.getNombre());
+		ventana.txtLegajo.setText(dtosPagos.getLegajo());
+		ventana.txtNombre.setText(dtosPagos.getNombreEmpleado());
 		ventana.txtApellido.setText(dtosPagos.getApellido());
 		ventana.txtDNI.setText(dtosPagos.getDNI());
 		ventana.txtDireccion.setText(dtosPagos.getDireccion());
 		ventana.txtTelefono.setText(dtosPagos.getTelefono());
 		ventana.txtEmail.setText(dtosPagos.getEmail());
-		ventana.txtDia.setText(dtosPagos.getFecha());
-		ventana.txt1.setText(dtosPagos.getSuma());
+		ventana.txtDia.setText(dtosPagos.getFechaNac());
+		ventana.txt1.setText(dtosPagos.getSalario());
 		ventana.setVisible(true);
 	}
 	
@@ -77,7 +76,6 @@ public class CtrlPagarEmpleado implements ActionListener{
 		
 		if(e.getSource() == ventana.btnVolver) {
 			
-			dtosPagos.borrarInfo();
 			ventana.dispose();
 		}
 	}

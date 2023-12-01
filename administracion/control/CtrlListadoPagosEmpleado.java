@@ -7,7 +7,6 @@ import java.awt.event.MouseEvent;
 import java.awt.print.PrinterException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
-
 import modelo.DtosPagos;
 import vista.Listado;
 

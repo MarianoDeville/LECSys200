@@ -285,12 +285,15 @@ public class DtosInsumos {
 	
 	public void setIdProveedor(int pos) {
 		
-		if(presupuesto == null) {
-			
+		if(presupuesto == null)
 			presupuesto = new Presupuesto();
+				
+		if(presupuesto.getProveedores() == null) {
+			
 			presupuesto.setProveedores(new Proveedor[1]);
+			presupuesto.getProveedores()[0] = new Proveedor();
 		}
-
+		
 		if(pos == -1)
 			presupuesto.getProveedores()[0].setId(0);
 		else

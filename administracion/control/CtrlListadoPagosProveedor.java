@@ -7,7 +7,6 @@ import java.awt.event.MouseEvent;
 import java.awt.print.PrinterException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
-
 import modelo.DtosPagos;
 import vista.Cobro;
 import vista.Listado;
@@ -16,6 +15,7 @@ public class CtrlListadoPagosProveedor implements ActionListener{
 	
 	private Listado ventana;
 	private DtosPagos dtosPagos;
+	private Cobro ventanaDetallePago;
 	private int elemento = -1;
 	
 	public CtrlListadoPagosProveedor(Listado vista) {
@@ -112,7 +112,11 @@ public class CtrlListadoPagosProveedor implements ActionListener{
 			return;
 		}
 		dtosPagos.setInfoPago(elemento);
-		Cobro ventanaDetallePago = new Cobro("Detalle pago realizado.");
+		elemento = -1;
+		
+		if(ventanaDetallePago != null && ventanaDetallePago.isVisible())
+			ventanaDetallePago.dispose();
+		ventanaDetallePago = new Cobro("Detalle pago realizado.", ventana.getX(), ventana.getY());
 		CtrlDetallePago ctrlDetallePago = new CtrlDetallePago(ventanaDetallePago);
 		ctrlDetallePago.iniciar();
 		elemento = -1;

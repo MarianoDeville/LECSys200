@@ -21,9 +21,14 @@ public class BackupDB {
 
 		try {
 
-			Process p = Runtime.getRuntime().exec(dtosConfiguracion.getServiviosMySQL()
-												+ " -u " + dtosConfiguracion.getUsuarioBD() 
-												+ " -p" + dtosConfiguracion.getPassBD() + " lecsys1");
+			String comando[] = new String[] {
+								dtosConfiguracion.getServiviosMySQL(), 
+								"-u", 
+								dtosConfiguracion.getUsuarioBD(), 
+								"-p" + dtosConfiguracion.getPassBD(), 
+								"lecsys2.00"
+							};
+			Process p = Runtime.getRuntime().exec(comando);
 			InputStream is = p.getInputStream();
 			FileOutputStream fos = new FileOutputStream(dtosConfiguracion.getDirectorioBackup() + nombreArchivo);
 			byte[] buffer = new byte[1000];

@@ -10,7 +10,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import modelo.DtosConfiguracion;
 
-public class DiscoDAO {
+public class DiscoFS {
 
 	public static void escribirLog(String msg) {
 		

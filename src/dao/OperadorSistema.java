@@ -54,8 +54,8 @@ public class OperadorSistema extends Conexion {
 		switch (clase) {
 									// Permisos para generales para el sistema.	///////////////////////////////////////////////
 			case "ActividadMySQL.setActividad":
-			case "CambioPasswordDAO.checkContraseña":
-			case "CambioPasswordDAO.guardarNuevaContraseña":
+			case "CambioPasswordMySQL.checkContraseña":
+			case "CambioPasswordMySQL.guardarNuevaContraseña":
 			case "EstadisticasMySQL.isNuevoMes":
 			case "EstadisticasMySQL.getResumenMensual":	
 			case "EstadisticasMySQL.getListadoAños":	
@@ -174,7 +174,7 @@ public class OperadorSistema extends Conexion {
 				break;
 
 			case "CtrlEditarEmail.iniciar":
-			case "DiscoDAO.modificarValores":
+			case "DiscoFS.modificarValores":
 				bandera = permisos[3][2];
 				break;
 									// Permisos para Cursos.	///////////////////////////////////////////////
@@ -411,5 +411,10 @@ public class OperadorSistema extends Conexion {
 	public boolean isActualizarContraseña() {
 		
 		return (cambiarPass < 1 && !idUsuarioActual.equals("0"))? true: false;
+	}
+	
+	public static void setCambiarPass(int cambiarPass) {
+		
+		OperadorSistema.cambiarPass = cambiarPass;
 	}
 }

@@ -2,9 +2,9 @@ package modelo;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import dao.DiscoDAO;
+import dao.DiscoFS;
 
-public class DtosLogErrores extends DiscoDAO{
+public class DtosLogErrores extends DiscoFS{
 
 	public static void setError(String informacion) {
 

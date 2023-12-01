@@ -1,6 +1,6 @@
 package control;
 
-import dao.DiscoDAO;
+import dao.DiscoFS;
 
 public class CtrlLogErrores {
 
@@ -8,6 +8,6 @@ public class CtrlLogErrores {
 	public static void guardarError(String informacion) {
 		
 		System.err.println(informacion);
-		DiscoDAO.escribirLog(informacion);
+		DiscoFS.escribirLog(informacion);
 	}
 }

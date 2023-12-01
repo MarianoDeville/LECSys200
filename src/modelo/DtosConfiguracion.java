@@ -1,11 +1,11 @@
 package modelo;
 
 import java.util.Arrays;
-import dao.DiscoDAO;
+import dao.DiscoFS;
 
 public class DtosConfiguracion {
 
-	private DiscoDAO discoDAO;
+	private DiscoFS discoDAO;
 	private static String emailSistema;
 	private static String passSistema;
 	private static String servidor;
@@ -19,7 +19,7 @@ public class DtosConfiguracion {
 	
 	public String getConfig() {
 		
-		discoDAO = new DiscoDAO();
+		discoDAO = new DiscoFS();
 		return discoDAO.getConfiguracion();
 	}
 
@@ -59,7 +59,7 @@ public class DtosConfiguracion {
 			pass += contraseña[i];
 		}
 		String valores[] = {"MAIL", email, "MPAS", pass};
-		discoDAO = new DiscoDAO();
+		discoDAO = new DiscoFS();
 		msg = discoDAO.modificarValores(valores);
 	
 		if(msg.equals("")) {

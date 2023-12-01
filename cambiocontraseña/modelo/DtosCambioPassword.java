@@ -2,6 +2,7 @@ package modelo;
 
 import java.util.Arrays;
 import dao.CambioPasswordDAO;
+import dao.CambioPasswordMySQL;
 import dao.OperadorSistema;
 
 public class DtosCambioPassword {
@@ -10,11 +11,11 @@ public class DtosCambioPassword {
 	private static String contraseñaOld;
 	private static String contraseñaNew;
 	private static String reContraseñaNew;
-	private CambioPasswordDAO cambioPass;
-		
+	private CambioPasswordDAO cambioPassDAO;
+	private OperadorSistema acceso = new OperadorSistema();
+	
 	public DtosCambioPassword() {
 
-		OperadorSistema acceso = new OperadorSistema();
 		nombreUsuario = acceso.getNombreUsuario();
 	}
 	
@@ -50,7 +51,7 @@ public class DtosCambioPassword {
 	
 	public String checkInformacion(boolean usuarioRepetido) {
 		
-		cambioPass = new CambioPasswordDAO();
+		cambioPassDAO = new CambioPasswordMySQL();
 		if(contraseñaNew.length() < 5) {
 			
 			return "La contraseña debe tener más de cuatro caracteres.";
@@ -60,7 +61,7 @@ public class DtosCambioPassword {
 		} else if(contraseñaOld.equals(contraseñaNew)) {
 			
 			return "La nueva contraseña no pude ser igual a la anterior.";
-		} else if(!cambioPass.checkContraseña()) {
+		} else if(!cambioPassDAO.checkContraseña()) {
 			
 			return "La contraseña actual es incorrecta.";
 		}
@@ -69,7 +70,10 @@ public class DtosCambioPassword {
 
 	public boolean setNuevaContraseña() {
 		
-		return cambioPass.guardarNuevaContraseña();
+		if(!cambioPassDAO.guardarNuevaContraseña())
+			return false;
+		OperadorSistema.setCambiarPass(3);
+		return true;
 	}
 
 	public String getNombreUsuario() {

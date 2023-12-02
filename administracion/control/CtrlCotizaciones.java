@@ -26,9 +26,6 @@ public class CtrlCotizaciones implements ActionListener {
 
 					elemento = ventana.tabla.getSelectedRow();
 					ventana.btnImprimir.setEnabled(true);
-		        } else if(e.getClickCount() == 1) {
-		        	
-		        	elemento = ventana.tabla.getSelectedRow();
 		        }
 		    }
 		});

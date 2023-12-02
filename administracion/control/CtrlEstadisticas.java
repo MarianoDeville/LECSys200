@@ -2,6 +2,8 @@ package control;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.print.PrinterException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
@@ -14,6 +16,7 @@ public class CtrlEstadisticas implements ActionListener {
 
 	private ABML ventana;
 	private DtosEstadisticas dtosEstadisticas;
+	private int elemento = -1;
 	
 	public CtrlEstadisticas(ABML vista) {
 		
@@ -22,6 +25,15 @@ public class CtrlEstadisticas implements ActionListener {
 		this.ventana.comboBox1.addActionListener(this);
 		this.ventana.btnImprimir.addActionListener(this);
 		this.ventana.btnVolver.addActionListener(this);
+		this.ventana.tabla.addMouseListener(new MouseAdapter() {
+		    public void mouseClicked(MouseEvent e) {
+		        if (e.getClickCount() == 2) {
+
+					elemento = ventana.tabla.getSelectedRow();
+					mostrarDetalle();
+		        }
+		    }
+		});
 	}
 	
 	public void iniciar() {
@@ -101,5 +113,11 @@ public class CtrlEstadisticas implements ActionListener {
 		ventana.tabla.getColumnModel().getColumn(8).setPreferredWidth(80);
 		ventana.tabla.getColumnModel().getColumn(8).setCellRenderer(derecha);
 		ventana.tabla.setDefaultEditor(Object.class, null);
+	}
+	
+	private void mostrarDetalle() {
+		
+		dtosEstadisticas.setSeleccion(elemento);
+		elemento = -1;
 	}
 }

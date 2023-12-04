@@ -46,7 +46,7 @@ public class DtosUsuarios {
 	public String [] getListaEmpleados() {
 		
 		EmpleadoDAO empleadosDAO = new EmpleadoMySQL();
-		Empleado empleados[] = empleadosDAO.getListado("Todos", true, "");
+		Empleado empleados[] = empleadosDAO.getListado("Todos", 1, "");
 		String respuesta[] = new String[empleados.length];
 		dniEmpleados = new String[empleados.length];
 		

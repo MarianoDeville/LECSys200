@@ -43,7 +43,7 @@ public class DtosEmpleado {
 		
 		empleadoDAO = new EmpleadoMySQL();
 		String titulo[] = {"Leg.", "Nombre", "Apellido", "DNI", "Dirección", "Teléfono", "E-mail", "Sector", "Cargo", "Tipo"};
-		listaEmpleados = empleadoDAO.getListado(tipo, estado, filtro);
+		listaEmpleados = empleadoDAO.getListado(tipo, estado? 1:0, filtro);
 		String cuerpo[][]=null;
 		
 		if(listaEmpleados != null) {
@@ -231,7 +231,7 @@ public class DtosEmpleado {
 		
 		empleadoDAO = new EmpleadoMySQL();
 		String titulo[] = {"Leg.", "Apellido, nombre", "Sector", "Cargo"};
-		listaEmpleados = empleadoDAO.getListado(tipo, true, filtro);
+		listaEmpleados = empleadoDAO.getListado(tipo, 1, filtro);
 		String cuerpo[][] = null;
 		
 		if(listaEmpleados != null) {
@@ -505,8 +505,8 @@ public class DtosEmpleado {
 
 	public String getAñoNacimiento() {
 		
-		String[] partes = empleado.getFechaNacimiento().split("-");
-		añoNacimiento = partes[0];
+		String[] partes = empleado.getFechaNacimiento().split("/");
+		añoNacimiento = partes[2];
 		return añoNacimiento;
 	}
 	
@@ -517,7 +517,7 @@ public class DtosEmpleado {
 
 	public String getMesNacimiento() {
 		
-		String[] partes = empleado.getFechaNacimiento().split("-");
+		String[] partes = empleado.getFechaNacimiento().split("/");
 		mesNacimiento = partes[1];
 		return mesNacimiento;
 	}
@@ -529,8 +529,8 @@ public class DtosEmpleado {
 
 	public String getDiaNacimiento() {
 		
-		String[] partes = empleado.getFechaNacimiento().split("-");
-		diaNacimiento = partes[2];
+		String[] partes = empleado.getFechaNacimiento().split("/");
+		diaNacimiento = partes[0];
 		return diaNacimiento;
 	}
 	
@@ -547,6 +547,11 @@ public class DtosEmpleado {
 	public int getGranAlmacenada() {
 		
 		return granAlmacenada;
+	}
+	
+	public boolean isDocente() {
+	
+		return empleado.getSector().equals("Docente");
 	}
 	
 	private boolean isNumeric(String cadena) {

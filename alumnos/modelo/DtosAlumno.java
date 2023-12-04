@@ -193,7 +193,7 @@ public class DtosAlumno {
 	public String [] getListadoProfesores() {
 		
 		EmpleadoDAO empleadosDAO = new EmpleadoMySQL();
-		docentes = empleadosDAO.getListado("Docente", true, "");
+		docentes = empleadosDAO.getListado("Docente", 1, "");
 		String respuesta[] = new String[docentes.length];
 
 		for(int i = 0 ; i < docentes.length ; i++) {

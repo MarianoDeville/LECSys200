@@ -60,25 +60,15 @@ public class CtrlNuevoCurso implements ActionListener {
 	
 	public void actionPerformed(ActionEvent e) {
 
-		if(e.getSource() == ventana.comboBoxNivel) {
+		if(e.getSource() == ventana.comboBoxNivel && ventana.isVisible()) {
 			
 			ventana.comboBoxAño.setModel(new DefaultComboBoxModel<String>(dtosCurso.getListaAños((String)ventana.comboBoxNivel.getSelectedItem())));
-			actualizar();
 		}		
-		
-		if(e.getSource() == ventana.comboBoxAula) {
-			
-			actualizar();
-		}	
-		
-		if(e.getSource() == ventana.comboBoxProfesor) {
-			
-			actualizar();
-		}
-		
+
 		if(e.getSource() == ventana.btnValidar) {
 			
 			validar();
+			return;
 		}
 		
 		if(e.getSource() == ventana.btnGuardar) {
@@ -89,7 +79,9 @@ public class CtrlNuevoCurso implements ActionListener {
 		if(e.getSource() == ventana.btnVolver) {
 			
 			ventana.dispose();
+			return;
 		}
+		actualizar();
 	}
 	
 	private void actualizar() {
@@ -184,7 +176,6 @@ public class CtrlNuevoCurso implements ActionListener {
 			ventana.lblMensageError.setForeground(Color.BLUE);
 			ventana.txtCuota.setText("");
 			dtosCurso.limpiarVariable();
-			actualizar();
 			ventana.lblMensageError.setText("Registro guardado con éxito.");
 			ventana.btnGuardar.setEnabled(false);
 			ventana.btnValidar.setEnabled(false);

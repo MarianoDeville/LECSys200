@@ -210,7 +210,7 @@ public class DtosPagos {
 	public DefaultTableModel getTablaEmpleados(boolean estado, String filtro) {
 		
 		EmpleadoMySQL empleadosDAO = new EmpleadoMySQL();
-		empleados = empleadosDAO.getListado("Todos", estado, filtro); 
+		empleados = empleadosDAO.getListado("Todos", estado? 1:0, filtro); 
 		Object tabla[][] = new Object[empleados.length][6]; 
 		String titulo[] = {"Leg.", "Nombre", "Apellido", "Sector", "Cargo", "Tipo"};
 

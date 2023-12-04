@@ -44,7 +44,7 @@ public class CtrlPrincipal implements ActionListener {
 	
 	public void iniciar() {
 
-		JOptionPane.showMessageDialog(null, "Welcome to LECSys.\nVer.2.00\nRev. 02122023.1737");
+		JOptionPane.showMessageDialog(null, "Welcome to LECSys.\nVer. 2.00\nRev. 04122023.1737");
 		actividad.registrarActividad("Inicio del sistema", "Principal", 0);
 		ventana.setVisible(true);
 		
@@ -52,9 +52,9 @@ public class CtrlPrincipal implements ActionListener {
 			
 			cambiarPass();
 			ventanaCumpleaños();
+			DtosPrincipal dtosPrincipal = new DtosPrincipal();
+			dtosPrincipal.inicializar();
 		}
-		DtosPrincipal dtosPrincipal = new DtosPrincipal();
-		dtosPrincipal.inicializar();
 	}
 
 	public void actionPerformed(ActionEvent e) {

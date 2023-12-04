@@ -87,6 +87,12 @@ public class CtrlNuevoUsuario implements ActionListener {
 	
 	private void guardar() {
 
+		if(ventana.comboBox1.getItemCount() == 0) {
+			
+			ventana.lblMsgError.setForeground(Color.RED);
+			ventana.lblMsgError.setText("Es necesario tener empleados cargados para crear un usuario.");
+			return;
+		}
 		dtosUsuarios.setNombre(ventana.txtUsuario.getText());
 		dtosUsuarios.setContraseña(ventana.txtContraseña.getPassword());
 		dtosUsuarios.setReContraseña(ventana.txtReContraseña.getPassword());

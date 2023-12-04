@@ -16,6 +16,11 @@ public class EmpleadoMySQL extends Conexion implements EmpleadoDAO{
 		long tiempo = System.currentTimeMillis();
 		DtosActividad dtosActividad = new DtosActividad();
 
+		if(empleado.getSector().equals("Docente"))
+			empleado.setEstado(0);
+		else
+			empleado.setEstado(1);
+		
 		try {
 			
 			this.conectar();
@@ -35,7 +40,7 @@ public class EmpleadoMySQL extends Conexion implements EmpleadoDAO{
 					+ "VALUES (?, ?, DATE(NOW()), ?, ?, ?, ?)");
 			stm.setString(1, empleado.getDni());
 			stm.setFloat(2, empleado.getSalario());
-			stm.setInt(3, 1);
+			stm.setInt(3, empleado.getEstado());
 			stm.setString(4, empleado.getSector());
 			stm.setString(5, empleado.getCargo());
 			stm.setString(6, empleado.getRelacion());
@@ -107,7 +112,7 @@ public class EmpleadoMySQL extends Conexion implements EmpleadoDAO{
 		
 		Empleado empleado = new Empleado();
 		String cmdStm = "SELECT persona.nombre, apellido, empleados.dni, dirección, "
-						+ "teléfono, email, sueldo, DATE_FORMAT(fechaNacimiento, '%d/%m/%Y') "
+						+ "teléfono, email, sueldo, DATE_FORMAT(fechaNacimiento, '%d/%m/%Y'), estado "
 						+ "FROM `lecsys2.00`.empleados "
 						+ "JOIN `lecsys2.00`.persona on empleados.dni = persona.dni "
 						+ "WHERE empleados.legajo = ?";
@@ -129,6 +134,7 @@ public class EmpleadoMySQL extends Conexion implements EmpleadoDAO{
 				empleado.setEmail(rs.getString(6));
 				empleado.setSalario(rs.getFloat(7));
 				empleado.setFechaNacimiento(rs.getString(8));
+				empleado.setEstado(rs.getInt(9));
 			}
 		}catch (Exception e) {
 			
@@ -142,31 +148,21 @@ public class EmpleadoMySQL extends Conexion implements EmpleadoDAO{
 	}
 	
 	@Override
-	public Empleado [] getListado(String tipo, boolean estado, String filtrado) {
+	public Empleado [] getListado(String tipo, int estado, String filtrado) {
 		
 		Empleado empleados[] = null;
-		String where = " AND (apellido LIKE '" + filtrado + "%' OR nombre LIKE '" + filtrado + "%')) ";
-		
-		switch (tipo) {
-		
-			case "Todos":
-				where = "WHERE (empleados.estado = " + (estado? "1 ":"0 ") + where;
-				break;
-				
-			case "ID":
-				where = "WHERE empleados.idEmpleado = '" + filtrado + "'";
-				break;
-			
-			default:
-				where = "WHERE (empleados.estado = " + (estado? "1":"0") + " AND sector = '" + tipo + "'" + where;
-
-		}
+		String filtroEstado = estado == 2? "": "empleados.estado = " + estado + " AND ";
 		String cmdStm = "SELECT empleados.legajo, persona.nombre, apellido, empleados.dni, dirección, teléfono, "
 						+ "email, sector, cargo , sueldo, tipo, estado, DATE_FORMAT(fechaNacimiento, '%d/%m/%Y'), DATE_FORMAT(fechaBaja, '%d/%m/%Y') "
 						+ "FROM `lecsys2.00`.empleados "
-		 				+ "JOIN `lecsys2.00`.persona on empleados.dni = persona.dni "
-		 				+ where
-		 				+ "ORDER BY apellido, nombre";
+		 				+ "JOIN `lecsys2.00`.persona on empleados.dni = persona.dni ";
+
+		if(tipo.equals("Todos"))
+			cmdStm += "WHERE(" + filtroEstado;
+		else
+			cmdStm += "WHERE(" + filtroEstado + "sector = '" + tipo + "' AND ";
+		cmdStm += "(apellido LIKE '" + filtrado + "%' OR nombre LIKE '" + filtrado + "%')) "
+	 				+ "ORDER BY apellido, nombre";
 		
 		try {
 			

@@ -93,7 +93,7 @@ public class DtosInsumos {
 		
 		EmpleadoDAO empleadoDAO = new EmpleadoMySQL();
 		String listado[] = null;
-		listaEmpleados = empleadoDAO.getListado("Todos", true, "");
+		listaEmpleados = empleadoDAO.getListado("Todos", 1, "");
 		
 		if(listaEmpleados != null) {
 			

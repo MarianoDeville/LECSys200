@@ -173,6 +173,10 @@ public class CursosMySQL extends Conexion implements CursosDAO{
 			stm.setInt(3, curso.getLegajoProfesor());
 			stm.setInt(4, curso.getAula());
 			stm.executeUpdate();
+			pprStm = "UPDATE `lecsys2.00`.empleados SET estado = 1 WHERE legajo = ?";
+			stm = this.conexion.prepareStatement(pprStm);
+			stm.setInt(1, curso.getLegajoProfesor());
+			stm.executeUpdate();
 			pprStm = "SELECT MAX(idCurso) FROM curso";
 			ResultSet rs = stm.executeQuery(pprStm);
 			
@@ -218,6 +222,7 @@ public class CursosMySQL extends Conexion implements CursosDAO{
 		long tiempo = System.currentTimeMillis();
 		DtosActividad dtosActividad = new DtosActividad();
 		String pprStm = "UPDATE `lecsys2.00`.curso SET idProfesor = ?, estado = ?, aula = ? WHERE idCurso = ?";
+		
 		try {
 			
 			this.conectar();
@@ -236,14 +241,24 @@ public class CursosMySQL extends Conexion implements CursosDAO{
 			stm = this.conexion.prepareStatement(pprStm);
 			stm.setInt(1, curso.getId());
 			stm.executeUpdate();
+			pprStm = "UPDATE `lecsys2.00`.empleados SET estado = 1 WHERE legajo = ?";
+			stm = this.conexion.prepareStatement(pprStm);
+			stm.setInt(1, curso.getLegajoProfesor());
+			stm.executeUpdate();
+			pprStm = "UPDATE `lecsys2.00`.empleados SET estado = 0 "
+					+ "WHERE (sector = 'Docente' AND estado = 1 AND legajo NOT IN "
+					+ "(SELECT idprofesor FROM `lecsys2.00`.curso WHERE (estado = 1)))";
+			stm = this.conexion.prepareStatement(pprStm);
+			stm.executeUpdate();
 			
 			if(curso.getEstado() == 1) {
+
+				pprStm = "INSERT INTO `lecsys2.00`.horarios (día, hora, duración, idPertenece, granularidad, idCurso) "
+						 + "VALUES (?, ?, ?, ?, 2, ?)";
+				stm = this.conexion.prepareStatement(pprStm);
 				
 				for(int i = 0; i < curso.getHorarios().length; i++) {
 					
-					pprStm = "INSERT INTO `lecsys2.00`.horarios (día, hora, duración, idPertenece, granularidad, idCurso) "
-							 + "VALUES (?, ?, ?, ?, 2, ?)";
-					stm = this.conexion.prepareStatement(pprStm);
 					stm.setInt(1, curso.getHorarios()[i].getDia());
 					stm.setString(2, curso.getHorarios()[i].getHora());
 					stm.setInt(3, curso.getHorarios()[i].getDuración());

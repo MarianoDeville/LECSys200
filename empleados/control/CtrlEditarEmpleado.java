@@ -60,6 +60,7 @@ public class CtrlEditarEmpleado implements ActionListener {
 		ventana.chkbox1.setSelected(dtosEmpleado.getEstado());
 		ventana.comboBox1.setSelectedItem(dtosEmpleado.getSector());
 		ventana.comboBox2.setSelectedItem(dtosEmpleado.getRelacion());
+		ventana.chkbox1.setVisible(!dtosEmpleado.isDocente());
 		ventana.setVisible(true);
 	}
 	

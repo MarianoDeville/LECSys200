@@ -25,6 +25,7 @@ public class DtosCurso {
 		String cuerpo[][]=null;
 		
 		try {
+			
 			cuerpo = new String[cursos.length][6];
 			
 			for(int i = 0 ; i < cursos.length ; i++) {
@@ -295,7 +296,15 @@ public class DtosCurso {
 			return getListaAulas();
 		} else if(valor.equals("Profesor")) {
 			
-			return getListaProfesores();
+			EmpleadoMySQL empleadosDAO = new EmpleadoMySQL();
+			profesores = empleadosDAO.getListado("Docente", 1, "");
+			String respuesta[] = new String[profesores.length];
+			
+			for(int i = 0 ; i < profesores.length ; i++) {
+				
+				respuesta[i] = profesores[i].getNombre() + " " + profesores[i].getApellido();
+			}
+			return respuesta;
 		} else if(valor.equals("Curso")) {
 			
 			return getListaCursos();
@@ -307,7 +316,6 @@ public class DtosCurso {
 		
 		cursosDAO = new CursosMySQL();
 		cursos = cursosDAO.getListado("");
-		
 		String nombreCursos[] = new String[cursos.length];
 		
 		for(int i = 0 ; i < cursos.length; i++) {
@@ -325,6 +333,8 @@ public class DtosCurso {
 		
 		if(criterio.equals("Profesor")) {
 			
+			if(cursos == null)
+				getListaCursos();
 			ocupado = cursosDAO.getTablaSemanal(0, cursos[valor].getLegajoProfesor(), -1);
 		} else if(criterio.equals("Curso")) {
 			

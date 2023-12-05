@@ -92,6 +92,11 @@ public class EmpleadoMySQL extends Conexion implements EmpleadoDAO{
 			stm.setString(5, empleado.getRelacion());
 			stm.setInt(6, empleado.getLegajo());
 			stm.executeUpdate();
+			cmdStm = "UPDATE `lecsys2.00`.empleados SET estado = 0 "
+					+ "WHERE (sector = 'Docente' AND estado = 1 AND legajo NOT IN "
+					+ "(SELECT idprofesor FROM `lecsys2.00`.curso WHERE (estado = 1)))";
+			stm = this.conexion.prepareStatement(cmdStm);
+			stm.executeUpdate();
 		} catch (Exception e) {
 
 			bandera = false;

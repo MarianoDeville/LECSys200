@@ -49,33 +49,11 @@ public class CtrlDiagramaCursos implements ActionListener {
 		ventana.lblSabado.setText("Sábado");
 		ventana.tabla.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		ventana.tabla.doLayout();
+		ventana.setTamaño(1200, 480);
 		actualizar();
 		ventana.setVisible(true);
 	}
 
-	private void actualizar() {
-
-		ventana.comboBox2.setModel(new DefaultComboBoxModel<>(dtosCurso.getListadoOpciones((String)ventana.comboBox1.getSelectedItem())));
-		actualizarTabla();
-	}
-	
-	private void actualizarTabla() {
-		
-		ventana.tabla.setModel(dtosCurso.getDiagramacion((String)ventana.comboBox1.getSelectedItem(), 
-														 ventana.comboBox2.getSelectedIndex()));
-		ventana.tabla.setEnabled(false);
-		DefaultTableCellRenderer centrado = new DefaultTableCellRenderer();
-		centrado.setHorizontalAlignment(JLabel.CENTER);
-		
-		for(int i = 0 ; i < ventana.tabla.getColumnCount() ; i++) {
-			
-			ventana.tabla.getColumnModel().getColumn(i).setPreferredWidth(40);
-			ventana.tabla.getColumnModel().getColumn(i).setCellRenderer(centrado);
-		}
-		ventana.tabla.setRowHeight(25);
-		ventana.txt1.setText(dtosCurso.getCantHoras());
-	}
-	
 	public void actionPerformed(ActionEvent e) {
 
 		if(e.getSource() == ventana.comboBox1) {
@@ -104,5 +82,28 @@ public class CtrlDiagramaCursos implements ActionListener {
 			
 			ventana.dispose();
 		}
+	}
+
+	private void actualizar() {
+
+		ventana.comboBox2.setModel(new DefaultComboBoxModel<>(dtosCurso.getListadoOpciones((String)ventana.comboBox1.getSelectedItem())));
+		actualizarTabla();
+	}
+	
+	private void actualizarTabla() {
+		
+		ventana.tabla.setModel(dtosCurso.getDiagramacion((String)ventana.comboBox1.getSelectedItem(), 
+														 ventana.comboBox2.getSelectedIndex()));
+		ventana.tabla.setEnabled(false);
+		DefaultTableCellRenderer centrado = new DefaultTableCellRenderer();
+		centrado.setHorizontalAlignment(JLabel.CENTER);
+		
+		for(int i = 0 ; i < ventana.tabla.getColumnCount() ; i++) {
+			
+			ventana.tabla.getColumnModel().getColumn(i).setPreferredWidth(40);
+			ventana.tabla.getColumnModel().getColumn(i).setCellRenderer(centrado);
+		}
+		ventana.tabla.setRowHeight(25);
+		ventana.txt1.setText(dtosCurso.getCantHoras());
 	}
 }

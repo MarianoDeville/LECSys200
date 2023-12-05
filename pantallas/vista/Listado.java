@@ -15,6 +15,8 @@ public class Listado extends VentanaModelo {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel listado;
+	private int posx;
+	private int posy;
 	private JScrollPane scrollTabla;
 	public JLabel lblComboBox1;
 	public JLabel lblComboBox2;
@@ -50,6 +52,8 @@ public class Listado extends VentanaModelo {
 		setLocation(x + 5, y + 5);
 		SpringLayout contenedor = new SpringLayout();
 		listado.setLayout(contenedor);
+		posx = x + 5;
+		posy = y + 5;
 		
 		lblComboBox1 = new JLabel();
 		contenedor.putConstraint(SpringLayout.NORTH, lblComboBox1, 15, SpringLayout.NORTH, listado);
@@ -229,5 +233,10 @@ public class Listado extends VentanaModelo {
 		contenedor.putConstraint(SpringLayout.WEST, btn1B, -90, SpringLayout.EAST, btn1B);
 		btn1B.setVisible(false);
 		listado.add(btn1B);	
+	}
+	
+	public void setTamaño(int x, int y) {
+		
+		setBounds(posx, posy, x, y);
 	}
 }

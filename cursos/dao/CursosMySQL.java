@@ -162,37 +162,37 @@ public class CursosMySQL extends Conexion implements CursosDAO{
 		boolean bandera = true;
 		long tiempo = System.currentTimeMillis();
 		DtosActividad dtosActividad = new DtosActividad();
-		String pprStm = "INSERT INTO `lecsys2.00`.curso (año, nivel, idProfesor, estado, aula)"
+		String cmdStm = "INSERT INTO `lecsys2.00`.curso (año, nivel, idProfesor, estado, aula)"
 				 		+ " VALUES (?, ?, ?, 1, ?)";
 		try {
 			
 			this.conectar();
-			PreparedStatement stm = this.conexion.prepareStatement(pprStm);
+			PreparedStatement stm = this.conexion.prepareStatement(cmdStm);
 			stm.setString(1, curso.getAño());
 			stm.setString(2, curso.getNivel());
 			stm.setInt(3, curso.getLegajoProfesor());
 			stm.setInt(4, curso.getAula());
 			stm.executeUpdate();
-			pprStm = "UPDATE `lecsys2.00`.empleados SET estado = 1 WHERE legajo = ?";
-			stm = this.conexion.prepareStatement(pprStm);
+			cmdStm = "UPDATE `lecsys2.00`.empleados SET estado = 1 WHERE legajo = ?";
+			stm = this.conexion.prepareStatement(cmdStm);
 			stm.setInt(1, curso.getLegajoProfesor());
 			stm.executeUpdate();
-			pprStm = "SELECT MAX(idCurso) FROM curso";
-			ResultSet rs = stm.executeQuery(pprStm);
+			cmdStm = "SELECT MAX(idCurso) FROM curso";
+			ResultSet rs = stm.executeQuery(cmdStm);
 			
 			if(rs.next())
 				curso.setId(rs.getInt(1));
-			pprStm = "INSERT INTO `lecsys2.00`.valorCuota (idCurso, precio) VALUES (?, ?)";
-			stm = this.conexion.prepareStatement(pprStm);
+			cmdStm = "INSERT INTO `lecsys2.00`.valorCuota (idCurso, precio) VALUES (?, ?)";
+			stm = this.conexion.prepareStatement(cmdStm);
 			stm.setInt(1, curso.getId());
 			stm.setString(2, curso.getPrecio() + "");
 			stm.executeUpdate();
 			
 			for(int i = 0; i < curso.getHorarios().length; i++) {
 			
-				pprStm = "INSERT INTO `lecsys2.00`.horarios (día, hora, duración, idPertenece, granularidad, idCurso) "
+				cmdStm = "INSERT INTO `lecsys2.00`.horarios (día, hora, duración, idPertenece, granularidad, idCurso) "
 						 + "VALUES (?, ?, ?, ?, 2, ?)";
-				stm = this.conexion.prepareStatement(pprStm);
+				stm = this.conexion.prepareStatement(cmdStm);
 				stm.setInt(1, curso.getHorarios()[i].getDia());
 				stm.setString(2, curso.getHorarios()[i].getHora());
 				stm.setInt(3, curso.getHorarios()[i].getDuración());
@@ -205,7 +205,7 @@ public class CursosMySQL extends Conexion implements CursosDAO{
 			bandera = false;
 			CtrlLogErrores.guardarError(e.getMessage());
 			CtrlLogErrores.guardarError("CursosMySQL, setCurso()");
-			CtrlLogErrores.guardarError(pprStm);
+			CtrlLogErrores.guardarError(cmdStm);
 		} finally {
 			
 			this.cerrar();
@@ -221,41 +221,41 @@ public class CursosMySQL extends Conexion implements CursosDAO{
 		boolean bandera = true;
 		long tiempo = System.currentTimeMillis();
 		DtosActividad dtosActividad = new DtosActividad();
-		String pprStm = "UPDATE `lecsys2.00`.curso SET idProfesor = ?, estado = ?, aula = ? WHERE idCurso = ?";
+		String cmdStm = "UPDATE `lecsys2.00`.curso SET idProfesor = ?, estado = ?, aula = ? WHERE idCurso = ?";
 		
 		try {
 			
 			this.conectar();
-			PreparedStatement stm = this.conexion.prepareStatement(pprStm);
+			PreparedStatement stm = this.conexion.prepareStatement(cmdStm);
 			stm.setInt(1, curso.getLegajoProfesor());
 			stm.setInt(2, curso.getEstado());
 			stm.setInt(3, curso.getAula());
 			stm.setInt(4, curso.getId());
 			stm.executeUpdate();
-			pprStm = "UPDATE `lecsys2.00`.valorCuota SET precio = ? WHERE idCurso = ?";
-			stm = this.conexion.prepareStatement(pprStm);
+			cmdStm = "UPDATE `lecsys2.00`.valorCuota SET precio = ? WHERE idCurso = ?";
+			stm = this.conexion.prepareStatement(cmdStm);
 			stm.setFloat(1, curso.getPrecio());
 			stm.setInt(2, curso.getId());
 			stm.executeUpdate();
-			pprStm = "DELETE FROM `lecsys2.00`.horarios WHERE idCurso = ?";
-			stm = this.conexion.prepareStatement(pprStm);
+			cmdStm = "DELETE FROM `lecsys2.00`.horarios WHERE idCurso = ?";
+			stm = this.conexion.prepareStatement(cmdStm);
 			stm.setInt(1, curso.getId());
 			stm.executeUpdate();
-			pprStm = "UPDATE `lecsys2.00`.empleados SET estado = 1 WHERE legajo = ?";
-			stm = this.conexion.prepareStatement(pprStm);
+			cmdStm = "UPDATE `lecsys2.00`.empleados SET estado = 1 WHERE legajo = ?";
+			stm = this.conexion.prepareStatement(cmdStm);
 			stm.setInt(1, curso.getLegajoProfesor());
 			stm.executeUpdate();
-			pprStm = "UPDATE `lecsys2.00`.empleados SET estado = 0 "
+			cmdStm = "UPDATE `lecsys2.00`.empleados SET estado = 0 "
 					+ "WHERE (sector = 'Docente' AND estado = 1 AND legajo NOT IN "
 					+ "(SELECT idprofesor FROM `lecsys2.00`.curso WHERE (estado = 1)))";
-			stm = this.conexion.prepareStatement(pprStm);
+			stm = this.conexion.prepareStatement(cmdStm);
 			stm.executeUpdate();
 			
 			if(curso.getEstado() == 1) {
 
-				pprStm = "INSERT INTO `lecsys2.00`.horarios (día, hora, duración, idPertenece, granularidad, idCurso) "
+				cmdStm = "INSERT INTO `lecsys2.00`.horarios (día, hora, duración, idPertenece, granularidad, idCurso) "
 						 + "VALUES (?, ?, ?, ?, 2, ?)";
-				stm = this.conexion.prepareStatement(pprStm);
+				stm = this.conexion.prepareStatement(cmdStm);
 				
 				for(int i = 0; i < curso.getHorarios().length; i++) {
 					
@@ -272,7 +272,7 @@ public class CursosMySQL extends Conexion implements CursosDAO{
 			bandera = false;
 			CtrlLogErrores.guardarError(e.getMessage());
 			CtrlLogErrores.guardarError("CursosMySQL, update()");
-			CtrlLogErrores.guardarError(pprStm);
+			CtrlLogErrores.guardarError(cmdStm);
 		} finally {
 			
 			this.cerrar();

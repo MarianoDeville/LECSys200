@@ -72,6 +72,11 @@ public class CtrlGestionPresupuestos implements ActionListener {
 		
 		if(e.getSource() == ventana.btnVolver) {
 			
+			if(ventanaEnviarPedidoCotización != null)
+				ventanaEnviarPedidoCotización.dispose();
+				
+			if(ventanaCargarPresupuestos != null)
+				ventanaCargarPresupuestos.dispose();
 			ventana.dispose();
 		}
 	}

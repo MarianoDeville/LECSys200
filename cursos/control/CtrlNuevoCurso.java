@@ -54,6 +54,7 @@ public class CtrlNuevoCurso implements ActionListener {
 		ventana.comboBoxProfesor.setModel(new DefaultComboBoxModel<String>(listaProfesores));
 		ventana.comboBoxAula.setModel(new DefaultComboBoxModel<String>(dtosCurso.getListaAulas()));
 		ventana.comboBoxAño.setModel(new DefaultComboBoxModel<String>(dtosCurso.getListaAños((String)ventana.comboBoxNivel.getSelectedItem())));
+		ventana.setTamaño(1200, 330);
 		actualizar();
 		ventana.setVisible(true);
 	}

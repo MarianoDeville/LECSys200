@@ -85,6 +85,11 @@ public class CtrlABMLPedidos implements ActionListener {
 		
 		if(e.getSource() == ventana.btnVolver) {
 			
+			if(ventanaNuevoPedido != null)
+				ventanaNuevoPedido.dispose();
+			
+			if(ventanaEditarPedido != null)
+				ventanaEditarPedido.dispose();
 			ventana.dispose();
 		}
 	}

@@ -87,11 +87,8 @@ public class OperadorSistema extends Conexion {
 			case "PagosMySQL.getHistorialPagos":
 			case "EmpleadoMySQL.getEmpleado":
 			case "EstadisticasMySQL.getEstadisticasAnuales":
+			case "CobrosMySQL.getListadoAños":
 				bandera = checkLectura(1);
-				break;
-
-			case "CobrosMySQL.getUltimoRegistro":
-				bandera = checkLectura(1) | permisos[2][1];
 				break;
 			
 			case "CobrosMySQL.setCobro":

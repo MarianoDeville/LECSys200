@@ -7,6 +7,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.print.PrinterException;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import vista.ABML;
 import vista.ListadoDoble;
@@ -26,6 +27,7 @@ public class CtrlGrupoFamiliar implements ActionListener {
 		this.ventana.chckbx1.addActionListener(this);
 		this.ventana.btnEditar.addActionListener(this);
 		this.ventana.btnVolver.addActionListener(this);
+		this.ventana.comboBox1.addActionListener(this);
 		this.ventana.txt1.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
@@ -55,6 +57,8 @@ public class CtrlGrupoFamiliar implements ActionListener {
 		ventana.chckbx1.setVisible(true);
 		ventana.chckbx1.setSelected(true);
 		ventana.txt1.setVisible(true);
+		ventana.comboBox1.setVisible(true);
+		ventana.comboBox1.setModel(new DefaultComboBoxModel<String>(new String[] {"Cant. de integ.", "1 int." ,"2 int", "3 int", "más de 3"}));
 		actualizar();
 		ventana.setVisible(true);
 	}
@@ -66,6 +70,11 @@ public class CtrlGrupoFamiliar implements ActionListener {
 			actualizar();
 		}
 	
+		if(e.getSource() == ventana.comboBox1 && ventana.isVisible()) {
+		
+			actualizar();
+		}
+		
 		if(e.getSource() == ventana.btnImprimir) {
 			
 			try {
@@ -102,7 +111,7 @@ public class CtrlGrupoFamiliar implements ActionListener {
 	private void actualizar() {
 
 		elemento = -1;
-		ventana.tabla.setModel(dtosFamilia.getTablaFamilias(!ventana.chckbx1.isSelected(), ventana.txt1.getText()));
+		ventana.tabla.setModel(dtosFamilia.getTablaFamilias(!ventana.chckbx1.isSelected(), ventana.txt1.getText(), ventana.comboBox1.getSelectedIndex()));
 		ventana.tabla.getColumnModel().getColumn(0).setPreferredWidth(200);
 		ventana.tabla.getColumnModel().getColumn(0).setMaxWidth(250);
 		ventana.tabla.setDefaultEditor(Object.class, null);

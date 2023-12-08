@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import control.CtrlLogErrores;
 import modelo.Estadisticas;
+import modelo.Situacion;
 
 public class EstadisticasMySQL extends Conexion implements EstadisticasDAO {
 
@@ -16,7 +17,7 @@ public class EstadisticasMySQL extends Conexion implements EstadisticasDAO {
 		try {
 			
 			this.conectar();
-			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			Statement stm = this.conexion.createStatement();
 			ResultSet rs = stm.executeQuery("SELECT MONTH(fecha) FROM `lecsys2.00`.estadísticas "
 										  + "WHERE (YEAR(fecha) = YEAR(NOW()) AND MONTH(fecha) = MONTH(NOW()))");
 			
@@ -206,7 +207,79 @@ public class EstadisticasMySQL extends Conexion implements EstadisticasDAO {
 				respuesta.setCompras(rs.getFloat(9));
 				respuesta.setServicios(rs.getFloat(10));
 			}
-
+			cmdStm = "SELECT deuda, precio FROM `lecsys2.00`.alumnos "
+					+ "JOIN `lecsys2.00`.valorcuota ON alumnos.idCurso = valorcuota.idCurso "
+					+ "JOIN  `lecsys2.00`.grupofamiliar ON alumnos.idGrupoFamiliar = grupofamiliar.idGrupoFamiliar "
+					+ "WHERE (deuda < 1 AND descuento > 0 AND alumnos.estado = 1)";
+			rs = stm.executeQuery(cmdStm);
+			rs.last();
+			respuesta.setConDescuento(new Situacion());
+			respuesta.getConDescuento().setAlDía(rs.getRow());
+			
+			cmdStm = "SELECT deuda, precio FROM `lecsys2.00`.alumnos "
+					+ "JOIN `lecsys2.00`.valorcuota ON alumnos.idCurso = valorcuota.idCurso "
+					+ "JOIN  `lecsys2.00`.grupofamiliar ON alumnos.idGrupoFamiliar = grupofamiliar.idGrupoFamiliar "
+					+ "WHERE (deuda = 1 AND descuento > 0 AND alumnos.estado = 1)";
+			rs = stm.executeQuery(cmdStm);
+			int i = 0;
+			float parcial = 0;
+			
+			while(rs.next()) {
+			
+				parcial += rs.getInt(1) * rs.getFloat(2);
+				i++;
+			}
+			respuesta.getConDescuento().setUnMesDeuda(i);
+			cmdStm = "SELECT deuda, precio FROM `lecsys2.00`.alumnos "
+					+ "JOIN `lecsys2.00`.valorcuota ON alumnos.idCurso = valorcuota.idCurso "
+					+ "JOIN  `lecsys2.00`.grupofamiliar ON alumnos.idGrupoFamiliar = grupofamiliar.idGrupoFamiliar "
+					+ "WHERE (deuda > 1 AND descuento > 0 AND alumnos.estado = 1)";
+			rs = stm.executeQuery(cmdStm);
+			i = 0;
+			
+			while(rs.next()) {
+				
+				parcial += rs.getInt(1) * rs.getFloat(2);
+				i++;
+			}
+			respuesta.getConDescuento().setMasDeUnMes(i);
+			respuesta.getConDescuento().setSumaDeuda(parcial);
+			cmdStm = "SELECT deuda, precio FROM `lecsys2.00`.alumnos "
+					+ "JOIN `lecsys2.00`.valorcuota ON alumnos.idCurso = valorcuota.idCurso "
+					+ "JOIN  `lecsys2.00`.grupofamiliar ON alumnos.idGrupoFamiliar = grupofamiliar.idGrupoFamiliar "
+					+ "WHERE (deuda < 1 AND descuento = 0 AND alumnos.estado = 1)";
+			rs = stm.executeQuery(cmdStm);
+			rs.last();
+			respuesta.setSinDescuento(new Situacion());
+			respuesta.getSinDescuento().setAlDía(rs.getRow());
+			cmdStm = "SELECT deuda, precio FROM `lecsys2.00`.alumnos "
+					+ "JOIN `lecsys2.00`.valorcuota ON alumnos.idCurso = valorcuota.idCurso "
+					+ "JOIN  `lecsys2.00`.grupofamiliar ON alumnos.idGrupoFamiliar = grupofamiliar.idGrupoFamiliar "
+					+ "WHERE (deuda = 1 AND descuento = 0 AND alumnos.estado = 1)";
+			rs = stm.executeQuery(cmdStm);
+			i = 0;
+			parcial = 0;
+			
+			while(rs.next()) {
+			
+				parcial += rs.getInt(1) * rs.getFloat(2);
+				i++;
+			}
+			respuesta.getSinDescuento().setUnMesDeuda(i);
+			cmdStm = "SELECT deuda, precio FROM `lecsys2.00`.alumnos "
+					+ "JOIN `lecsys2.00`.valorcuota ON alumnos.idCurso = valorcuota.idCurso "
+					+ "JOIN  `lecsys2.00`.grupofamiliar ON alumnos.idGrupoFamiliar = grupofamiliar.idGrupoFamiliar "
+					+ "WHERE (deuda > 1 AND descuento = 0 AND alumnos.estado = 1)";
+			rs = stm.executeQuery(cmdStm);
+			i = 0;
+			
+			while(rs.next()) {
+				
+				parcial += rs.getInt(1) * rs.getFloat(2);
+				i++;
+			}
+			respuesta.getSinDescuento().setMasDeUnMes(i);
+			respuesta.getSinDescuento().setSumaDeuda(parcial);
 		} catch(Exception e) {
 			
 			CtrlLogErrores.guardarError(e.getMessage());

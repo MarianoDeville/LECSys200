@@ -3,6 +3,7 @@ package control;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import dao.OperadorSistema;
 import modelo.DtosConfiguracion;
 import vista.ABML;
@@ -52,7 +53,7 @@ public class CtrlEmpleados implements ActionListener {
 
 		if(e.getSource() == ventana.btn1B) {
 			
-
+			asistencia();
 		}
 		
 		if(e.getSource() == ventana.btn2A) {
@@ -93,5 +94,10 @@ public class CtrlEmpleados implements ActionListener {
 		ventanaHorarios = new ListadoDoble2("Horarios Personal", ventana.getX(), ventana.getY());
 		CtrlHorariosEmpleado ctrlHorariosEmpleados = new CtrlHorariosEmpleado(ventanaHorarios);
 		ctrlHorariosEmpleados.iniciar();
+	}
+	
+	private void asistencia() {
+		
+		JOptionPane.showMessageDialog(null, "Próximamente.");
 	}
 }

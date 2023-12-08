@@ -15,6 +15,8 @@ public class NuevoCurso extends VentanaModelo{
 
 	private static final long serialVersionUID = 1L;
 	private JPanel panel;
+	private int posx;
+	private int posy;
 	public JScrollPane scrollTabla;
 	public JTable tabla;
 	public JTextField txtNombre;
@@ -55,6 +57,8 @@ public class NuevoCurso extends VentanaModelo{
 		setContentPane(panel);
 		SpringLayout contenedor = new SpringLayout();
 		panel.setLayout(contenedor);
+		posx = x + 5;
+		posy = y + 5;
 
 		lblNivel = new JLabel("Nivel:");
 		contenedor.putConstraint(SpringLayout.NORTH, lblNivel, 15, SpringLayout.NORTH, panel);
@@ -241,5 +245,10 @@ public class NuevoCurso extends VentanaModelo{
 		contenedor.putConstraint(SpringLayout.WEST, btnVolver, 115, SpringLayout.EAST, btnBorrar);
 		contenedor.putConstraint(SpringLayout.EAST, btnVolver, 100, SpringLayout.WEST, btnVolver);
 		panel.add(btnVolver);
+	}
+	
+	public void setTamaño(int x, int y) {
+		
+		setBounds(posx, posy, x, y);
 	}
 }

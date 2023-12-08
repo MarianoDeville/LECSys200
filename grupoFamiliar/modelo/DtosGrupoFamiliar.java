@@ -17,10 +17,10 @@ public class DtosGrupoFamiliar {
 	private Alumno intEliminados[] = new Alumno[0];
 	private String listaAcciones[] = new String[0];
 	
-	public DefaultTableModel getTablaFamilias(boolean deuda, String busqueda) {
+	public DefaultTableModel getTablaFamilias(boolean deuda, String busqueda, int cantIntegrantes) {
 		
 		grupoFamiliarDAO = new GrupoFamiliarMySQL();
-		familias = grupoFamiliarDAO.getListado("ESTADO", "1", deuda, busqueda);
+		familias = grupoFamiliarDAO.getListado(deuda, busqueda, cantIntegrantes);
 		String titulo[] = new String[] {"Nombre", "Integrantes"};
 		String cuerpo[][] = new String[familias.length][3];
 

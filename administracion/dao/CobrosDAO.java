@@ -7,5 +7,5 @@ public interface CobrosDAO {
 	public Cobros [] getListado(int año, int mes);
 	public int setCobro(Cobros cobro);
 	public boolean update(Cobros cobros[]);
-//	public int getUltimoRegistro();
+	public String[] getListadoAños();
 }

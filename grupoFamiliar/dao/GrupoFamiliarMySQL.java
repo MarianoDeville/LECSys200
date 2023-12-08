@@ -9,35 +9,110 @@ import modelo.CursoXtnd;
 import modelo.DtosActividad;
 import modelo.GrupoFamiliar;
 
-public class GrupoFamiliarMySQL extends Conexion implements GrupoFamiliarDAO{
+public class GrupoFamiliarMySQL extends Conexion implements GrupoFamiliarDAO {
 
+	@Override
+	public GrupoFamiliar [] getListado(boolean sinDeuda, String campoBusqueda, int tamañoGrupo) {
+
+		GrupoFamiliar familias[] = null;
+		String cmdStm = "SELECT idGrupoFamiliar, nombreFamilia, deuda, estado, descuento, email FROM `lecsys2.00`.grupofamiliar "
+						+ "WHERE( grupofamiliar.idGrupoFamiliar in (SELECT idGrupoFamiliar "
+								+ "FROM `lecsys2.00`.alumnos GROUP BY idGrupoFamiliar "
+								+ (tamañoGrupo == 0? ") ": "HAVING COUNT(idGrupoFamiliar) = " + tamañoGrupo + ") ")
+						+ "AND grupoFamiliar.estado = 1 AND deuda " + (sinDeuda? "< 1":"> 0") + " AND nombreFamilia LIKE '%" + campoBusqueda + "%') ";
+		
+		try {
+
+			this.conectar();
+			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			ResultSet rs = stm.executeQuery(cmdStm);
+			rs.last();	
+			familias = new GrupoFamiliar[rs.getRow()];
+			rs.beforeFirst();
+			int i=0;
+
+			while (rs.next()) {
+					
+				familias[i] = new GrupoFamiliar();
+				familias[i].setId(rs.getInt(1));
+				familias[i].setNombre(rs.getString(2));
+				familias[i].setDeuda(rs.getInt(3));
+				familias[i].setEstado(rs.getInt(4));
+				familias[i].setDescuento(rs.getInt(5));
+				familias[i].setEmail(rs.getString(6));
+				i++;
+			}
+			
+			for(int e = 0; e < familias.length; e++) {
+			
+				cmdStm = "SELECT legajo, apellido, nombre, dirección, alumnos.dni, año, nivel, precio "
+						+ "FROM `lecsys2.00`.alumnos "
+						+ "JOIN `lecsys2.00`.persona ON persona.dni = alumnos.dni "
+						+ "JOIN `lecsys2.00`.curso ON alumnos.idCurso = curso.idCurso "
+						+ "JOIN `lecsys2.00`.valorCuota ON alumnos.idCurso = valorCuota.idCurso " 
+						+ "WHERE alumnos.idGrupoFamiliar = " + familias[e].getId();
+				rs = stm.executeQuery(cmdStm);
+				rs.last();	
+				familias[e].setIntegrantes(new Alumno[rs.getRow()]);
+				rs.beforeFirst();
+				i=0;
+				float sumaPrecioCuotas = 0;
+				
+				while (rs.next()) {
+	
+					familias[e].getIntegrantes()[i] = new Alumno(); 
+					familias[e].getIntegrantes()[i].setLegajo(rs.getInt(1));
+					familias[e].getIntegrantes()[i].setApellido(rs.getString(2));
+					familias[e].getIntegrantes()[i].setNombre(rs.getString(3));
+					familias[e].getIntegrantes()[i].setDireccion(rs.getString(4));
+					familias[e].getIntegrantes()[i].setDni(rs.getString(5));
+					familias[e].getIntegrantes()[i].setCurso(new CursoXtnd());
+					familias[e].getIntegrantes()[i].getCurso().setAño(rs.getString(6));
+					familias[e].getIntegrantes()[i].getCurso().setNivel(rs.getString(7));
+					familias[e].getIntegrantes()[i].getCurso().setPrecio(rs.getFloat(8));
+					sumaPrecioCuotas += rs.getFloat(8);
+					i++;
+				}
+				familias[e].setCantIntegrantes(i);
+				familias[e].setSumaPrecioCuotas(sumaPrecioCuotas);
+			}
+		}catch (Exception e) {
+			
+			CtrlLogErrores.guardarError(e.getMessage());
+			CtrlLogErrores.guardarError("GrupoFamiliarMySQL, getListado()");
+			CtrlLogErrores.guardarError(cmdStm);
+		} finally {
+			
+			this.cerrar();
+		}
+		return familias;
+	}
+	
 	@Override
 	public GrupoFamiliar [] getListado(String campo, String valor, boolean sinDeuda, String campoBusqueda) {
 
 		GrupoFamiliar familias[] = null;
-		String armoWhere = null;
-		
-		if(campo.equals("ID")) {
-			
-			armoWhere = "WHERE (grupoFamiliar.idGrupoFamiliar = " + valor + " AND deuda " + (sinDeuda? "< 1":"> 0") + ") ";
-		} else if(campo.equals("IDALUMNO")) {
-			
-			armoWhere = "WHERE (idAlumno = " + valor + " AND deuda " + (sinDeuda? "< 1":"> 0") + ") ";
-		} else if(campo.equals("ESTADO")) {
-			
-			armoWhere = "WHERE (grupoFamiliar.estado = " + valor + " AND deuda " + (sinDeuda? "< 1":"> 0") + " AND nombreFamilia LIKE '%" + campoBusqueda + "%') ";
-		} else {
-		
-			armoWhere = "WHERE (grupoFamiliar.estado = 1 AND deuda " + (sinDeuda? "< 1":"> 0") + " AND nombreFamilia LIKE '%" + campoBusqueda + "%') ";
-		}
 		String cmdStm = "SELECT grupoFamiliar.idGrupoFamiliar, nombreFamilia, deuda, SUM(precio), descuento, grupoFamiliar.email, grupoFamiliar.estado "
 						+ "FROM `lecsys2.00`.grupoFamiliar "
 						+ "JOIN `lecsys2.00`.alumnos ON alumnos.idGrupoFamiliar = grupoFamiliar.idGrupoFamiliar "
 						+ "JOIN `lecsys2.00`.curso ON alumnos.idCurso = curso.idCurso "
-						+ "JOIN `lecsys2.00`.valorCuota ON curso.idCurso = valorCuota.idCurso " 
-						+ armoWhere 
-						+ "GROUP BY grupoFamiliar.idGrupoFamiliar "
-						+ "ORDER BY grupoFamiliar.nombreFamilia";
+						+ "JOIN `lecsys2.00`.valorCuota ON curso.idCurso = valorCuota.idCurso "; 
+		
+		if(campo.equals("ID")) {
+			
+			cmdStm +=  "WHERE (grupoFamiliar.idGrupoFamiliar = " + valor + " AND deuda " + (sinDeuda? "< 1":"> 0") + ") ";
+		} else if(campo.equals("IDALUMNO")) {
+			
+			cmdStm += "WHERE (idAlumno = " + valor + " AND deuda " + (sinDeuda? "< 1":"> 0") + ") ";
+		} else if(campo.equals("ESTADO")) {
+			
+			cmdStm += "WHERE (grupoFamiliar.estado = " + valor + " AND deuda " + (sinDeuda? "< 1":"> 0") + " AND nombreFamilia LIKE '%" + campoBusqueda + "%') ";
+		} else {
+		
+			cmdStm += "WHERE (grupoFamiliar.estado = 1 AND deuda " + (sinDeuda? "< 1":"> 0") + " AND nombreFamilia LIKE '%" + campoBusqueda + "%') ";
+		}
+		cmdStm += "GROUP BY grupoFamiliar.idGrupoFamiliar "
+				+ "ORDER BY grupoFamiliar.nombreFamilia";
 		
 		try {
 
@@ -260,22 +335,14 @@ public class GrupoFamiliarMySQL extends Conexion implements GrupoFamiliarDAO{
 
 		boolean bandera = true;
 		long tiempo = System.currentTimeMillis();
-		int nuevaDeuda = 0;
 		DtosActividad dtosActividad = new DtosActividad();
-		String where = idGrupo == 0? "WHERE estado = '1'" : "WHERE idGrupoFamiliar = '" + idGrupo + "'";
-		String cmdStm = "SELECT deuda FROM grupoFamiliar ";
-		
+		String cmdStm = "UPDATE `lecsys2.00`.grupoFamiliar SET deuda = deuda + ? WHERE " +  (idGrupo == 0? "estado = 1" : "idGrupoFamiliar = " + idGrupo);
+
 		try {
 			
 			this.conectar();
 			PreparedStatement stm = this.conexion.prepareStatement(cmdStm);
-			ResultSet rs = stm.executeQuery();
-			
-			if(rs.next()) 
-				nuevaDeuda = rs.getInt(1) + modificarDeuda;
-			cmdStm = "UPDATE `lecsys2.00`.grupoFamiliar SET deuda = ? " + where;
-			stm = this.conexion.prepareStatement(cmdStm);
-			stm.setInt(1, nuevaDeuda);
+			stm.setInt(1, modificarDeuda);
 			stm.executeUpdate();
 		} catch (Exception e) {
 	
@@ -288,7 +355,7 @@ public class GrupoFamiliarMySQL extends Conexion implements GrupoFamiliarDAO{
 			this.cerrar();
 		}
 		tiempo = System.currentTimeMillis() - tiempo;
-		dtosActividad.registrarActividad("Actualización de la deuda del grupo familiar.", "Adminnistración", tiempo);
+		dtosActividad.registrarActividad("Actualización de la deuda del grupo familiar.", "Adminnistración / Sistema", tiempo);
 		return bandera;
 	}
 

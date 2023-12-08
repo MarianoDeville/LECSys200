@@ -4,6 +4,7 @@ import modelo.GrupoFamiliar;
 
 public interface GrupoFamiliarDAO {
 
+	public GrupoFamiliar [] getListado(boolean sinDeuda, String campoBusqueda, int cantIntegrantes);
 	public GrupoFamiliar [] getListado(String campo, String valor, boolean sinDeuda, String campoBusqueda);
 	public GrupoFamiliar getGrupoFamiliar(int id);
 	public int create(GrupoFamiliar familia);

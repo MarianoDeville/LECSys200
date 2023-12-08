@@ -135,17 +135,14 @@ public class CtrlCobrarCuota implements ActionListener {
 
 		ventana.tabla.clearSelection();
 		
-		if(ventanaCobrar != null) {
-
-			JOptionPane.showMessageDialog(null, "Le ventana \"Cobrar\" ya se encuentra abierta.");
-			return;
-		}
-		
 		if(elemento == -1) {
 			
 			JOptionPane.showMessageDialog(null, "No ha seleccionado ningún elemento.");
 			return;
 		}
+		
+		if(ventanaCobrar != null)
+			ventanaCobrar.dispose();
 		dtosCobros.setInfoCobro(elemento);
 		ventanaCobrar = new Cobro("Cobro de cuota", ventana.getX(), ventana.getY());
 		CtrlRealizarCobro ctrolCobrar = new CtrlRealizarCobro(ventanaCobrar);

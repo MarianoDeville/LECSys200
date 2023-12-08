@@ -228,7 +228,7 @@ public class CtrlCobrarInscripcion implements ActionListener {
 	}
 
 	private void registraCobro() {
-		
+
 		boolean bandera = false;
 		dtosCobros.setNombre(ventana.txtNombre.getText());
 		dtosCobros.setEnviarEmail(ventana.chckbxEnviarEmail.isSelected());
@@ -241,9 +241,6 @@ public class CtrlCobrarInscripcion implements ActionListener {
 		String error = dtosCobros.validarInformación(!haySeleccion, true);
 		
 		if(error.length() == 0) {
-
-			ventana.lblMsgError.setForeground(Color.BLUE);
-			ventana.lblMsgError.setText("Procesando la operación.");
 
 			if(ventana.chckbxTabla2.isSelected()) {
 				
@@ -274,6 +271,7 @@ public class CtrlCobrarInscripcion implements ActionListener {
 						
 						ventana.lblMsgError.setForeground(Color.RED);
 						ventana.lblMsgError.setText("Error en el emvío del email.");
+						return;
 					}
 				} else {
 				
@@ -281,11 +279,8 @@ public class CtrlCobrarInscripcion implements ActionListener {
 					CtrlReciboCobrarInscripcion ctrolReciboInscripcion = new CtrlReciboCobrarInscripcion(ventanaReciboPago);
 					ctrolReciboInscripcion.iniciar();
 				}
-				if(ventana.lblMsgError.getText().length() == 0) {
-					
-					ventana.lblMsgError.setForeground(Color.BLUE);
-					ventana.lblMsgError.setText("Operación almacenada en la base de datos.");
-				}
+				ventana.lblMsgError.setForeground(Color.BLUE);
+				ventana.lblMsgError.setText("Operación almacenada en la base de datos.");
 				ventana.btnCobrar.setEnabled(false);
 				dtosCobros.deleteInfo();
 			}else {

@@ -166,7 +166,7 @@ public class DtosCobros {
 			
 				cuerpo[i][1] += familias[i].getIntegrantes()[e].getNombre() + " " + familias[i].getIntegrantes()[e].getApellido();
 				
-				if(e < familias.length - 1)
+				if(e < familias[i].getIntegrantes().length - 1)
 					cuerpo[i][1] += ", ";
 			}
 		}
@@ -202,17 +202,18 @@ public class DtosCobros {
 			
 			sumaCuotas += familia.getIntegrantes()[i].getCurso().getPrecio();
 		}
-		String descripcion = "Inscripción: " + String.format("%.2f",inscripcion) + ", primer cuota: " + String.format("%.2f",sumaCuotas);
+		String descripcion = "Inscripción: " + String.format("%.2f", inscripcion) + ", primer cuota: " + String.format("%.2f", sumaCuotas);
 		
 		if(descuentoContado > 0)
 			descripcion += ", descuento pago contado: " + String.format("%.2f",descuentoContado);
 		montoTotal = sumaCuotas + inscripcion;
 		descuentoDeGrupo = sumaCuotas * familia.getDescuento() / 100;
 		montoTotal -= descuentoDeGrupo; 
-		
+
 		if(familia.getDescuento() > 0)
-			descripcion += ", descuento grupo familiar: " + descuentoDeGrupo;
+			descripcion += ", descuento grupo familiar: " + String.format("%.2f", descuentoDeGrupo);
 		montoTotal -= descuentoContado;
+		montoTotal = (float) (Math.round(montoTotal * 100d) / 100d);
 		cobro.setConcepto(descripcion);
 		cobro.setMonto(montoTotal);
 		return montoTotal;
@@ -414,7 +415,6 @@ public class DtosCobros {
 	public String calculoDescuento() {
 		
 		return String.format("%.2f", familia.getDescuento() * familia.getSumaPrecioCuotas() /100);
-		
 	}
 
 	public String setRecargoMora(String recargo) {
@@ -489,14 +489,8 @@ public class DtosCobros {
 	
 	public String [] getAños() {
 		
-		fechaSistema = new GregorianCalendar();
-		String respuesta[] = new String[5];
-		
-		for(int i = 4 ; i >= 0 ; i--) {
-			
-			respuesta[i] = fechaSistema.get(Calendar.YEAR) - i +""; 
-		}
-		return respuesta;
+		cobrosDAO = new CobrosMySQL();
+		return cobrosDAO.getListadoAños();
 	}
 	
 	public String [] getMeses() {

@@ -134,4 +134,37 @@ public class CobrosMySQL extends Conexion implements CobrosDAO{
 		dtosActividad.registrarActividad("Actualización del número de factura en cobros.", "Administración", tiempo);
 		return bandera;
 	}
+	
+	@Override
+	public String[] getListadoAños() {
+		
+		String listado[] = null;
+		String cmdStm = "SELECT YEAR(fecha) FROM `lecsys2.00`.cobros GROUP BY YEAR(fecha)";
+		
+		try {
+			
+			this.conectar();
+			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);			
+			ResultSet rs = stm.executeQuery(cmdStm);
+			rs.last();	
+			listado = new String[rs.getRow()];
+			rs.beforeFirst();
+			int i = 0;
+			
+			while(rs.next()) {
+
+				listado[i] = rs.getString(1);
+				i++;
+			}
+		} catch(Exception e) {
+			
+			CtrlLogErrores.guardarError(e.getMessage());
+			CtrlLogErrores.guardarError("CobrosMySQL, getListadoAños()");
+			CtrlLogErrores.guardarError(cmdStm);
+		} finally {
+			
+			this.cerrar();
+		}
+		return listado;
+	}
 }

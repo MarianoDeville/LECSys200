@@ -20,12 +20,12 @@ public class DtosPrincipal {
 		if(estadisticasDAO.isNuevoMes()) {
 			
 			JOptionPane.showMessageDialog(null, "generando el resumen mensual");
+			mandarInforme();
 			GrupoFamiliarDAO grupoFamiliarDAO = new GrupoFamiliarMySQL();
 			UsuariosDAO usuariosDAO = new UsuariosMySQL();
 			grupoFamiliarDAO.updateDeuda(0, 1);
 			usuariosDAO.updateTiempoPass();
 			BackupDB.iniciar();
-			mandarInforme();
 		}
 	}
 	
@@ -40,10 +40,20 @@ public class DtosPrincipal {
 		cuerpoEmail += "\n       Cantidad de faltas en el mes: " + estadiscica.getFaltasEstudiantes();
 		cuerpoEmail += "\n\nCantidsa de empleados: " + estadiscica.getCantidadEmpleados();
 		cuerpoEmail += "\n       Cantidad de faltas en el mes: " + estadiscica.getFaltasEmpleados();
-		cuerpoEmail += "\n\nIngresos: " + estadiscica.getIngresos();
-		cuerpoEmail += "\nSueldos: " + estadiscica.getSueldos();
-		cuerpoEmail += "\nCompras: " + estadiscica.getCompras();
-		cuerpoEmail += "\nUtilidad del mes: " + (estadiscica.getIngresos() - estadiscica.getSueldos() - estadiscica.getCompras());
+		cuerpoEmail += "\n\n                                                    Detalle situación alumnos con deuda vencida\n";
+		cuerpoEmail += "\n                                           Sin deuda     Un mes de deuda     Más de un mes     Suma adeudada";
+		cuerpoEmail += "\nAlumnos con descuento    " + estadiscica.getConDescuento().getAlDía() + "                    " 
+													 + estadiscica.getConDescuento().getUnMesDeuda() + "                               " 
+													 + estadiscica.getConDescuento().getMasDeUnMes() + "                             " 
+													 + String.format("%.2f", estadiscica.getConDescuento().getSumaDeuda());
+		cuerpoEmail += "\nAlumnos sin descuento      " + estadiscica.getSinDescuento().getAlDía() + "                    " 
+													 + estadiscica.getSinDescuento().getUnMesDeuda() + "                              " 
+													 + estadiscica.getSinDescuento().getMasDeUnMes() + "                             " 
+													 + String.format("%.2f", estadiscica.getSinDescuento().getSumaDeuda());
+		cuerpoEmail += "\n\nIngresos: " + String.format("%.2f", estadiscica.getIngresos());
+		cuerpoEmail += "\nSueldos: " + String.format("%.2f", estadiscica.getSueldos());
+		cuerpoEmail += "\nCompras: " + String.format("%.2f", estadiscica.getCompras());
+		cuerpoEmail += "\nUtilidad del mes: " + String.format("%.2f", (estadiscica.getIngresos() - estadiscica.getSueldos() - estadiscica.getCompras()));
 		emailService.mandarCorreo(config.getEmailInforme(), "Resumen mensual", cuerpoEmail);
 	}
 }

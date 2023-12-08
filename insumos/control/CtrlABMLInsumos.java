@@ -95,6 +95,14 @@ public class CtrlABMLInsumos implements ActionListener{
 		
 		if(e.getSource() == ventana.btnVolver) {
 			
+			if(ventanaNuevoInsumo != null)
+				ventanaNuevoInsumo.dispose();
+			
+			if(ventanaEditarInsumo != null) 
+				ventanaEditarInsumo.dispose();
+				
+			if(ventanaHistorico != null)
+				ventanaHistorico.dispose();
 			ventana.dispose();
 		}
 		

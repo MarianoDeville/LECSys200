@@ -34,26 +34,7 @@ public class CtrlNuevoAlumno implements ActionListener {
 		actualizar();
 		ventana.setVisible(true);
 	}
-	
-	private void actualizar() {
-		
-		ventana.tabla.setModel(dtosAlumno.getTablaDias(ventana.comboBox1.getSelectedIndex()));
-		ventana.tabla.setEnabled(false);
-	}
-	
-	private void limpiarCampos() {
-		
-		ventana.txtNombre.setText("");
-		ventana.txtApellido.setText("");
-		ventana.txtDNI.setText("");
-		ventana.txtAño.setText("");
-		ventana.txtMes.setText("");
-		ventana.txtDia.setText("");
-		ventana.txtDireccion.setText("");
-		ventana.txtEmail.setText("");
-		ventana.txtTelefono.setText("");
-	}
-	
+
 	public void actionPerformed(ActionEvent e) {
 		
 		if(e.getSource() == ventana.comboBox1) {
@@ -75,6 +56,25 @@ public class CtrlNuevoAlumno implements ActionListener {
 
 			ventana.dispose();
 		}
+	}
+	
+	private void actualizar() {
+		
+		ventana.tabla.setModel(dtosAlumno.getTablaDias(ventana.comboBox1.getSelectedIndex()));
+		ventana.tabla.setEnabled(false);
+	}
+	
+	private void limpiarCampos() {
+		
+		ventana.txtNombre.setText("");
+		ventana.txtApellido.setText("");
+		ventana.txtDNI.setText("");
+		ventana.txtAño.setText("");
+		ventana.txtMes.setText("");
+		ventana.txtDia.setText("");
+		ventana.txtDireccion.setText("");
+		ventana.txtEmail.setText("");
+		ventana.txtTelefono.setText("");
 	}
 	
 	private void guardar() {

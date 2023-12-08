@@ -13,6 +13,8 @@ public class Estadisticas {
 	private float compras;
 	private float servicios;
 	private String fecha;
+	private Situacion conDescuento;
+	private Situacion sinDescuento;
 
 	public Estadisticas() {
 		
@@ -136,5 +138,25 @@ public class Estadisticas {
 	public void setFecha(String fecha) {
 		
 		this.fecha = fecha;
+	}
+
+	public Situacion getConDescuento() {
+		
+		return conDescuento;
+	}
+
+	public void setConDescuento(Situacion conDescuento) {
+		
+		this.conDescuento = conDescuento;
+	}
+
+	public Situacion getSinDescuento() {
+		
+		return sinDescuento;
+	}
+
+	public void setSinDescuento(Situacion sinDescuento) {
+		
+		this.sinDescuento = sinDescuento;
 	}
 }

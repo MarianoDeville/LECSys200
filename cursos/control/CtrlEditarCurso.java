@@ -54,6 +54,7 @@ public class CtrlEditarCurso implements ActionListener{
 		ventana.comboBoxAño.setSelectedItem(dtosCurso.getAño());
 		ventana.comboBoxProfesor.setSelectedItem(dtosCurso.getNombreProfesor());
 		ventana.comboBoxNivel.setSelectedItem(dtosCurso.getNivel());
+		ventana.setTamaño(1200, 330);
 		actualizar();
 		ventana.setVisible(true);
 	}

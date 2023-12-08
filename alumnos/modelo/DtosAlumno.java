@@ -95,7 +95,7 @@ public class DtosAlumno {
 			for(int i = 0 ; i < cursos[pos].getHorarios().length ; i++) {
 
 				cuerpo[0][cursos[pos].getHorarios()[i].getDia() + 1] = cursos[pos].getHorarios()[i].getHora();
-				cuerpo[1][cursos[pos].getHorarios()[i].getDia() + 1] = calcularTiempo(cursos[pos].getHorarios()[i].getDuración());
+				cuerpo[1][cursos[pos].getHorarios()[i].getDia() + 1] = calcularTiempo(cursos[pos].getHorarios()[i].getDuración() - 1);
 			}
 		} else {
 			
@@ -545,7 +545,8 @@ public class DtosAlumno {
 	}
 	
 	public void setNombre(String nombre) {
-		
+		if(DtosAlumno.alumno == null)
+			DtosAlumno.alumno = new Alumno();
 		DtosAlumno.alumno.setNombre(nombre);
 	}
 	
@@ -780,7 +781,7 @@ public class DtosAlumno {
 	}
 
 	private String calcularTiempo(int num) {
-		
+
 		String resultado =(int) num / 2 + "";
 		
 		if (num % 2 == 0)

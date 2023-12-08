@@ -14,6 +14,7 @@ public class CtrlPagos implements ActionListener {
 	private InterfaceBotones ventana;
 	private ABML ventanaEmpleados;
 	private ABML ventanaProveedores;
+	private ABML ventanaServicios;
 	private Listado ventanaHistorial;
 	
 	public CtrlPagos(InterfaceBotones vista) {
@@ -22,6 +23,7 @@ public class CtrlPagos implements ActionListener {
 		this.ventana.btn1A.addActionListener(this);
 		this.ventana.btn1B.addActionListener(this);
 		this.ventana.btn1C.addActionListener(this);
+		this.ventana.btn2A.addActionListener(this);
 		this.ventana.btnVolver.addActionListener(this);
 	}
 	
@@ -38,9 +40,12 @@ public class CtrlPagos implements ActionListener {
 		ventana.lbl1B.setText("Proveedores");
 		ventana.btn1B.setIcon(new ImageIcon(DtosConfiguracion.getDirectorio() + "\\Imagenes\\Proveedores.png"));
 		ventana.btn1B.setVisible(true);
-		ventana.lbl1C.setText("Listado pagos");
-		ventana.btn1C.setIcon(new ImageIcon(DtosConfiguracion.getDirectorio() + "\\Imagenes\\Listado cobros.png"));
+		ventana.lbl1C.setText("Servicios");
+		ventana.btn1C.setIcon(new ImageIcon(DtosConfiguracion.getDirectorio() + "\\Imagenes\\Servicios.png"));
 		ventana.btn1C.setVisible(true);
+		ventana.lbl2A.setText("Listado pagos");
+		ventana.btn2A.setIcon(new ImageIcon(DtosConfiguracion.getDirectorio() + "\\Imagenes\\Listado cobros.png"));
+		ventana.btn2A.setVisible(true);
 		ventana.setVisible(true);
 	}
 	
@@ -58,11 +63,27 @@ public class CtrlPagos implements ActionListener {
 		
 		if(e.getSource() == ventana.btn1C) {
 			
+			servicios();
+		}
+		
+		if(e.getSource() == ventana.btn2A) {
+			
 			historial();
 		}
 		
 		if(e.getSource() == ventana.btnVolver) {
 			
+			if(ventanaEmpleados != null)
+				ventanaEmpleados.dispose();
+
+			if(ventanaProveedores != null)
+				ventanaProveedores.dispose();
+
+			if(ventanaServicios != null)
+				ventanaServicios.dispose();
+
+			if(ventanaHistorial != null)
+				ventanaHistorial.dispose();
 			ventana.dispose();
 		}
 	}
@@ -89,6 +110,17 @@ public class CtrlPagos implements ActionListener {
 		ventanaProveedores = new ABML("Pago a proveedores", ventana.getX(), ventana.getY());
 		CtrlProveedores ctrlProveedores = new CtrlProveedores(ventanaProveedores);
 		ctrlProveedores.iniciar();
+	}
+	
+	private void servicios() {
+		
+		if(ventanaServicios != null && ventanaServicios.isVisible()) {
+			ventanaServicios.setVisible(true);
+			return;
+		}
+		ventanaServicios = new ABML("Pago de servicios e impuestos", ventana.getX(), ventana.getY());
+		CtrlPagoServicios ctrlPagarServicios = new CtrlPagoServicios(ventanaServicios);
+		ctrlPagarServicios.iniciar();
 	}
 	
 	private void historial() {

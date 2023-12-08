@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.DefaultComboBoxModel;
-
 import modelo.DtosPagos;
 import vista.Nuevo;
 
@@ -54,6 +53,7 @@ public class CtrlPagarEmpleado implements ActionListener{
 		ventana.txt3.setColumns(30);
 		ventana.txt3.setVisible(true);
 		ventana.comboBox1.setModel(new DefaultComboBoxModel<String>(dtosPagos.listadoConcepto()));
+		ventana.comboBox1.setSelectedIndex(dtosPagos.getMesActual() - 1);
 		ventana.comboBox2.setModel(new DefaultComboBoxModel<String>(dtosPagos.formasPago()));
 		ventana.txtLegajo.setText(dtosPagos.getLegajo());
 		ventana.txtNombre.setText(dtosPagos.getNombreEmpleado());

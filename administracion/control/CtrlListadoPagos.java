@@ -33,6 +33,9 @@ public class CtrlListadoPagos implements ActionListener {
 		ventana.lblComboBox1.setText("Año:");
 		ventana.comboBox1.setVisible(true);
 		ventana.comboBox1.setModel(new DefaultComboBoxModel<String>(dtosPagos.getAños()));
+		
+		if(dtosPagos.getAños().length > 1)
+			ventana.comboBox1.setSelectedIndex(1);
 		ventana.lblComboBox2.setVisible(true);
 		ventana.lblComboBox2.setText("Mes:");
 		ventana.comboBox2.setVisible(true);

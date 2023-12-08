@@ -276,7 +276,7 @@ public class CtrlCobrarInscripcion implements ActionListener {
 				} else {
 				
 					ReciboCobro ventanaReciboPago = new ReciboCobro("Comprobante de pago");
-					CtrlReciboCobrarInscripcion ctrolReciboInscripcion = new CtrlReciboCobrarInscripcion(ventanaReciboPago);
+					CtrlReciboCobro ctrolReciboInscripcion = new CtrlReciboCobro(ventanaReciboPago);
 					ctrolReciboInscripcion.iniciar();
 				}
 				ventana.lblMsgError.setForeground(Color.BLUE);

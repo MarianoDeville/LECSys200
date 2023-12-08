@@ -9,7 +9,6 @@ import dao.ComprasMySQL;
 import dao.EmpleadoMySQL;
 import dao.InsumosDAO;
 import dao.InsumosMySQL;
-import dao.OperadorSistema;
 import dao.PagosDAO;
 import dao.PagosMySQL;
 
@@ -153,9 +152,7 @@ public class DtosPagos {
 			return false;
 		}
 		pagosDAO = new PagosMySQL();
-		OperadorSistema operador = new OperadorSistema();
-		pago.setIdEmpleado(operador.getLegajoUsuario());
-		
+
 		if(pagosDAO.setPagoProveedor(pago, seleccionados)) {
 			
 			InsumosDAO insumosDAO = new InsumosMySQL();
@@ -260,8 +257,7 @@ public class DtosPagos {
 	public boolean registrarPagoEmpleado() {
 		
 		pagosDAO = new PagosMySQL();
-		OperadorSistema operador = new OperadorSistema();
-		pago.setIdEmpleado(operador.getLegajoUsuario());
+		pago.setIdEmpleado(empleado.getLegajo());
 		
 		if(pagosDAO.setPagoEmpleado(pago)) {
 	

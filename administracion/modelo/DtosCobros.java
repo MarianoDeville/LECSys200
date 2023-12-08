@@ -202,16 +202,17 @@ public class DtosCobros {
 			
 			sumaCuotas += familia.getIntegrantes()[i].getCurso().getPrecio();
 		}
-		String descripcion = "Inscripción: " + String.format("%.2f", inscripcion) + ", primer cuota: " + String.format("%.2f", sumaCuotas);
+		String descripcion = "Inscripción: " + String.format("%.2f", inscripcion) 
+							+ " - primer cuota: " + String.format("%.2f", sumaCuotas);
 		
 		if(descuentoContado > 0)
-			descripcion += ", descuento pago contado: " + String.format("%.2f",descuentoContado);
+			descripcion += " - descuento pago contado: " + String.format("%.2f",descuentoContado);
 		montoTotal = sumaCuotas + inscripcion;
 		descuentoDeGrupo = sumaCuotas * familia.getDescuento() / 100;
 		montoTotal -= descuentoDeGrupo; 
 
 		if(familia.getDescuento() > 0)
-			descripcion += ", descuento grupo familiar: " + String.format("%.2f", descuentoDeGrupo);
+			descripcion += " - descuento grupo familiar: " + String.format("%.2f", descuentoDeGrupo);
 		montoTotal -= descuentoContado;
 		montoTotal = (float) (Math.round(montoTotal * 100d) / 100d);
 		cobro.setConcepto(descripcion);
@@ -284,7 +285,7 @@ public class DtosCobros {
 	public String getCuerpoEmail() {
 		
 		String temp = "Por la presente se deja constancia del pago realizado el día " + getFechaActual("") 
-					+ ", y el detalle del mismo:\n\n" + cobro.getConcepto().replaceAll(", ", "\n")
+					+ ", y el detalle del mismo:\n\n" + cobro.getConcepto()
 					+ "\nTotal: " + String.format("%.2f",cobro.getMonto());
 		return temp;
 	}
@@ -377,7 +378,7 @@ public class DtosCobros {
 		
 		fechaSistema = new GregorianCalendar();
 		int mesActual = fechaSistema.get(Calendar.MONTH);
-		String meses[] = new String[] {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+		String meses[] = new String[] {"Ene", "Feb", "Mzo", "Abr", "May", "Jun", "Jul", "Agto", "Sept", "Oct", "Nov", "Dic"};
 		String listaCuotasDeuda[] = new String[familia.getDeuda() == 0? 2 : familia.getDeuda() + 1];
 		listaCuotasDeuda[0] = "Seleccione uno";
 
@@ -438,24 +439,24 @@ public class DtosCobros {
 		float montoTotal;
 		cobro = new Cobros();
 		montoTotal = familia.getSumaPrecioCuotas() * cantidadCuotasSeleccionadas;
-		String descripcion = "Cuota correspondiente a " + concepto + ": " + montoTotal;
+		String descripcion = "Cuota correspondiente a " + concepto + ": " + String.format("%.2f", montoTotal);
 		descuentoDeGrupo = montoTotal * familia.getDescuento() / 100;
 		montoTotal -= descuentoDeGrupo; 
 		
 		if(familia.getDescuento() > 0)
-			descripcion += ", descuento grupo familiar: " + descuentoDeGrupo;
+			descripcion += " - descuento grupo familiar: " + String.format("%.2f", descuentoDeGrupo);
 
 		if(recargoMora > 0)
-			descripcion += ", recargo por pago fuera de término: " + recargoMora;		
+			descripcion += " - recargo por pago fuera de término: " + String.format("%.2f", recargoMora);		
 		
 		if(descuentoContado > 0)
-			descripcion += ", descuento pago contado: " + descuentoContado;
+			descripcion += " - descuento pago contado: " + String.format("%.2f", descuentoContado);
 		montoTotal += recargoMora;
 		montoTotal -= descuentoContado;
-		descripcion += ", suma total: " + montoTotal;
+		descripcion += " - suma total: " + String.format("%.2f", montoTotal);
 		cobro.setMonto(montoTotal);
 		cobro.setConcepto(descripcion);
-		return String.format("%.2f",montoTotal);
+		return String.format("%.2f", montoTotal);
 	}
 	
 	public boolean guardarCobroCuota() {
@@ -662,9 +663,9 @@ public class DtosCobros {
 		cobro.setFactura(numeroFactura);
 	}
 	
-	public float getMontoTotal() {
+	public String getMontoTotal() {
 		
-		return cobro.getMonto();
+		return String.format("%.2f", cobro.getMonto());
 	}
 	
 	public String getDescripcion() {

@@ -8,6 +8,8 @@ public class Proveedor {
 	private String cuit;
 	private String tipo;
 	private int estado;
+	private int servicio;
+	private String comentario;
 	private Contacto contactos[];
 	
 	public int getId() {
@@ -69,7 +71,27 @@ public class Proveedor {
 		
 		this.estado = estado;
 	}
+	
+	public int getServicio() {
+		
+		return servicio;
+	}
 
+	public void setServicio(int servicio) {
+		
+		this.servicio = servicio;
+	}
+
+	public String getComentario() {
+		
+		return comentario;
+	}
+
+	public void setComentario(String comentario) {
+		
+		this.comentario = comentario;
+	}
+	
 	public Contacto[] getContactos() {
 		
 		return contactos;

@@ -64,7 +64,7 @@ public class CtrlPagoEmpleados implements ActionListener{
 	
 	public void actionPerformed(ActionEvent e) {
 
-		if(e.getSource() == ventana.chckbx1) {
+		if(e.getSource() == ventana.chckbx1 && ventana.isVisible()) {
 			
 			actualizar();
 		}
@@ -125,6 +125,7 @@ public class CtrlPagoEmpleados implements ActionListener{
 			
 			if(ventanaDetallePagos != null && ventanaDetallePagos.isVisible())
 				ventanaDetallePagos.dispose();
+			ventana.tabla.clearSelection();
 			ventanaDetallePagos = new Listado("Detalle pagos empleados", ventana.getX(), ventana.getY());
 			CtrlListadoPagosEmpleado ctrlDetallePagos = new CtrlListadoPagosEmpleado(ventanaDetallePagos);
 			ctrlDetallePagos.iniciar();

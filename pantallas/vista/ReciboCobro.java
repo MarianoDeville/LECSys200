@@ -18,7 +18,6 @@ public class ReciboCobro extends VentanaModelo {
 	public JLabel txtFecha;
 	public JLabel txtNombre;
 	public JLabel txtConcepto;
-	public JLabel txtConcepto_1;
 	public JLabel txtMontoTotal;
 	public JLabel txtTítulo_1;
 	public JLabel txtTítulo_2;
@@ -59,15 +58,11 @@ public class ReciboCobro extends VentanaModelo {
 		panel.add(txtMontoTotal);
 		
 		txtConcepto = new JLabel();
+		txtConcepto.setVerticalAlignment(SwingConstants.TOP);
 		txtConcepto.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		txtConcepto.setBounds(25, 300, 560, 25);
+		txtConcepto.setBounds(25, 300, 560, 75);
 		panel.add(txtConcepto);
-		
-		txtConcepto_1 = new JLabel();
-		txtConcepto_1.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		txtConcepto_1.setBounds(25, 325, 560, 25);
-		panel.add(txtConcepto_1);
-		
+
 		txtNroRecibo = new JLabel();
 		txtNroRecibo.setHorizontalAlignment(SwingConstants.CENTER);
 		txtNroRecibo.setFont(new Font("Tahoma", Font.PLAIN, 14));

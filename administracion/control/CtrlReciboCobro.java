@@ -9,12 +9,12 @@ import javax.swing.JOptionPane;
 import modelo.DtosCobros;
 import vista.ReciboCobro;
 
-public class CtrlReciboCobrarInscripcion implements ActionListener {
+public class CtrlReciboCobro implements ActionListener {
 	
 	private ReciboCobro ventanaReciboInscripcion;
 	private DtosCobros dtosCobro;
 		
-	public CtrlReciboCobrarInscripcion(ReciboCobro vista) {
+	public CtrlReciboCobro(ReciboCobro vista) {
 		
 		this.ventanaReciboInscripcion = vista;
 		this.dtosCobro = new DtosCobros();

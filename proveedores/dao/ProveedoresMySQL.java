@@ -11,19 +11,26 @@ import modelo.Proveedor;
 public class ProveedoresMySQL extends Conexion implements ProveedoresDAO {
 
 	@Override
-	public Proveedor [] getListado(String filtrado, boolean estado) {
+	public Proveedor [] getListado(String filtrado, boolean estado, int tipo) {
 
 		Proveedor respuesta[] = null;
-		String cmdStm = "SELECT idProveedores, nombre, cuit, direccion, tipo, estado "
+		String cmdStm = "SELECT idProveedores, nombre, cuit, direccion, tipo, estado, servicio, comentario "
 					+ "FROM `lecsys2.00`.proveedores "
-	 				+ "WHERE (estado = " + (estado?"1":"0") +  " AND (nombre LIKE '%" + filtrado + "%' OR cuit LIKE'" + filtrado + "%')) "
-	 				+ "ORDER BY nombre";
+	 				+ "WHERE (estado = ? ";
+					
+		if(tipo < 2)			
+	 			cmdStm += "AND servicio = " + (tipo == 1? 1 : 0);
+		cmdStm += " AND (nombre LIKE ? OR cuit LIKE ?)) ORDER BY nombre";
+		filtrado = "%" + filtrado + "%";		
 		
 		try {
 			
 			this.conectar();
-			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stm.executeQuery(cmdStm);
+			PreparedStatement stm = this.conexion.prepareStatement(cmdStm, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			stm.setInt(1, estado? 1 : 0);
+			stm.setString(2, filtrado);
+			stm.setString(3, filtrado);
+			ResultSet rs = stm.executeQuery();
 			rs.last();	
 			respuesta = new Proveedor[rs.getRow()];
 			rs.beforeFirst();
@@ -38,6 +45,8 @@ public class ProveedoresMySQL extends Conexion implements ProveedoresDAO {
 				respuesta[i].setDireccion(rs.getString(4));
 				respuesta[i].setTipo(rs.getString(5));
 				respuesta[i].setEstado(rs.getInt(6));
+				respuesta[i].setServicio(rs.getInt(7));
+				respuesta[i].setComentario(rs.getString(8));
 				i++;
 			}
 			
@@ -80,8 +89,8 @@ public class ProveedoresMySQL extends Conexion implements ProveedoresDAO {
 
 		boolean bandera = true;
 		long tiempo = System.currentTimeMillis();
-		String cmdStm = "INSERT INTO `lecsys2.00`.proveedores (nombre, direccion, cuit, tipo, estado)"
-				 	+ " VALUES (?, ?, ?, ?, 1)";
+		String cmdStm = "INSERT INTO `lecsys2.00`.proveedores (nombre, direccion, cuit, tipo, estado, servicio, comentario)"
+				 	+ " VALUES (?, ?, ?, ?, 1, ?, ?)";
 		DtosActividad dtosActividad = new DtosActividad();
 
 		try {
@@ -92,6 +101,8 @@ public class ProveedoresMySQL extends Conexion implements ProveedoresDAO {
 			stm.setString(2, proveedor.getDireccion());
 			stm.setString(3, proveedor.getCuit());
 			stm.setString(4, proveedor.getTipo());
+			stm.setInt(5, proveedor.getServicio());
+			stm.setString(6, proveedor.getComentario());
 			stm.executeUpdate();
 			ResultSet rs = stm.executeQuery("SELECT MAX(idProveedores) FROM proveedores");
 			
@@ -132,7 +143,7 @@ public class ProveedoresMySQL extends Conexion implements ProveedoresDAO {
 		long tiempo = System.currentTimeMillis();
 		DtosActividad dtosActividad = new DtosActividad();
 		String cmdStm = "UPDATE `lecsys2.00`.proveedores "
-					+ "SET nombre = ?, direccion = ?, cuit = ?, tipo = ?, estado = ? "
+					+ "SET nombre = ?, direccion = ?, cuit = ?, tipo = ?, estado = ?, servicio = ?, comentario = ? "
 					+ "WHERE idProveedores = ?";
 				
 		try {
@@ -144,7 +155,9 @@ public class ProveedoresMySQL extends Conexion implements ProveedoresDAO {
 			stm.setString(3, proveedor.getCuit());
 			stm.setString(4, proveedor.getTipo());
 			stm.setInt(5, proveedor.getEstado());
-			stm.setLong(6, proveedor.getId());
+			stm.setInt(6, proveedor.getServicio());
+			stm.setString(7, proveedor.getComentario());
+			stm.setLong(8, proveedor.getId());
 			stm.executeUpdate();
 			
 			if(proveedor.getEstado() == 1) {		
@@ -211,16 +224,20 @@ public class ProveedoresMySQL extends Conexion implements ProveedoresDAO {
 		String cmdStm = "SELECT proveedores.nombre,sector, contacto.nombre, email, proveedores.idProveedores "
 						+ "FROM contacto "
 						+ "JOIN proveedores ON contacto.idProveedores = proveedores.IdProveedores "
-		 				+ "WHERE (proveedores.estado = 1 AND (proveedores.nombre LIKE '%" + filtrado + "%' "
-		 											 + "OR contacto.nombre LIKE'%" + filtrado + "%' "
-		 											 + "OR email LIKE'%" + filtrado + "%')) "
+		 				+ "WHERE (proveedores.estado = 1 AND (proveedores.nombre LIKE ? "
+		 											 + "OR contacto.nombre LIKE ? "
+		 											 + "OR email LIKE ?)) "
 		 				+ "ORDER BY proveedores.nombre";
+		filtrado = "%" + filtrado + "%";
 		
 		try {
 			
 			this.conectar();
-			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stm.executeQuery(cmdStm);
+			PreparedStatement stm = this.conexion.prepareStatement(cmdStm, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			stm.setString(1, filtrado);
+			stm.setString(2, filtrado);
+			stm.setString(3, filtrado);
+			ResultSet rs = stm.executeQuery();
 			rs.last();	
 			matriz = new Object[rs.getRow()][5];
 			rs.beforeFirst();

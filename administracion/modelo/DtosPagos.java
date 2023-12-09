@@ -11,6 +11,8 @@ import dao.InsumosDAO;
 import dao.InsumosMySQL;
 import dao.PagosDAO;
 import dao.PagosMySQL;
+import dao.ProveedoresDAO;
+import dao.ProveedoresMySQL;
 
 public class DtosPagos {
 
@@ -324,6 +326,45 @@ public class DtosPagos {
 		DefaultTableModel respuesta = new DefaultTableModel(tabla, titulo);
 		return respuesta;
 	}
+	
+	
+	
+	
+	
+	
+	public DefaultTableModel getTablaProveedores(String filtro) {
+		
+		ProveedoresDAO proveedoresDAO = new ProveedoresMySQL();
+		String titulo[] = new String[] {"Id", "Razón social", "CUIT", "Dirección"};
+		Object tabla[][] = null;
+		proveedores = proveedoresDAO.getListado(filtro, true, 1);
+		tabla = new Object[proveedores.length][4];
+	
+		for(int i = 0; i < tabla.length;i++) {
+			
+			tabla[i][0] = proveedores[i].getId();
+			tabla[i][1] = proveedores[i].getNombre();
+			tabla[i][2] = proveedores[i].getCuit();
+			tabla[i][3] = proveedores[i].getDireccion();
+		}
+		DefaultTableModel respuesta = new DefaultTableModel(tabla,titulo);
+		return respuesta;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	public String getNombreEmpresa() {
 		

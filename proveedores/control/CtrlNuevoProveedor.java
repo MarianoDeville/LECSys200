@@ -66,6 +66,12 @@ public class CtrlNuevoProveedor implements ActionListener{
 		ventana.btnBorrar.setVisible(true);
 		ventana.txtNombre.setVisible(true);
 		ventana.txtDirección.setVisible(true);
+		ventana.checkBoxServicios.setVisible(true);
+		ventana.checkBoxServicios.setText("Proveedor de servicios");
+		ventana.lblAula.setVisible(true);
+		ventana.lblAula.setText("Comentario:");
+		ventana.txtComentario.setVisible(true);
+		ventana.txtComentario.setText("");
 		ventana.lblNivel.setText("Nombre:");
 		ventana.lblAño.setText("Dirección:");
 		ventana.lblProfesor.setText("Condición:");
@@ -136,6 +142,8 @@ public class CtrlNuevoProveedor implements ActionListener{
 		dtosProveedores.setDirección(ventana.txtDirección.getText());
 		dtosProveedores.setSituaciónFiscal((String)ventana.comboBoxProfesor.getSelectedItem());
 		dtosProveedores.setCuit(ventana.txtCuota.getText());
+		dtosProveedores.setComentario(ventana.txtComentario.getText());
+		dtosProveedores.setServicio(ventana.checkBoxServicios.isSelected());
 		
 		if(dtosProveedores.setGuardar(ventana.tabla)) {
 			

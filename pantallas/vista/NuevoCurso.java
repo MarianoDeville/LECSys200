@@ -23,10 +23,12 @@ public class NuevoCurso extends VentanaModelo{
 	public JTextField txtDirección;
 	public JTextField Cuit;
 	public JTextField txtCuota;
+	public JTextField txtComentario;
 	public JComboBox<String> comboBoxNivel;
 	public JComboBox<String> comboBoxAño;
 	public JComboBox<String> comboBoxProfesor;
 	public JComboBox<String> comboBoxAula;
+	public JCheckBox checkBoxServicios;
 	public JCheckBox checkBoxActivo;
 	public JLabel lblNivel;
 	public JLabel lblAño;
@@ -72,13 +74,19 @@ public class NuevoCurso extends VentanaModelo{
 		contenedor.putConstraint(SpringLayout.WEST, comboBoxNivel, 95, SpringLayout.WEST, panel);
 		contenedor.putConstraint(SpringLayout.SOUTH, comboBoxNivel, 35, SpringLayout.NORTH, panel);
 		panel.add(comboBoxNivel);
-		
+
 		txtNombre = new JTextField();
 		contenedor.putConstraint(SpringLayout.NORTH, txtNombre, 15, SpringLayout.NORTH, panel);
 		contenedor.putConstraint(SpringLayout.WEST, txtNombre, 95, SpringLayout.WEST, panel);
 		panel.add(txtNombre);
 		txtNombre.setVisible(false);
 		txtNombre.setColumns(20);
+
+		checkBoxServicios = new JCheckBox();
+		contenedor.putConstraint(SpringLayout.NORTH, checkBoxServicios, 15, SpringLayout.NORTH, panel);
+		contenedor.putConstraint(SpringLayout.WEST, checkBoxServicios, 100, SpringLayout.EAST, txtNombre);
+		checkBoxServicios.setVisible(false);
+		panel.add(checkBoxServicios);		
 		
 		lblAño = new JLabel("Año:");
 		contenedor.putConstraint(SpringLayout.NORTH, lblAño, 40, SpringLayout.NORTH, panel);
@@ -99,7 +107,13 @@ public class NuevoCurso extends VentanaModelo{
 		panel.add(txtDirección);
 		txtDirección.setVisible(false);
 		txtDirección.setColumns(20);
-		
+
+		checkBoxActivo = new JCheckBox();
+		contenedor.putConstraint(SpringLayout.NORTH, checkBoxActivo, 40, SpringLayout.NORTH, panel);
+		contenedor.putConstraint(SpringLayout.WEST, checkBoxActivo, 100, SpringLayout.EAST, txtDirección);
+		checkBoxActivo.setVisible(false);
+		panel.add(checkBoxActivo);	
+
 		lblProfesor = new JLabel("Profesor:");
 		contenedor.putConstraint(SpringLayout.NORTH, lblProfesor, 65, SpringLayout.NORTH, panel);
 		contenedor.putConstraint(SpringLayout.WEST, lblProfesor, 25, SpringLayout.WEST, panel);
@@ -126,12 +140,13 @@ public class NuevoCurso extends VentanaModelo{
 		contenedor.putConstraint(SpringLayout.SOUTH, comboBoxAula, 135, SpringLayout.NORTH, panel);
 		contenedor.putConstraint(SpringLayout.EAST, comboBoxAula, 215, SpringLayout.WEST, panel);
 		panel.add(comboBoxAula);
-		
-		checkBoxActivo = new JCheckBox();
-		contenedor.putConstraint(SpringLayout.NORTH, checkBoxActivo, 115, SpringLayout.NORTH, panel);
-		contenedor.putConstraint(SpringLayout.WEST, checkBoxActivo, 95, SpringLayout.WEST, panel);
-		checkBoxActivo.setVisible(false);
-		panel.add(checkBoxActivo);		
+	
+		txtComentario = new JTextField();
+		contenedor.putConstraint(SpringLayout.NORTH, txtComentario, 115, SpringLayout.NORTH, panel);
+		contenedor.putConstraint(SpringLayout.WEST, txtComentario, 95, SpringLayout.WEST, panel);
+		panel.add(txtComentario);
+		txtComentario.setVisible(false);
+		txtComentario.setColumns(60);
 		
 		lblHorario = new JLabel("Horario:     ");
 		contenedor.putConstraint(SpringLayout.NORTH, lblHorario, 150, SpringLayout.NORTH, panel);

@@ -62,7 +62,11 @@ public class CtrlEditarProveedor implements ActionListener{
 		ventana.comboBoxNivel.setVisible(false);
 		ventana.comboBoxAño.setVisible(false);
 		ventana.comboBoxAula.setVisible(false);
-		ventana.lblAula.setVisible(false);
+		ventana.checkBoxServicios.setVisible(true);
+		ventana.checkBoxServicios.setText("Proveedor de servicios");
+		ventana.lblAula.setVisible(true);
+		ventana.lblAula.setText("Comentario:");
+		ventana.txtComentario.setVisible(true);
 		ventana.btnBorrar.setVisible(true);
 		ventana.txtNombre.setVisible(true);
 		ventana.txtDirección.setVisible(true);
@@ -121,7 +125,9 @@ public class CtrlEditarProveedor implements ActionListener{
 		ventana.txtNombre.setText(dtosProveedores.getNombre());
 		ventana.txtDirección.setText(dtosProveedores.getDirección());
 		ventana.txtCuota.setText(dtosProveedores.getCuit());
+		ventana.txtComentario.setText(dtosProveedores.getComentario());
 		ventana.comboBoxProfesor.setSelectedItem(dtosProveedores.getSituaciónFiscal());
+		ventana.checkBoxServicios.setSelected(dtosProveedores.getServicio());
 		ventana.checkBoxActivo.setSelected(dtosProveedores.isEstado());
 		ventana.tabla.setModel(dtosProveedores.getTablaContactos(ventana.tabla, elemento));
 		ventana.tabla.getColumnModel().getColumn(0).setMinWidth(100);
@@ -143,6 +149,8 @@ public class CtrlEditarProveedor implements ActionListener{
 		dtosProveedores.setDirección(ventana.txtDirección.getText());
 		dtosProveedores.setSituaciónFiscal((String)ventana.comboBoxProfesor.getSelectedItem());
 		dtosProveedores.setCuit(ventana.txtCuota.getText());
+		dtosProveedores.setComentario(ventana.txtComentario.getText());
+		dtosProveedores.setServicio(ventana.checkBoxServicios.isSelected());
 		dtosProveedores.setEstado(ventana.checkBoxActivo.isSelected());
 		
 		if(dtosProveedores.setActualizar(ventana.tabla)) {

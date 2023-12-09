@@ -14,12 +14,12 @@ public class DtosProveedores {
 	private int cantidadContactos = 0;
 	private Object tabla[][];
 	
-	public DefaultTableModel getTablaProveedores(String filtro, boolean estado) {
+	public DefaultTableModel getTablaProveedores(String filtro, boolean estado, int tipo) {
 		
 		proveedoresDAO = new ProveedoresMySQL();
 		String titulo[] = new String[] {"Razón social", "CUIT", "Dirección", "Teléfonos", "E-mail"};
 		tabla = null;
-		proveedores = proveedoresDAO.getListado(filtro, estado);
+		proveedores = proveedoresDAO.getListado(filtro, estado, tipo);
 		
 		if(proveedores != null) {
 			
@@ -127,12 +127,6 @@ public class DtosProveedores {
 	
 	public boolean setGuardar(JTable contactos) {
 		
-		if(contactos.getRowCount() == 0) {
-			
-			mensageError = "Falta ingrsar información de contacto para este proveedor.";
-			return true;
-		}
-		
 		if(!isInfoCorrecta(contactos, true))
 			return false;
 		
@@ -146,7 +140,7 @@ public class DtosProveedores {
 	}
 
 	public boolean setActualizar(JTable contactos) {
-		
+
 		if(!isInfoCorrecta(contactos, false))
 			return false;
 
@@ -173,6 +167,26 @@ public class DtosProveedores {
 		
 		return proveedor.getNombre();
 	}
+	
+	public void setComentario(String comentario) {
+		
+		proveedor.setComentario(comentario);
+	}
+	
+	public String getComentario() {
+		
+		return proveedor.getComentario();
+	}
+	
+	public void setServicio(boolean servicio) {
+		
+		proveedor.setServicio(servicio? 1: 0);
+	}
+	
+	public boolean getServicio() {
+		
+		return proveedor.getServicio() == 1? true: false;
+	}	
 	
 	public void setDirección(String dirección) {
 		
@@ -228,7 +242,11 @@ public class DtosProveedores {
 
 	private boolean isInfoCorrecta(JTable contactos, boolean nuevo) {
 
-		if(proveedor.getNombre().length() < 4) {
+		if(contactos.getRowCount() == 0 && proveedor.getServicio() == 0) {
+			
+			mensageError = "Falta ingrsar información de contacto para este proveedor.";
+			return false;
+		} else if(proveedor.getNombre().length() < 4) {
 			
 			mensageError = "El nombre o razón social debe ser más largo.";
 			return false;
@@ -244,12 +262,15 @@ public class DtosProveedores {
 
 			mensageError = "El número de cuit ya se encuentra cargado en la base de datos.";
 			return false;
+		}else if(proveedor.getComentario().length() > 239) {
+			
+			mensageError = "El comentario es demasiado largo.";
+			return false;
 		}
-
+		proveedor.setContactos(new Contacto[contactos.getRowCount()]);
+		
 		if(contactos.getRowCount() > 0) {
-			
-			proveedor.setContactos(new Contacto[contactos.getRowCount()]);
-			
+
 			for(int i = 0; i < contactos.getRowCount(); i++) {
 
 				if(contactos.getValueAt(i, 0) == null)

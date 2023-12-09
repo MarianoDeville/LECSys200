@@ -7,6 +7,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.print.PrinterException;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import dao.OperadorSistema;
 import modelo.DtosProveedores;
@@ -30,6 +31,7 @@ public class CtrlABMLProveedores implements ActionListener{
 		this.ventana.btnImprimir.addActionListener(this);
 		this.ventana.btnVolver.addActionListener(this);
 		this.ventana.chckbx1.addActionListener(this);
+		this.ventana.comboBox1.addActionListener(this);
 		this.ventana.txt1.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
@@ -58,6 +60,9 @@ public class CtrlABMLProveedores implements ActionListener{
 			ventana.dispose();
 			return;
 		}
+		ventana.comboBox1.setVisible(true);
+		ventana.comboBox1.setModel(new DefaultComboBoxModel<String>(new String[] {"Insumos","Servicios", "Todos"}));
+		ventana.comboBox1.setSelectedIndex(2);
 		ventana.txt1.setVisible(true);
 		ventana.chckbx1.setVisible(true);
 		actualizar();
@@ -67,6 +72,11 @@ public class CtrlABMLProveedores implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 
 		if(e.getSource() == ventana.chckbx1 && ventana.isVisible()) {
+			
+			actualizar();
+		}
+		
+		if(e.getSource() == ventana.comboBox1 && ventana.isVisible()) {
 			
 			actualizar();
 		}
@@ -119,7 +129,8 @@ public class CtrlABMLProveedores implements ActionListener{
 
 		elemento = -1;
 		ventana.tabla.setModel(dtosProveedores.getTablaProveedores(ventana.txt1.getText(), 
-																	ventana.chckbx1.isSelected()));
+																	ventana.chckbx1.isSelected(), 
+																	ventana.comboBox1.getSelectedIndex()));
 		ventana.tabla.setDefaultEditor(Object.class, null);
 	}
 	

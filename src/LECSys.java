@@ -19,7 +19,7 @@ import vista.IngresoUsuario;
 /*		Estado:					BETA.											*/
 /*		Autor:					Mariano Ariel Deville							*/
 /*		Fecha creación:			24/09/2023										*/
-/*		Última modificación:	08/12/2023										*/
+/*		Última modificación:	09/12/2023										*/
 /********************************************************************************/
 
 public class LECSys {

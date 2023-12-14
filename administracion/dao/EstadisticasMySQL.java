@@ -41,25 +41,48 @@ public class EstadisticasMySQL extends Conexion implements EstadisticasDAO {
 			if (rs.next())
 				estadistica.setCantidadEmpleados(rs.getInt(1));
 			rs = stm.executeQuery("SELECT SUM(monto) FROM `lecsys2.00`.cobros "
-								+ "WHERE( MONTH(fecha) = MONTH(NOW()) AND YEAR(fecha) = YEAR(NOW()) AND cobros.idEstadisticas IS NULL)");
+								+ "WHERE( MONTH(fecha) = MONTH(NOW()) AND YEAR(fecha) = YEAR(NOW()) "
+								+ "AND cobros.idEstadisticas IS NULL)");
 			
 			if (rs.next())
 				estadistica.setIngresos(rs.getFloat(1));
 			rs = stm.executeQuery("SELECT SUM(pagos.monto) FROM `lecsys2.00`.pagos "
-								+ "WHERE( MONTH(fecha) = MONTH(NOW()) AND YEAR(fecha) = YEAR(NOW()) AND pagos.idEmpleados > 0 AND pagos.idEstadisticas IS NULL)");
+								+ "WHERE( MONTH(fecha) = MONTH(NOW()) AND YEAR(fecha) = YEAR(NOW()) "
+								+ "AND pagos.idEmpleados > 0 AND pagos.idEstadisticas IS NULL)");
 			
 			if (rs.next())
 				estadistica.setSueldos(rs.getFloat(1));
 			rs = stm.executeQuery("SELECT SUM(pagos.monto) FROM `lecsys2.00`.pagos "
-								+ "WHERE( MONTH(fecha) = MONTH(NOW()) AND YEAR(fecha) = YEAR(NOW()) AND pagos.idProveedor > 0 AND pagos.idEstadisticas IS NULL)");
+								+ "WHERE( MONTH(fecha) = MONTH(NOW()) AND YEAR(fecha) = YEAR(NOW()) "
+								+ "AND pagos.idProveedor > 0 AND pagos.idEstadisticas IS NULL)");
 			
 			if (rs.next())
 				estadistica.setCompras(rs.getFloat(1));
+
+
+			
+			
+			
+			
+			
+			rs = stm.executeQuery("SELECT SUM(pagos.monto) FROM `lecsys2.00`.pagos "
+								+ "WHERE( MONTH(fecha) = MONTH(NOW()) AND YEAR(fecha) = YEAR(NOW()) AND pagos.idProveedor > 0 AND pagos.idEstadisticas IS NULL)");
+
+			if (rs.next())
+				estadistica.setServicios(rs.getFloat(1));
+			
+			
+			
+			
+			
+			
+			
+			
 			rs = stm.executeQuery("SELECT COUNT(idFaltas) FROM `lecsys2.00`.faltas "
 								+ "WHERE( MONTH(fecha) = MONTH(NOW()) AND YEAR(fecha) = YEAR(NOW()) AND faltas.estado = 0)");
 			
 			if (rs.next())
-				estadistica.setFaltasEstudiantes(rs.getInt(1));			
+				estadistica.setFaltasEstudiantes(rs.getInt(1));
 			PreparedStatement pstm  = this.conexion.prepareStatement("INSERT INTO `lecsys2.00`.estadísticas (fecha, estudiantesActivos, empleados, "
 																   + "ingresosMes, sueldos, compras, servicios, faltasEmpleados, faltasAlumnos) "
 																   + "VALUES( DATE( NOW()), ?, ?, ?, ?, ?, ?, ?, ?)");

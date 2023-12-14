@@ -244,13 +244,16 @@ public class DtosPagos {
 	}
 
 	public boolean setSuma(String valor) {
+
+		if(pago == null)
+			pago = new Pago();
 		
 		try {
 			
 			pago.setMonto(Float.parseFloat(valor.replace(",", ".")));
 		} catch(Exception e) {
 			
-			msgError = "El formato del valor de la remuneración es incorrecto.";
+			msgError = "El monto debe ser numérico.";
 			return false;
 		}
 		return true;
@@ -326,12 +329,7 @@ public class DtosPagos {
 		DefaultTableModel respuesta = new DefaultTableModel(tabla, titulo);
 		return respuesta;
 	}
-	
-	
-	
-	
-	
-	
+
 	public DefaultTableModel getTablaProveedores(String filtro) {
 		
 		ProveedoresDAO proveedoresDAO = new ProveedoresMySQL();
@@ -350,21 +348,31 @@ public class DtosPagos {
 		DefaultTableModel respuesta = new DefaultTableModel(tabla,titulo);
 		return respuesta;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+	public boolean registrarPagoServicio() {
+		
+		if(pago.getFormaPago().length() < 3 || pago.getFormaPago().length() > 99) {
+			
+			msgError = "No hay forma de pago definida, no debe ser mayor a 100 caracteres.";
+			return false;
+		} else if(pago.getConcepto().length() < 3 || pago.getConcepto().length() > 239) {
+			
+			msgError = "Por favor indique el concepto del pago, no debe ser mayor a 240 caracteres.";
+			return false;
+		}
+		pago.setIdProveedor(proveedor.getId());
+		pagosDAO = new PagosMySQL();
+
+		if(pagosDAO.setPagoProveedor(pago, null)) {
+
+			msgError = "Pago guardado en la base se datos correctamente.";
+			return true;
+		} else {
+			
+			msgError = "Error al intentar guardar la información.";
+			return false;
+		}
+	}
 	
 	public String getNombreEmpresa() {
 		
@@ -479,5 +487,15 @@ public class DtosPagos {
 	public String getSuma() {
 		
 		return String.format("%.2f", suma);
+	}
+	
+	public String getId() {
+		
+		return proveedor.getId() + "";
+	}
+	
+	public String getDireccionEmpresa(){
+		
+		return proveedor.getDireccion();
 	}
 }

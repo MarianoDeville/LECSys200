@@ -71,13 +71,13 @@ public class Nuevo extends VentanaModelo {
 		lblLegajo = new JLabel("Legajo:");
 		contenedor.putConstraint(SpringLayout.NORTH, lblLegajo, 30, SpringLayout.NORTH, panel);
 		contenedor.putConstraint(SpringLayout.WEST, lblLegajo, 15, SpringLayout.WEST, panel);
-		contenedor.putConstraint(SpringLayout.EAST, lblLegajo, 70, SpringLayout.WEST, lblLegajo);
+		contenedor.putConstraint(SpringLayout.EAST, lblLegajo, 80, SpringLayout.WEST, lblLegajo);
 		panel.add(lblLegajo);
 		
 		txtLegajo = new JTextField();
 		contenedor.putConstraint(SpringLayout.NORTH, txtLegajo, -2, SpringLayout.NORTH, lblLegajo);
 		contenedor.putConstraint(SpringLayout.WEST, txtLegajo, 5, SpringLayout.EAST, lblLegajo);
-		contenedor.putConstraint(SpringLayout.EAST, txtLegajo, 150, SpringLayout.WEST, txtLegajo);
+		txtLegajo.setColumns(18);
 		txtLegajo.setEditable(false);
 		panel.add(txtLegajo);
 		
@@ -90,51 +90,52 @@ public class Nuevo extends VentanaModelo {
 		lblNombre = new JLabel("Nombres:");
 		contenedor.putConstraint(SpringLayout.NORTH, lblNombre, 15, SpringLayout.SOUTH, lblLegajo);
 		contenedor.putConstraint(SpringLayout.WEST, lblNombre, 15, SpringLayout.WEST, panel);
-		contenedor.putConstraint(SpringLayout.EAST, lblNombre, 70, SpringLayout.WEST, lblNombre);
+		contenedor.putConstraint(SpringLayout.EAST, lblNombre, 80, SpringLayout.WEST, lblNombre);
 		panel.add(lblNombre);
 		
 		txtNombre = new JTextField();
 		contenedor.putConstraint(SpringLayout.NORTH, txtNombre, -2, SpringLayout.NORTH, lblNombre);
 		contenedor.putConstraint(SpringLayout.WEST, txtNombre, 5, SpringLayout.EAST, lblNombre);
-		contenedor.putConstraint(SpringLayout.EAST, txtNombre, 150, SpringLayout.WEST, txtNombre);
+		txtNombre.setColumns(18);
 		panel.add(txtNombre);
 		configurarJTextField(txtNombre, 20);
 		
 		lblApellido = new JLabel("Apellidos:");
 		contenedor.putConstraint(SpringLayout.NORTH, lblApellido, 15, SpringLayout.SOUTH, lblNombre);
 		contenedor.putConstraint(SpringLayout.WEST, lblApellido, 15, SpringLayout.WEST, panel);
-		contenedor.putConstraint(SpringLayout.EAST, lblApellido, 70, SpringLayout.WEST, lblApellido);
+		contenedor.putConstraint(SpringLayout.EAST, lblApellido, 80, SpringLayout.WEST, lblApellido);
 		panel.add(lblApellido);
 		
 		txtApellido = new JTextField();
 		contenedor.putConstraint(SpringLayout.NORTH, txtApellido, -2, SpringLayout.NORTH, lblApellido);
 		contenedor.putConstraint(SpringLayout.WEST, txtApellido, 5, SpringLayout.EAST, lblApellido);
-		contenedor.putConstraint(SpringLayout.EAST, txtApellido, 150, SpringLayout.WEST, txtApellido);
+		txtApellido.setColumns(18);
 		panel.add(txtApellido);
 		configurarJTextField(txtApellido, 20);
 		
 		lblDNI = new JLabel("DNI:");
 		contenedor.putConstraint(SpringLayout.NORTH, lblDNI, 15, SpringLayout.SOUTH, lblApellido);
 		contenedor.putConstraint(SpringLayout.WEST, lblDNI, 15, SpringLayout.WEST, panel);
-		contenedor.putConstraint(SpringLayout.EAST, lblDNI, 70, SpringLayout.WEST, lblDNI);
+		contenedor.putConstraint(SpringLayout.EAST, lblDNI, 80, SpringLayout.WEST, lblDNI);
 		panel.add(lblDNI);
 		
 		txtDNI = new JTextField();
 		contenedor.putConstraint(SpringLayout.NORTH, txtDNI, -2, SpringLayout.NORTH, lblDNI);
 		contenedor.putConstraint(SpringLayout.WEST, txtDNI, 5, SpringLayout.EAST, lblDNI);
-		contenedor.putConstraint(SpringLayout.EAST, txtDNI, 150, SpringLayout.WEST, txtDNI);
+		txtDNI.setColumns(10);
 		panel.add(txtDNI);
 		configurarJTextField(txtDNI, 10);
 		
 		lblNacimiento = new JLabel("Nacimiento:");
 		contenedor.putConstraint(SpringLayout.NORTH, lblNacimiento, 15, SpringLayout.SOUTH, lblDNI);
 		contenedor.putConstraint(SpringLayout.WEST, lblNacimiento, 15, SpringLayout.WEST, panel);
-		contenedor.putConstraint(SpringLayout.EAST, lblNacimiento, 70, SpringLayout.WEST, lblNacimiento);
+		contenedor.putConstraint(SpringLayout.EAST, lblNacimiento, 80, SpringLayout.WEST, lblNacimiento);
 		panel.add(lblNacimiento);
 		
 		txtDia = new JTextField();
 		contenedor.putConstraint(SpringLayout.NORTH, txtDia, -2, SpringLayout.NORTH, lblNacimiento);
 		contenedor.putConstraint(SpringLayout.WEST, txtDia, 5, SpringLayout.EAST, lblNacimiento);
+		txtDia.setColumns(2);
 		panel.add(txtDia);
 		configurarJTextField(txtDia, 2);
 		
@@ -146,6 +147,7 @@ public class Nuevo extends VentanaModelo {
 		txtMes = new JTextField();
 		contenedor.putConstraint(SpringLayout.NORTH, txtMes, -2, SpringLayout.NORTH, separador1);
 		contenedor.putConstraint(SpringLayout.WEST, txtMes, 5, SpringLayout.EAST, separador1);
+		txtMes.setColumns(2);
 		panel.add(txtMes);
 		configurarJTextField(txtMes, 2);
 		
@@ -157,6 +159,7 @@ public class Nuevo extends VentanaModelo {
 		txtAño = new JTextField();
 		contenedor.putConstraint(SpringLayout.NORTH, txtAño, -2, SpringLayout.NORTH, separador2);
 		contenedor.putConstraint(SpringLayout.WEST, txtAño, 5, SpringLayout.EAST, separador2);
+		txtAño.setColumns(2);
 		panel.add(txtAño);
 		configurarJTextField(txtAño, 4);
 		
@@ -168,46 +171,44 @@ public class Nuevo extends VentanaModelo {
 		lblDireccion = new JLabel("Dirección:");
 		contenedor.putConstraint(SpringLayout.NORTH, lblDireccion, 15, SpringLayout.SOUTH, lblNacimiento);
 		contenedor.putConstraint(SpringLayout.WEST, lblDireccion, 15, SpringLayout.WEST, panel);
-		contenedor.putConstraint(SpringLayout.EAST, lblDireccion, 70, SpringLayout.WEST, lblDireccion);
+		contenedor.putConstraint(SpringLayout.EAST, lblDireccion, 80, SpringLayout.WEST, lblDireccion);
 		panel.add(lblDireccion);
 		
 		txtDireccion = new JTextField();
 		contenedor.putConstraint(SpringLayout.NORTH, txtDireccion, -2, SpringLayout.NORTH, lblDireccion);
 		contenedor.putConstraint(SpringLayout.WEST, txtDireccion, 5, SpringLayout.EAST, lblDireccion);
-		contenedor.putConstraint(SpringLayout.EAST, txtDireccion, 285, SpringLayout.WEST, txtDireccion);
+		txtDireccion.setColumns(27);
 		panel.add(txtDireccion);
-		configurarJTextField(txtDireccion, 45);
 		
 		lblEmail = new JLabel("E-mail:");
 		contenedor.putConstraint(SpringLayout.NORTH, lblEmail, 15, SpringLayout.SOUTH, lblDireccion);
 		contenedor.putConstraint(SpringLayout.WEST, lblEmail, 15, SpringLayout.WEST, panel);
-		contenedor.putConstraint(SpringLayout.EAST, lblEmail, 70, SpringLayout.WEST, lblEmail);
+		contenedor.putConstraint(SpringLayout.EAST, lblEmail, 80, SpringLayout.WEST, lblEmail);
 		panel.add(lblEmail);
 		
 		txtEmail = new JTextField();
 		contenedor.putConstraint(SpringLayout.NORTH, txtEmail, -2, SpringLayout.NORTH, lblEmail);
 		contenedor.putConstraint(SpringLayout.WEST, txtEmail, 5, SpringLayout.EAST, lblEmail);
-		contenedor.putConstraint(SpringLayout.EAST, txtEmail, 285, SpringLayout.WEST, txtEmail);
+		txtEmail.setColumns(27);
 		panel.add(txtEmail);
 		configurarJTextField(txtEmail, 40);
 		
 		lblTelefono = new JLabel("Teléfono:");
 		contenedor.putConstraint(SpringLayout.NORTH, lblTelefono, 15, SpringLayout.SOUTH, lblEmail);
 		contenedor.putConstraint(SpringLayout.WEST, lblTelefono, 15, SpringLayout.WEST, panel);
-		contenedor.putConstraint(SpringLayout.EAST, lblTelefono, 70, SpringLayout.WEST, lblTelefono);
+		contenedor.putConstraint(SpringLayout.EAST, lblTelefono, 80, SpringLayout.WEST, lblTelefono);
 		panel.add(lblTelefono);
 		
 		txtTelefono = new JTextField();
 		contenedor.putConstraint(SpringLayout.NORTH, txtTelefono, -2, SpringLayout.NORTH, lblTelefono);
 		contenedor.putConstraint(SpringLayout.WEST, txtTelefono, 5, SpringLayout.EAST, lblTelefono);
-		contenedor.putConstraint(SpringLayout.EAST, txtTelefono, 150, SpringLayout.WEST, txtTelefono);
+		txtTelefono.setColumns(18);
 		panel.add(txtTelefono);
-		configurarJTextField(txtTelefono, 20);
-		
+				
 		lblcomboBox1 = new JLabel();
 		contenedor.putConstraint(SpringLayout.NORTH, lblcomboBox1, 15, SpringLayout.SOUTH, lblTelefono);
 		contenedor.putConstraint(SpringLayout.WEST, lblcomboBox1, 15, SpringLayout.WEST, panel);
-		contenedor.putConstraint(SpringLayout.EAST, lblcomboBox1, 70, SpringLayout.WEST, lblcomboBox1);
+		contenedor.putConstraint(SpringLayout.EAST, lblcomboBox1, 80, SpringLayout.WEST, lblcomboBox1);
 		panel.add(lblcomboBox1);
 		
 		comboBox1 = new JComboBox<String>();
@@ -219,7 +220,7 @@ public class Nuevo extends VentanaModelo {
 		lblcomboBox2 = new JLabel();
 		contenedor.putConstraint(SpringLayout.NORTH, lblcomboBox2, 15, SpringLayout.SOUTH, lblcomboBox1);
 		contenedor.putConstraint(SpringLayout.WEST, lblcomboBox2, 15, SpringLayout.WEST, panel);
-		contenedor.putConstraint(SpringLayout.EAST, lblcomboBox2, 70, SpringLayout.WEST, lblcomboBox2);
+		contenedor.putConstraint(SpringLayout.EAST, lblcomboBox2, 80, SpringLayout.WEST, lblcomboBox2);
 		lblcomboBox2.setVisible(false);
 		panel.add(lblcomboBox2);
 		
@@ -233,7 +234,7 @@ public class Nuevo extends VentanaModelo {
 		lblTxt1 = new JLabel();
 		contenedor.putConstraint(SpringLayout.NORTH, lblTxt1, 15, SpringLayout.SOUTH, lblcomboBox2);
 		contenedor.putConstraint(SpringLayout.WEST, lblTxt1, 15, SpringLayout.WEST, panel);
-		contenedor.putConstraint(SpringLayout.EAST, lblTxt1, 70, SpringLayout.WEST, lblTxt1);
+		contenedor.putConstraint(SpringLayout.EAST, lblTxt1, 80, SpringLayout.WEST, lblTxt1);
 		lblTxt1.setVisible(false);
 		panel.add(lblTxt1);
 		
@@ -247,13 +248,14 @@ public class Nuevo extends VentanaModelo {
 		lblTxt2 = new JLabel();
 		contenedor.putConstraint(SpringLayout.NORTH, lblTxt2, 15, SpringLayout.SOUTH, lblTxt1);
 		contenedor.putConstraint(SpringLayout.WEST, lblTxt2, 15, SpringLayout.WEST, panel);
-		contenedor.putConstraint(SpringLayout.EAST, lblTxt2, 70, SpringLayout.WEST, lblTxt2);
+		contenedor.putConstraint(SpringLayout.EAST, lblTxt2, 80, SpringLayout.WEST, lblTxt2);
 		lblTxt2.setVisible(false);
 		panel.add(lblTxt2);
 		
 		txt2 = new JTextField();
 		contenedor.putConstraint(SpringLayout.NORTH, txt2, -2, SpringLayout.NORTH, lblTxt2);
 		contenedor.putConstraint(SpringLayout.WEST, txt2, 5, SpringLayout.EAST, lblTxt2);
+		txt2.setColumns(6);
 		txt2.setVisible(false);
 		panel.add(txt2);
 		configurarJTextField(txt2, 20);
@@ -261,7 +263,7 @@ public class Nuevo extends VentanaModelo {
 		lblTxt3 = new JLabel();
 		contenedor.putConstraint(SpringLayout.NORTH, lblTxt3, 15, SpringLayout.SOUTH, lblTxt2);
 		contenedor.putConstraint(SpringLayout.WEST, lblTxt3, 15, SpringLayout.WEST, panel);
-		contenedor.putConstraint(SpringLayout.EAST, lblTxt3, 70, SpringLayout.WEST, lblTxt3);
+		contenedor.putConstraint(SpringLayout.EAST, lblTxt3, 80, SpringLayout.WEST, lblTxt3);
 		lblTxt3.setVisible(false);
 		panel.add(lblTxt3);
 		
@@ -309,7 +311,6 @@ public class Nuevo extends VentanaModelo {
 	
 	private void configurarJTextField(Component nombre, int cantidadCaracteres) {
 		
-		((JTextField) nombre).setColumns(cantidadCaracteres);
 		nombre.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent e) {
 				

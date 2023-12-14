@@ -47,6 +47,7 @@ public class CtrlPagarEmpleado implements ActionListener{
 		ventana.txt1.setVisible(true);
 		ventana.lblTxt2.setText("Factura:");
 		ventana.lblTxt2.setVisible(true);
+		ventana.txt2.setColumns(10);
 		ventana.txt2.setVisible(true);
 		ventana.lblTxt3.setText("Comentario:");
 		ventana.lblTxt3.setVisible(true);

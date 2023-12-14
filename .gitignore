@@ -25,3 +25,4 @@ replay_pid*
 # configuración de la app #
 *.dam
 /bin/
+bd/LECSys2.00.mwb.bak

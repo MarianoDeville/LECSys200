@@ -126,28 +126,32 @@ public class PagosMySQL extends Conexion implements PagosDAO{
 			stm.setString(5, infoPago.getComentario());
 			stm.setString(6, infoPago.getFormaPago());
 			stm.executeUpdate();
-			cmdStm = "SELECT MAX(idPagos) FROM `lecsys2.00`.pagos";
-			stm = this.conexion.prepareStatement(cmdStm);
-			ResultSet rs = stm.executeQuery();
+			
+			if(ordenesCompra != null) {
+			
+				cmdStm = "SELECT MAX(idPagos) FROM `lecsys2.00`.pagos";
+				stm = this.conexion.prepareStatement(cmdStm);
+				ResultSet rs = stm.executeQuery();
+	
+				if(rs.next())
+					infoPago.setId(rs.getInt(1));
 
-			if(rs.next())
-				infoPago.setId(rs.getInt(1));
-
-			for(OrdenCompra ordenes: ordenesCompra) {
-		
-				cmdStm = "UPDATE `lecsys2.00`.ordenCompra SET idPago = ? WHERE idOrdenCompra = ?";
-				stm= this.conexion.prepareStatement(cmdStm);
-				stm.setInt(1, infoPago.getId());
-				stm.setInt(2, ordenes.getId());
-				stm.executeUpdate();
-				cmdStm = "UPDATE `lecsys2.00`.pedidoCompra "
-						  + "JOIN `lecsys2.00`.presupuesto ON pedidoCompra.idPedidoCompra = presupuesto.idPedidoCompra "
-						  + "JOIN `lecsys2.00`.ordenCompra ON presupuesto.idPresupuesto = ordenCompra.idPresupuesto "
-						  + "SET pedidoCompra.estado = 2 "
-						  + "WHERE ordenCompra.idOrdenCompra = ?";
-				stm= this.conexion.prepareStatement(cmdStm);
-				stm.setInt(1, ordenes.getId());
-				stm.executeUpdate();
+				for(OrdenCompra ordenes: ordenesCompra) {
+			
+					cmdStm = "UPDATE `lecsys2.00`.ordenCompra SET idPago = ? WHERE idOrdenCompra = ?";
+					stm= this.conexion.prepareStatement(cmdStm);
+					stm.setInt(1, infoPago.getId());
+					stm.setInt(2, ordenes.getId());
+					stm.executeUpdate();
+					cmdStm = "UPDATE `lecsys2.00`.pedidoCompra "
+							  + "JOIN `lecsys2.00`.presupuesto ON pedidoCompra.idPedidoCompra = presupuesto.idPedidoCompra "
+							  + "JOIN `lecsys2.00`.ordenCompra ON presupuesto.idPresupuesto = ordenCompra.idPresupuesto "
+							  + "SET pedidoCompra.estado = 2 "
+							  + "WHERE ordenCompra.idOrdenCompra = ?";
+					stm= this.conexion.prepareStatement(cmdStm);
+					stm.setInt(1, ordenes.getId());
+					stm.executeUpdate();
+				}
 			}
 		} catch(Exception e) {
 	

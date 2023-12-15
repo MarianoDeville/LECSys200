@@ -57,8 +57,9 @@ public class OperadorSistema extends Conexion {
 			case "CambioPasswordMySQL.checkContraseña":
 			case "CambioPasswordMySQL.guardarNuevaContraseña":
 			case "EstadisticasMySQL.isNuevoMes":
-			case "EstadisticasMySQL.getResumenMensual":	
-			case "EstadisticasMySQL.getListadoAños":	
+			case "EstadisticasMySQL.getResumenMensual":
+			case "EstadisticasMySQL.getListadoAños":
+			case "EstadisticasMySQL.getResumenAnual":
 			case "GrupoFamiliarMySQL.updateDeuda":
 			case "OperadorSistema.checkUsuario":
 			case "OperadorSistema.getLegajoUsuario":
@@ -102,7 +103,7 @@ public class OperadorSistema extends Conexion {
 				break;
 				
 			case "ComprasMySQL.setOrdenCompra":
-			case "AlumnoMySQL.setInactivos":
+			case "AlumnoMySQL.resetEstado":
 				bandera = permisos[1][1] || permisos[1][2];
 				break;
 									// Permisos para Alumnos.	///////////////////////////////////////////////

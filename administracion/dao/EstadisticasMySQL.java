@@ -10,7 +10,7 @@ import modelo.Situacion;
 public class EstadisticasMySQL extends Conexion implements EstadisticasDAO {
 
 	@Override
-	public boolean isNuevoMes() {
+	public boolean isNuevoMes(boolean forzar) {
 
 		int ultimoMesCargado = 0;
 
@@ -24,7 +24,7 @@ public class EstadisticasMySQL extends Conexion implements EstadisticasDAO {
 			if (rs.next())
 				ultimoMesCargado = rs.getInt(1);
 
-			if(ultimoMesCargado > 0) {
+			if(ultimoMesCargado > 0 && !forzar) {
 				
 				this.cerrar();
 				return false;
@@ -54,30 +54,16 @@ public class EstadisticasMySQL extends Conexion implements EstadisticasDAO {
 				estadistica.setSueldos(rs.getFloat(1));
 			rs = stm.executeQuery("SELECT SUM(pagos.monto) FROM `lecsys2.00`.pagos "
 								+ "WHERE( MONTH(fecha) = MONTH(NOW()) AND YEAR(fecha) = YEAR(NOW()) "
-								+ "AND pagos.idProveedor > 0 AND pagos.idEstadisticas IS NULL)");
+								+ "AND pagos.idProveedor > 0 AND servicio = 0 AND pagos.idEstadisticas IS NULL)");
 			
 			if (rs.next())
 				estadistica.setCompras(rs.getFloat(1));
-
-
-			
-			
-			
-			
-			
 			rs = stm.executeQuery("SELECT SUM(pagos.monto) FROM `lecsys2.00`.pagos "
-								+ "WHERE( MONTH(fecha) = MONTH(NOW()) AND YEAR(fecha) = YEAR(NOW()) AND pagos.idProveedor > 0 AND pagos.idEstadisticas IS NULL)");
+								+ "WHERE( MONTH(fecha) = MONTH(NOW()) AND YEAR(fecha) = YEAR(NOW()) "
+								+ "AND pagos.idProveedor > 0  AND servicio = 1 AND pagos.idEstadisticas IS NULL)");
 
 			if (rs.next())
 				estadistica.setServicios(rs.getFloat(1));
-			
-			
-			
-			
-			
-			
-			
-			
 			rs = stm.executeQuery("SELECT COUNT(idFaltas) FROM `lecsys2.00`.faltas "
 								+ "WHERE( MONTH(fecha) = MONTH(NOW()) AND YEAR(fecha) = YEAR(NOW()) AND faltas.estado = 0)");
 			
@@ -313,5 +299,39 @@ public class EstadisticasMySQL extends Conexion implements EstadisticasDAO {
 			this.cerrar();
 		}
 		return respuesta;	
+	}
+	
+	@Override
+	public Estadisticas getResumenAnual() {
+
+		Estadisticas respuesta = new Estadisticas();
+		String cmdStm = "SELECT ROUND(SUM(ingresosMes), 2), ROUND(SUM(sueldos), 2), "
+						+ "ROUND(SUM(compras), 2), ROUND(SUM(servicios), 2)  "
+						+ "FROM `lecsys2.00`.estadísticas "
+						+ "WHERE YEAR(fecha) = YEAR(NOW())";
+
+		try {
+			
+			this.conectar();
+			Statement stm = this.conexion.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			ResultSet rs = stm.executeQuery(cmdStm);
+	
+			if(rs.next()) {
+
+				respuesta.setIngresos(rs.getFloat(1));
+				respuesta.setSueldos(rs.getFloat(2));
+				respuesta.setCompras(rs.getFloat(3));
+				respuesta.setServicios(rs.getFloat(4));
+			}
+		} catch(Exception e) {
+			
+			CtrlLogErrores.guardarError(e.getMessage());
+			CtrlLogErrores.guardarError("EstadisticasMySQL, getResumenMensual()");
+			CtrlLogErrores.guardarError(cmdStm);
+		} finally {
+			
+			this.cerrar();
+		}
+		return respuesta;
 	}
 }

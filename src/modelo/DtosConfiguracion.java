@@ -16,6 +16,7 @@ public class DtosConfiguracion {
 	private static String serviviosMySQL;
 	private static String directorioBackup;
 	private static String emailInforme;
+	private static int mesComienzoClases;
 	
 	public String getConfig() {
 		
@@ -163,5 +164,15 @@ public class DtosConfiguracion {
 	public String getEmailInforme() {
 		
 		return emailInforme;
+	}
+
+	public int getMesComienzoClases() {
+		
+		return mesComienzoClases;
+	}
+
+	public void setMesComienzoClases(int mesComienzoClases) {
+
+		DtosConfiguracion.mesComienzoClases = mesComienzoClases;
 	}
 }

@@ -1,5 +1,7 @@
 package modelo;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import javax.swing.JOptionPane;
 import control.EmailSenderService;
 import dao.BackupDB;
@@ -17,13 +19,16 @@ public class DtosPrincipal {
 	
 	public void inicializar() {
 
-		if(estadisticasDAO.isNuevoMes()) {
+		if(estadisticasDAO.isNuevoMes(false)) {
 			
 			JOptionPane.showMessageDialog(null, "generando el resumen mensual");
 			mandarInforme();
 			GrupoFamiliarDAO grupoFamiliarDAO = new GrupoFamiliarMySQL();
 			UsuariosDAO usuariosDAO = new UsuariosMySQL();
-			grupoFamiliarDAO.updateDeuda(0, 1);
+			Calendar fecha = new GregorianCalendar();
+			
+			if(fecha.get(Calendar.MONTH) >=config.getMesComienzoClases())
+				grupoFamiliarDAO.updateDeuda(0, 1);
 			usuariosDAO.updateTiempoPass();
 			BackupDB.iniciar();
 		}
@@ -51,8 +56,9 @@ public class DtosPrincipal {
 													 + estadiscica.getSinDescuento().getMasDeUnMes() + "                             " 
 													 + String.format("%.2f", estadiscica.getSinDescuento().getSumaDeuda());
 		cuerpoEmail += "\n\nIngresos: " + String.format("%.2f", estadiscica.getIngresos());
-		cuerpoEmail += "\nSueldos: " + String.format("%.2f", estadiscica.getSueldos());
-		cuerpoEmail += "\nCompras: " + String.format("%.2f", estadiscica.getCompras());
+		cuerpoEmail += "\nSueldos:    " + String.format("%.2f", estadiscica.getSueldos());
+		cuerpoEmail += "\nCompras:    " + String.format("%.2f", estadiscica.getCompras());
+		cuerpoEmail += "\nServicios:  " + String.format("%.2f", estadiscica.getServicios());
 		cuerpoEmail += "\nUtilidad del mes: " + String.format("%.2f", (estadiscica.getIngresos() - estadiscica.getSueldos() - estadiscica.getCompras()));
 		emailService.mandarCorreo(config.getEmailInforme(), "Resumen mensual", cuerpoEmail);
 	}

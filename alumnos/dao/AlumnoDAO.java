@@ -9,8 +9,5 @@ public interface AlumnoDAO {
 	public boolean update(Alumno alumno);
 	public int getLegajoLibre();
 	public Alumno [] getListado( boolean estado, int grupo, String busqueda);	
-	
-	
-
 	public boolean resetEstado();
 }

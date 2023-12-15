@@ -13,13 +13,13 @@ import vista.IngresoUsuario;
 /*		Base de Datos:			MySQL Workbench 8.00 CE							*/
 /*		Plugin:					WindowBuilder 1.9.8								*/
 /*								UMLet 14.3										*/
-/*		Librerías:				mysql-connector-java-8.0.21.jar					*/
+/*		Dependencias:			mysql-connector-java-8.0.21.jar					*/
 /*								javax.mail-1.6.2.jar							*/
 /*								activation.jar									*/
-/*		Estado:					BETA.											*/
+/*		Estado:					Producción.										*/
 /*		Autor:					Mariano Ariel Deville							*/
 /*		Fecha creación:			24/09/2023										*/
-/*		Última modificación:	14/12/2023										*/
+/*		Última modificación:	15/12/2023										*/
 /********************************************************************************/
 
 public class LECSys {

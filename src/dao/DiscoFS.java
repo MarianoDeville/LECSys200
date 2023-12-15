@@ -168,6 +168,10 @@ public class DiscoFS {
 					case "INFO":
 						config.setEmailInforme(partes[1]);
 						break;
+						
+					case "INIC":
+						config.setMesComienzoClases(Integer.parseInt(partes[1]));
+						break;	
 					}
 				}
 			}

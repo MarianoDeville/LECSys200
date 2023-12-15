@@ -257,13 +257,6 @@ public class AlumnoMySQL extends Conexion implements AlumnoDAO {
 		return alumnos;
 	}
 
-	
-	
-	
-	
-	
-	
-	
 	@Override
 	public boolean resetEstado() {
 
@@ -286,7 +279,7 @@ public class AlumnoMySQL extends Conexion implements AlumnoDAO {
 		} catch (Exception e) {
 	
 			CtrlLogErrores.guardarError(e.getMessage());
-			CtrlLogErrores.guardarError("AlumnoMySQL, setInactivos()");
+			CtrlLogErrores.guardarError("AlumnoMySQL, resetEstado()");
 			bandera = false;
 		} finally {
 			

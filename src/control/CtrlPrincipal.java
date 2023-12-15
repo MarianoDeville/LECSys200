@@ -44,7 +44,7 @@ public class CtrlPrincipal implements ActionListener {
 	
 	public void iniciar() {
 
-		JOptionPane.showMessageDialog(null, "Welcome to LECSys.\nVer. 2.00\nRev. 14122023.2054");
+		JOptionPane.showMessageDialog(null, "Welcome to LECSys.\nVer. 2.00\nRev. 15122023.0123");
 		actividad.registrarActividad("Inicio del sistema", "Principal", 0);
 		ventana.setVisible(true);
 		

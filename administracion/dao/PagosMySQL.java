@@ -112,8 +112,8 @@ public class PagosMySQL extends Conexion implements PagosDAO{
 		long tiempo = System.currentTimeMillis();
 		DtosActividad dtosActividad = new DtosActividad();
 		String cmdStm = "INSERT INTO `lecsys2.00`.pagos "
-						+ "(idProveedor, concepto, fecha, hora, monto, factura, comentario, formaPago ) "
-						+ "VALUES (?, ?, DATE(NOW()), TIME(NOW()), ?, ?, ?, ?)";
+						+ "(idProveedor, concepto, fecha, hora, monto, factura, comentario, formaPago, servicio ) "
+						+ "VALUES (?, ?, DATE(NOW()), TIME(NOW()), ?, ?, ?, ?, ?)";
 	
 		try {
 			
@@ -125,6 +125,7 @@ public class PagosMySQL extends Conexion implements PagosDAO{
 			stm.setString(4, infoPago.getFactura());
 			stm.setString(5, infoPago.getComentario());
 			stm.setString(6, infoPago.getFormaPago());
+			stm.setInt(7, ordenesCompra == null? 1: 0);
 			stm.executeUpdate();
 			
 			if(ordenesCompra != null) {

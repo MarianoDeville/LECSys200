@@ -4,9 +4,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import dao.AlumnoDAO;
 import dao.AlumnoMySQL;
+import dao.EstadisticasDAO;
+import dao.EstadisticasMySQL;
 import dao.OperadorSistema;
 import modelo.DtosConfiguracion;
+import modelo.Estadisticas;
 import vista.ABML;
 import vista.InterfaceBotones;
 
@@ -78,17 +82,7 @@ public class CtrlAdministracion implements ActionListener {
 		
 		if(e.getSource() == ventana.btn2B) {
 			
-			if(JOptionPane.showConfirmDialog(null, "¿Esta seguro de cerrar el año actual?", "Alerta!", JOptionPane.YES_NO_OPTION) == 0) {
-				
-				AlumnoMySQL alumnosDAO = new AlumnoMySQL();
-				
-				if(alumnosDAO.resetEstado()) {
-					
-					JOptionPane.showInternalMessageDialog(null, "Operación realizada con éxito.");
-					return;
-				}
-				JOptionPane.showInternalMessageDialog(null, "No se pudo realizar la operación.");
-			}
+			cerrarAño();
 		}
 		
 		if(e.getSource() == ventana.btnVolver) {
@@ -143,5 +137,53 @@ public class CtrlAdministracion implements ActionListener {
 		ventanaEstadisticas = new ABML("Estadísticas", ventana.getX(), ventana.getY());
 		CtrlEstadisticas ctrlEstadisticas = new CtrlEstadisticas(ventanaEstadisticas);
 		ctrlEstadisticas.iniciar();
+	}
+	
+	private void cerrarAño() {
+		
+		if(JOptionPane.showConfirmDialog(null, "¿Esta seguro de cerrar el año actual?", "Alerta!", JOptionPane.YES_NO_OPTION) == 0) {
+			
+			AlumnoDAO alumnosDAO = new AlumnoMySQL();
+			
+			if(alumnosDAO.resetEstado()) {
+				
+				EstadisticasDAO estadisticasDAO = new EstadisticasMySQL();
+				estadisticasDAO.isNuevoMes(true);
+				Estadisticas estadiscica = estadisticasDAO.getResumenMensual();
+				Estadisticas resumen = estadisticasDAO.getResumenAnual();
+				DtosConfiguracion config = new DtosConfiguracion();
+				EmailSenderService emailService = new EmailSenderService();
+				String cuerpoEmail = "Informe cierre de año\n";
+				cuerpoEmail += "\nFecha de generacion del informe: " + estadiscica.getFecha();
+				cuerpoEmail += "\n\nCantidad de estudiantes: " + estadiscica.getCantidadEstudientas();
+				cuerpoEmail += "\n       Cantidad de faltas en el mes: " + estadiscica.getFaltasEstudiantes();
+				cuerpoEmail += "\n\nCantidsa de empleados: " + estadiscica.getCantidadEmpleados();
+				cuerpoEmail += "\n       Cantidad de faltas en el mes: " + estadiscica.getFaltasEmpleados();
+				cuerpoEmail += "\n\n                                                    Detalle situación alumnos con deuda vencida\n";
+				cuerpoEmail += "\n                                           Sin deuda     Un mes de deuda     Más de un mes     Suma adeudada";
+				cuerpoEmail += "\nAlumnos con descuento    " + estadiscica.getConDescuento().getAlDía() + "                    " 
+															 + estadiscica.getConDescuento().getUnMesDeuda() + "                               " 
+															 + estadiscica.getConDescuento().getMasDeUnMes() + "                             " 
+															 + String.format("%.2f", estadiscica.getConDescuento().getSumaDeuda());
+				cuerpoEmail += "\nAlumnos sin descuento      " + estadiscica.getSinDescuento().getAlDía() + "                    " 
+															 + estadiscica.getSinDescuento().getUnMesDeuda() + "                              " 
+															 + estadiscica.getSinDescuento().getMasDeUnMes() + "                             " 
+															 + String.format("%.2f", estadiscica.getSinDescuento().getSumaDeuda());
+				cuerpoEmail += "\n\nIngresos: " + String.format("%.2f", estadiscica.getIngresos());
+				cuerpoEmail += "\nSueldos:    " + String.format("%.2f", estadiscica.getSueldos());
+				cuerpoEmail += "\nCompras:    " + String.format("%.2f", estadiscica.getCompras());
+				cuerpoEmail += "\nServicios:  " + String.format("%.2f", estadiscica.getServicios());
+				cuerpoEmail += "\nUtilidad del mes: " + String.format("%.2f", (estadiscica.getIngresos() - estadiscica.getSueldos() - estadiscica.getCompras()));
+				cuerpoEmail += "\n\nIngresos anuales: " + String.format("%.2f", resumen.getIngresos());
+				cuerpoEmail += "\nSueldos anuales:   " + String.format("%.2f", resumen.getSueldos());
+				cuerpoEmail += "\nCompras anuales:  " + String.format("%.2f", resumen.getCompras());
+				cuerpoEmail += "\nServicios anuales: " + String.format("%.2f", resumen.getServicios());
+				cuerpoEmail += "\nUtilidad anual: " + String.format("%.2f", resumen.getIngresos() + resumen.getSueldos() + resumen.getSueldos() + resumen.getSueldos());
+				emailService.mandarCorreo(config.getEmailInforme(), "Resumen mensual y cierre de año", cuerpoEmail);
+				JOptionPane.showInternalMessageDialog(null, "Operación realizada con éxito.");
+				return;
+			}
+			JOptionPane.showInternalMessageDialog(null, "No se pudo realizar la operación.");
+		}
 	}
 }

@@ -14,7 +14,7 @@ public class DtosEstadisticas {
 		
 		EstadisticasDAO estadisticasDAO = new EstadisticasMySQL();
 		estadisticas = estadisticasDAO.getEstadisticasAnuales(año);;
-		Object tabla[][] = new Object[estadisticas.length + 1][9];
+		Object tabla[][] = new Object[estadisticas.length + 1][10];
 		String titulo[] = new String[] {"Mes", "Estud.", "Faltas", "Empl.", "Faltas", "Ingresos", "Sueldos", "Compras", "Servicios", "Utilidad neta"};
 		float sumaIngresos = 0;
 		float sumaSueldos = 0;
